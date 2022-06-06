@@ -14,7 +14,7 @@ async function submitPrintOrder(orderObj){
 }
 
 async function uploadFileToCubee(file, apiKey) {
-    return await httpService.post('ssupload',file, apiKey)
+    return await httpService.post('upload',file, apiKey)
     return {
         data: "4d1649aa-2756-4efb-ab72-0c5a84de63da"
     }

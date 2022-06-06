@@ -61,13 +61,16 @@ export default {
 
 async function ajax(endpoint, method = 'get', data = null, apiKey = null) {
     try {
+        let formData = new FormData();
+        formData.append('file', data)
         const res = await axios({
             url: `${API_URL}${endpoint}`,
             method,
-            data,
+            data: formData,
             headers: {
-                'x-api-key': apiKey,
+                'x-api-key': 'yPLsXXF6ialkaUbjGy0IRiV0YEVG4EYr',
                 'Access-Control-Allow-Origin': '*',
+                "Content-Type":'multipart/form-data'
             },
         });
         return res.data;
