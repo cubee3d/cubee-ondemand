@@ -1,0 +1,21 @@
+.cont-404 {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 60vh;
+    gap: 20px;
+}
+
+@media only screen and (max-width: 750px) {
+    .cont-404 {
+        h1 {
+            font-size: 2rem;
+            text-align: center;
+        }
+        h2 {
+            text-align: center;
+            font-size: 1.2rem;
+        }
+    }
+}

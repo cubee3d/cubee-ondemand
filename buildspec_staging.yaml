@@ -1,0 +1,19 @@
+version: 0.2
+
+phases:
+  install:
+    runtime-versions:
+      nodejs: 12
+    commands:
+      - echo Installing packages...
+      - npm i --force
+  pre_build:
+    commands:
+      - CF_DISTRIBUTION_ID=E29SFBIBJINWRP
+      - BUCKET_NAME=s3://cubee-club-stage
+  build:
+    commands:
+      - npm run build:staging
+      - aws s3 sync build $BUCKET_NAME
+      - aws s3 cp $BUCKET_NAME/index.html $BUCKET_NAME/index.html --metadata Cache-Control=max-age=0
+      - aws cloudfront create-invalidation --distribution-id $CF_DISTRIBUTION_ID --paths "/*"
