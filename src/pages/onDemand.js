@@ -11,7 +11,7 @@ import { styled } from '@mui/material/styles';
 import Switch from '@mui/material/Switch';
 import { SnackbarHandlerContext } from '../contexts/SnackbarHandlerContext';
 import LiveHelpIcon from '@mui/icons-material/LiveHelp';
-import shopService from '../services/shopService';
+import onDemandService from '../services/onDemandService';
 import ViewInArRoundedIcon from '@mui/icons-material/ViewInArRounded';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import WhatsAppIcon from '@mui/icons-material/WhatsApp';
@@ -165,7 +165,7 @@ export const OnDemand = ({ location }) => {
         const filer = event.target.files[0]
         if (filer?.name.toLowerCase().slice(-3) !== 'stl') return notificationHandler.error('STL מצטערים, רק קבצי')
         setSelectedFile(filer);
-        const res = await shopService.uploadFileToCubee(filer, apiKey)
+        const res = await onDemandService.uploadFileToCubee(filer, apiKey)
         if (res.error) {
             setIsLoading(false)
             return notificationHandler.error('אופס, יש בעיה בשרת, נא לנסות שוב')
@@ -236,7 +236,7 @@ export const OnDemand = ({ location }) => {
             vaseMode: printSettings.isVase,
             currencyCode: 'ILS'
         }
-        const res = await shopService.calculateSlicer(printSettingsObj)
+        const res = await onDemandService.calculateSlicer(printSettingsObj)
         if (res.error) {
             setIsLoading(false)
             return notificationHandler.error('אופס, לא הצלחנו לחשב את ההדפסה, נסה שוב')
@@ -258,7 +258,7 @@ export const OnDemand = ({ location }) => {
         if (!emailValidation(contactForm.email))
             return notificationHandler.warning('יש להזין מייל תקין')
         setIsLoading(true)
-        const res = await shopService.submitPrintOrder({ calculated: { ...slicedInfo }, settings: { ...printSettings }, fileId: cubeeFileIdName.fileId })
+        const res = await onDemandService.submitPrintOrder({ calculated: { ...slicedInfo }, settings: { ...printSettings }, fileId: cubeeFileIdName.fileId })
         if (res.error) {
             notificationHandler.error('לא הצלחנו לבצע את ההזמנה, נסה שוב')
             setIsLoading(false)
@@ -462,7 +462,7 @@ export const OnDemand = ({ location }) => {
                                         // orbitControls
                                         shadows
                                         // showAxes
-                                        // url={url}
+                                        // url={URL.createObjectURL(selectedFile)}
                                         file={selectedFile}
                                         color={stlViewerColor}
                                     />

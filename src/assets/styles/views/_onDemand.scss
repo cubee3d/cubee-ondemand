@@ -1,3 +1,29 @@
+.address-form {
+    padding: 20px 40px;
+    display: flex;
+    flex-direction: row;
+    gap: 60px;
+    // height: 400px;
+    .right-fields,
+    .left-fields {
+        flex-direction: column;
+        display: flex;
+        gap: 20px;
+    }
+    .form-field {
+        display: flex;
+        flex-direction: row;
+        // justify-content: center;
+        align-items: center;
+        gap: 10px;
+        span {
+            width: 130px;
+        }
+        .textarea-field {
+            width: 300px;
+        }
+    }
+}
 .onDemand-stepper {
     width: 600px;
     margin: 10px auto;
