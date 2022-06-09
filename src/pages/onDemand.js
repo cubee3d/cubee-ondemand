@@ -159,12 +159,19 @@ export const OnDemand = ({ location }) => {
     const [cubeeFileIdName, setCubeeFileIdName] = useState(null)
     const [slicedInfo, setSlicedInfo] = useState(null);
     const [isLoading, setIsLoading] = useState(false)
+    const [isFileLoaded, setFileLoaded] = useState(false)
     const onFileSelect = async (event) => {
         event.persist()
         setIsLoading(true)
         const filer = event.target.files[0]
         if (filer?.name.toLowerCase().slice(-3) !== 'stl') return notificationHandler.error('STL מצטערים, רק קבצי')
         setSelectedFile(filer);
+        //חשבתי שהבעיה היא שזה לא מספיק לטעון את הקובץ בסטייט לפני שהוא מעלה את התצוגה
+        //אז ניסיתי להוסיף את הטיימאאוט למטה, אבל זה לא עזר. גם לא ב10 שניות
+        // this is ms no אני יודע
+        setTimeout(()=>{
+            setFileLoaded(true)
+        }, 10)
         const res = await onDemandService.uploadFileToCubee(filer, apiKey)
         if (res.error) {
             setIsLoading(false)
@@ -220,6 +227,7 @@ export const OnDemand = ({ location }) => {
     }
     const onChangeFile = () => {
         setCubeeFileIdName(null)
+        setFileLoaded(false)
         setPrintSettings(initialPrintSettings)
         setActiveStep(prevActive => prevActive - 1);
     }
@@ -455,16 +463,26 @@ export const OnDemand = ({ location }) => {
                                     </LoadingButton>
                                 </div>
                             </div>
-                            {selectedFile &&
-                                <div>
+                            {isFileLoaded &&
+                            // console.log(selectedFile) &&
+                                <div style={{width: '150px', height: '150px'}}>
                                     <StlViewer
-                                        style={style}
+                                        // style={style}
                                         // orbitControls
-                                        shadows
+                                        // shadows
                                         // showAxes
                                         // url={URL.createObjectURL(selectedFile)}
+                                        // url={"https://cdn.thingiverse.com/assets/a4/c2/db/e9/ff/20131015WV1Feet.stl"}
                                         file={selectedFile}
-                                        color={stlViewerColor}
+                                        // modelProps={{
+                                        //     color: stlViewerColor,
+                                        //     scale: 0.25
+                                        // }}
+                                        // floorProps={{
+                                        //     gridWidth: 300
+                                        // }}
+                                        // color={stlViewerColor}
+                                        onError={console.log}
                                     />
                                 </div>
                             }

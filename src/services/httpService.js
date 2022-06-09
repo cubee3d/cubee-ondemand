@@ -70,12 +70,13 @@ async function ajax(endpoint, method = 'get', data = null, apiKey = null) {
             headers: {
                 'x-api-key': 'yPLsXXF6ialkaUbjGy0IRiV0YEVG4EYr',
                 'Access-Control-Allow-Origin': '*',
-                "Content-Type":'multipart/form-data'
+                "Content-Type": 'multipart/form-data'
             },
         });
         return res.data;
     } catch (err) {
-        if (!err.response)
+        if (!err.response) {
+            console.log(err);
             return {
                 error: {
                     message:
@@ -83,11 +84,14 @@ async function ajax(endpoint, method = 'get', data = null, apiKey = null) {
                     status: 500,
                 },
             };
+        }
+        console.log(err);
         return {
             error: {
                 message: err.response.data,
                 status: err.response.status,
             },
-        };
+    
     }
+}
 }

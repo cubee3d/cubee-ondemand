@@ -7,6 +7,7 @@ import { SnackbarContext } from './contexts/SnackbarContext';
 import Alert from '@mui/material/Alert';
 import Slide from '@mui/material/Slide';
 import { OnDemand } from './pages/onDemand';
+import { Test } from './pages/test';
 
 const theme = createTheme({
   components: {
@@ -127,7 +128,7 @@ function App() {
                 <Route
                   path="/"
                   exact
-                  component={OnDemand}
+                  component={Test}
                 />
               </Switch>
             </div>
