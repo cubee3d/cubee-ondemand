@@ -128,7 +128,7 @@ function App() {
                 <Route
                   path="/"
                   exact
-                  component={Test}
+                  component={OnDemand}
                 />
               </Switch>
             </div>

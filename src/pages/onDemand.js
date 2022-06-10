@@ -1,5 +1,7 @@
+/* global StlViewer */
+
 import React, { useEffect, useRef, useState, useContext } from 'react';
-import { StlViewer } from "react-stl-viewer";
+// import { StlViewer } from "react-stl-viewer";
 import Stepper from '@mui/material/Stepper';
 import Step from '@mui/material/Step';
 import StepLabel from '@mui/material/StepLabel';
@@ -147,12 +149,32 @@ export const OnDemand = ({ location }) => {
         left: 0,
         width: '600px',
         height: '650px',
+        numWidth: 600,
+        numHeight: 650
     }
     const miniStyle = {
         top: 0,
         left: 0,
         width: '300px',
         height: '350px',
+        numWidth: 300,
+        numHeight: 350
+    }
+
+    const divRef = useRef(null);
+    const [stlViewer, setStlViewer] = useState(null)
+
+    useEffect(() => {
+
+    }, [])
+
+    // useEffect(()=>{
+    //     stlViewer.setColor(1, stlViewerColor)
+    // },[stlViewerColor])
+
+    const test = () => {
+        console.log(stlViewer.set_color);
+        stlViewer.set_color(1, "#ff00ee")
     }
 
     const [selectedFile, setSelectedFile] = useState(null);
@@ -160,16 +182,26 @@ export const OnDemand = ({ location }) => {
     const [slicedInfo, setSlicedInfo] = useState(null);
     const [isLoading, setIsLoading] = useState(false)
     const [isFileLoaded, setFileLoaded] = useState(false)
+
     const onFileSelect = async (event) => {
         event.persist()
         setIsLoading(true)
         const filer = event.target.files[0]
         if (filer?.name.toLowerCase().slice(-3) !== 'stl') return notificationHandler.error('STL מצטערים, רק קבצי')
+        // stlViewer.set_color(1, "#00ff00")
+
+
+
+        // setTimeout(()=>{
+        //     stlViewer.set_color(1, "#00ff00")
+        // },2000)
+        // return;
+
         setSelectedFile(filer);
         //חשבתי שהבעיה היא שזה לא מספיק לטעון את הקובץ בסטייט לפני שהוא מעלה את התצוגה
         //אז ניסיתי להוסיף את הטיימאאוט למטה, אבל זה לא עזר. גם לא ב10 שניות
         // this is ms no אני יודע
-        setTimeout(()=>{
+        setTimeout(() => {
             setFileLoaded(true)
         }, 10)
         const res = await onDemandService.uploadFileToCubee(filer, apiKey)
@@ -183,6 +215,18 @@ export const OnDemand = ({ location }) => {
         })
         setIsLoading(false)
         setActiveStep(prevActive => prevActive + 1);
+        setTimeout(() => {
+
+            const stlViewer1 = new StlViewer(divRef.current, {
+                ready_callback: (e) => console.log(e), all_loaded_callback: (e) => console.log('all loaded 3d'), canvas_width: '100%', canvas_height: '100%'
+            });
+            console.log(stlViewer1);
+            setStlViewer(stlViewer1)
+            stlViewer1.add_model({
+                local_file: filer, color: stlViewerColor,
+                //  animation: { delta: { rotationx: 1, rotationy: 1.1, rotationz: 1.2, msec: 8000, loop: true },  }
+            });
+        }, 1000)
     };
 
     const handleFileSelect = () => {
@@ -219,6 +263,7 @@ export const OnDemand = ({ location }) => {
             return { ...prevForm, color };
         });
         setStlViewerColor(colors[color])
+        stlViewer.set_color(1, colors[color])
 
     }
     const onResetSettings = () => {
@@ -251,7 +296,26 @@ export const OnDemand = ({ location }) => {
         }
         setIsLoading(false)
         setSlicedInfo(res)
+        // stlViewer.dispose()
         setActiveStep(prevActive => prevActive + 1);
+        // const stlViewer1 = new StlViewer(divRef.current, {
+        //     ready_callback: (e) => console.log(e), all_loaded_callback: (e) => console.log('all loaded 3d'), canvas_width: '100%', canvas_height: '100%'
+        // });
+        // console.log(stlViewer1);
+        // setStlViewer(stlViewer1)
+        // stlViewer1.add_model({
+        //     local_file: selectedFile, color: stlViewerColor,
+        //     //  animation: { delta: { rotationx: 1, rotationy: 1.1, rotationz: 1.2, msec: 8000, loop: true },  }
+        // });
+        // stlViewer.dispose()
+        document.querySelector('canvas').width=miniStyle.numWidth//.style= {border: '5px solid black'}
+        document.querySelector('canvas').height=miniStyle.numHeight//.style= {border: '5px solid black'}
+        document.querySelector('canvas').style= {}
+        // stlViewer.set_auto_zoom()
+        window.stlViewer = stlViewer
+        // stlViewer.set_position(1, 100,100,100)
+        // stlViewer.set_center_models(true)
+        // setStlViewer(null)
     }
     const onSubmitPrintOrder = async () => {
         const isFormFilled = Object.values(contactForm).every(
@@ -277,6 +341,9 @@ export const OnDemand = ({ location }) => {
 
     const onPrevStep = () => {
         setActiveStep(prevActive => prevActive - 1);
+        document.querySelector('canvas').width=style.numWidth//.style= {border: '5px solid black'}
+        document.querySelector('canvas').height=style.numHeight//.style= {border: '5px solid black'}
+        document.querySelector('canvas').style= {}
         setSlicedInfo(null)
     }
 
@@ -463,7 +530,8 @@ export const OnDemand = ({ location }) => {
                                     </LoadingButton>
                                 </div>
                             </div>
-                            {isFileLoaded &&
+                            <div style={style} ref={divRef} />
+                            {/* {isFileLoaded &&
                             // console.log(selectedFile) &&
                                 <div style={{width: '150px', height: '150px'}}>
                                     <StlViewer
@@ -485,7 +553,7 @@ export const OnDemand = ({ location }) => {
                                         onError={console.log}
                                     />
                                 </div>
-                            }
+                            } */}
 
                         </div>
                         <Popover
@@ -531,8 +599,8 @@ export const OnDemand = ({ location }) => {
                                 <h3>משקל הדפסה משוער: {slicedInfo.weight} גרם</h3>
                                 <h2>מחיר משוער: ₪{Math.ceil(slicedInfo.price)}</h2>
                             </div>
-                            <div>
-                                <StlViewer
+                            <div style={miniStyle} ref={divRef} />
+                                {/* <StlViewer
                                     style={miniStyle}
                                     // orbitControls
                                     shadows
@@ -540,8 +608,8 @@ export const OnDemand = ({ location }) => {
                                     // url={url}
                                     file={selectedFile}
                                     color={stlViewerColor}
-                                />
-                            </div>
+                                /> */}
+                            {/* </div> */}
                         </div>
                         <div>
 
