@@ -9,8 +9,8 @@ phases:
       - npm i --force
   pre_build:
     commands:
-      - CF_DISTRIBUTION_ID=E29SFBIBJINWRP
-      - BUCKET_NAME=s3://cubee-club-stage
+      - CF_DISTRIBUTION_ID=E34QX4OI2HTOU
+      - BUCKET_NAME=s3://cubee-ondemand-stage
   build:
     commands:
       - npm run build:staging

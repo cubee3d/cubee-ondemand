@@ -9,8 +9,8 @@ phases:
       - npm install
   pre_build:
     commands:
-      - CF_DISTRIBUTION_ID=E166LX8BONP5P
-      - BUCKET_NAME=s3://cubee-club
+      - CF_DISTRIBUTION_ID=E30CCVHLFAVL5H
+      - BUCKET_NAME=s3://cubee-ondemand
   build:
     commands:
       - npm run build:production
