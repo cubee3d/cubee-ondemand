@@ -6,7 +6,7 @@ phases:
       nodejs: 12
     commands:
       - echo Installing packages...
-      - npm install
+      - npm i --force
   pre_build:
     commands:
       - CF_DISTRIBUTION_ID=E30CCVHLFAVL5H
