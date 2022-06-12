@@ -19,103 +19,15 @@ import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import WhatsAppIcon from '@mui/icons-material/WhatsApp';
 import ThreeDRotationIcon from '@mui/icons-material/ThreeDRotation';
 import { emailValidation, phoneNumberValidation } from '../services/utils';
+import { WindowSharp } from '@mui/icons-material';
+import {
+    prettoSliderSettings, infillMarks, resMarks, colors, initialPrintSettings,
+    steps, materials, popovers
 
+} from './consts';
 
-const PrettoSlider = styled(Slider)({
-    color: '#007CFF',
-    height: 8,
-    '& .MuiSlider-track': {
-        border: 'none',
-    },
-    '& .MuiSlider-thumb': {
-        height: 24,
-        width: 24,
-        backgroundColor: '#fff',
-        border: '2px solid currentColor',
-        '&:focus, &:hover, &.Mui-active, &.Mui-focusVisible': {
-            boxShadow: 'inherit',
-        },
-        '&:before': {
-            display: 'none',
-        },
-    },
-    '& .MuiSlider-valueLabel': {
-        lineHeight: 1.2,
-        fontSize: 12,
-        background: 'unset',
-        padding: 0,
-        width: 32,
-        height: 32,
-        borderRadius: '50% 50% 50% 0',
-        backgroundColor: '#007CFF',
-        transformOrigin: 'bottom left',
-        transform: 'translate(50%, -100%) rotate(-45deg) scale(0)',
-        '&:before': { display: 'none' },
-        '&.MuiSlider-valueLabelOpen': {
-            transform: 'translate(50%, -100%) rotate(-45deg) scale(1)',
-        },
-        '& > *': {
-            transform: 'rotate(45deg)',
-        },
-    },
-});
-const infillMarks = [
-    {
-        value: 0,
-        label: '0%',
-    },
-    {
-        value: 100,
-        label: '100%',
-    }
+const PrettoSlider = styled(Slider)(prettoSliderSettings);
 
-]
-const resMarks = [
-    {
-        value: 0.1,
-        label: 'גבוהה',
-    },
-    {
-        value: 0.3,
-        label: 'נמוכה',
-    }
-
-]
-const colors = {
-    כחול: '#2410de',
-    אדום: '#f44336',
-    סגול: '#9c27b0',
-    ורוד: '#fb87ff',
-    תכלת: '#2196f3',
-    ירוק: '#8bc34a',
-    צהוב: '#ffeb3b',
-    זהב: '#ffc107',
-    כתום: '#ff9800',
-    חום: '#795548',
-    אפור: '#607d8b',
-    כסף: '#919191',
-    זהב: '#ffab0f',
-}
-
-const initialPrintSettings = {
-    material: 'PLA',
-    infill: 20,
-    resolution: 0.2,
-    color: 'חום',
-    isSupports: false,
-    isVase: false
-}
-
-
-const steps = ['העלאת קובץ להדפסה', 'הגדרות הדפסה', 'שלח לאישור'];
-const materials = ['ABS', 'PLA', 'PETG', 'Nylon', 'TPU']
-const popovers = {
-    material: 'הפלסטיק הסטנדרטי הוא PLA. ה-PETG ו-ABS עמידים יותר, ו-TPU הינו חומר גמיש',
-    infill: 'אחוז המילוי קובע את משקל וחוזק המודל, הסטנדרט הינו 20%',
-    res: 'הרזולוציה משפיעה על זמן ההדפסה וגימור המוצר - גובה שכבה נמוך יותר יעזור למוצר אסתטי יותר',
-    vase: 'אם המוצר הינו עציץ/אגרטל - ניתן להדפיס במצב חסכוני בעל גימור נקי',
-    support: 'אם חלק מהמודל מודפס באוויר, כנראה שיידרשו תמיכות'
-}
 export const OnDemand = ({ location }) => {
     const [apiKey, setApiKey] = useState(null)
     const notificationHandler = useContext(SnackbarHandlerContext);
@@ -162,11 +74,10 @@ export const OnDemand = ({ location }) => {
     }
 
     const divRef = useRef(null);
+    const miniDivRef = useRef(null)
     const [stlViewer, setStlViewer] = useState(null)
+    const [miniStlViewer, setMiniStlViewer] = useState(null)
 
-    useEffect(() => {
-
-    }, [])
 
     // useEffect(()=>{
     //     stlViewer.setColor(1, stlViewerColor)
@@ -298,6 +209,7 @@ export const OnDemand = ({ location }) => {
         setSlicedInfo(res)
         // stlViewer.dispose()
         setActiveStep(prevActive => prevActive + 1);
+
         // const stlViewer1 = new StlViewer(divRef.current, {
         //     ready_callback: (e) => console.log(e), all_loaded_callback: (e) => console.log('all loaded 3d'), canvas_width: '100%', canvas_height: '100%'
         // });
@@ -307,15 +219,30 @@ export const OnDemand = ({ location }) => {
         //     local_file: selectedFile, color: stlViewerColor,
         //     //  animation: { delta: { rotationx: 1, rotationy: 1.1, rotationz: 1.2, msec: 8000, loop: true },  }
         // });
+        // stlViewer.clean()
         // stlViewer.dispose()
-        document.querySelector('canvas').width=miniStyle.numWidth//.style= {border: '5px solid black'}
-        document.querySelector('canvas').height=miniStyle.numHeight//.style= {border: '5px solid black'}
-        document.querySelector('canvas').style= {}
+        // document.querySelector('canvas').width=miniStyle.numWidth//.style= {border: '5px solid black'}
+        // document.querySelector('canvas').height=miniStyle.numHeight//.style= {border: '5px solid black'}
+        // document.querySelector('canvas').style= {}
         // stlViewer.set_auto_zoom()
-        window.stlViewer = stlViewer
+        // window.stlViewer = stlViewer
         // stlViewer.set_position(1, 100,100,100)
         // stlViewer.set_center_models(true)
         // setStlViewer(null)
+        stlViewer.dispose()
+        document.querySelector('canvas').display = 'none'
+        window.stlViewer = stlViewer
+        setTimeout(() => {
+            const stlViewer1 = new StlViewer(miniDivRef.current, {
+                ready_callback: (e) => console.log(e), all_loaded_callback: (e) => console.log('all loaded 3d'), canvas_width: '100%', canvas_height: '100%'
+            });
+            console.log(stlViewer1);
+            setMiniStlViewer(stlViewer1)
+            stlViewer1.add_model({
+                local_file: selectedFile, color: stlViewerColor,
+                //  animation: { delta: { rotationx: 1, rotationy: 1.1, rotationz: 1.2, msec: 8000, loop: true },  }
+            });
+        }, 1000)
     }
     const onSubmitPrintOrder = async () => {
         const isFormFilled = Object.values(contactForm).every(
@@ -341,9 +268,9 @@ export const OnDemand = ({ location }) => {
 
     const onPrevStep = () => {
         setActiveStep(prevActive => prevActive - 1);
-        document.querySelector('canvas').width=style.numWidth//.style= {border: '5px solid black'}
-        document.querySelector('canvas').height=style.numHeight//.style= {border: '5px solid black'}
-        document.querySelector('canvas').style= {}
+        document.querySelector('canvas').width = style.numWidth//.style= {border: '5px solid black'}
+        document.querySelector('canvas').height = style.numHeight//.style= {border: '5px solid black'}
+        document.querySelector('canvas').style = {}
         setSlicedInfo(null)
     }
 
@@ -530,7 +457,7 @@ export const OnDemand = ({ location }) => {
                                     </LoadingButton>
                                 </div>
                             </div>
-                            <div style={style} ref={divRef} />
+                            <div className='bigdiv' style={style} ref={divRef} />
                             {/* {isFileLoaded &&
                             // console.log(selectedFile) &&
                                 <div style={{width: '150px', height: '150px'}}>
@@ -599,8 +526,8 @@ export const OnDemand = ({ location }) => {
                                 <h3>משקל הדפסה משוער: {slicedInfo.weight} גרם</h3>
                                 <h2>מחיר משוער: ₪{Math.ceil(slicedInfo.price)}</h2>
                             </div>
-                            <div style={miniStyle} ref={divRef} />
-                                {/* <StlViewer
+                            <div className='minidiv' style={miniStyle} ref={miniDivRef} />
+                            {/* <StlViewer
                                     style={miniStyle}
                                     // orbitControls
                                     shadows
