@@ -7,40 +7,46 @@ export const Test = () => {
     // const [stlViewerColor, setStlViewerColor] = useState(colors[initialPrintSettings.color])
     const [selectedFile, setSelectedFile] = useState(null);
 
-    const hiddenFileInput = useRef(null)
+    const hiddenFileInput = useRef(null);
     const style = {
         top: 0,
         left: 0,
         width: '600px',
         height: '650px',
-    }
-    const onFileSelect = async (event) => {
-
-        event.persist()
-        const filer = event.target.files[0]
+    };
+    const onFileSelect = async event => {
+        event.persist();
+        const filer = event.target.files[0];
         setSelectedFile(filer);
         //חשבתי שהבעיה היא שזה לא מספיק לטעון את הקובץ בסטייט לפני שהוא מעלה את התצוגה
         //אז ניסיתי להוסיף את הטיימאאוט למטה, אבל זה לא עזר. גם לא ב10 שניות
     };
     const handleFileSelect = () => {
-        setSelectedFile(null)
-        hiddenFileInput.current.click()
+        setSelectedFile(null);
+        hiddenFileInput.current.click();
     };
 
     return (
         <>
-            <input accept=".stl" type='file' name='file' onChange={onFileSelect} hidden ref={hiddenFileInput} />
-            <LoadingButton endIcon={<CloudUploadIcon />}
-                variant='contained'
-                color='warn'
+            <input
+                accept=".stl"
+                type="file"
+                name="file"
+                onChange={onFileSelect}
+                hidden
+                ref={hiddenFileInput}
+            />
+            <LoadingButton
+                endIcon={<CloudUploadIcon />}
+                variant="contained"
+                color="warn"
                 onClick={handleFileSelect}
                 // loading={isLoading}
                 // disabled={!Boolean(apiKey)}
             >
                 העלאת קובץ להדפסה
             </LoadingButton>
-            {
-                selectedFile &&
+            {selectedFile && (
                 <div>
                     <StlViewer
                         style={style}
@@ -50,7 +56,7 @@ export const Test = () => {
                         onFinishLoading={console.log}
                     />
                 </div>
-            }
+            )}
         </>
-    )
-}
+    );
+};

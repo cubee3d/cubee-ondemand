@@ -35,7 +35,7 @@ export const prettoSliderSettings = {
             transform: 'rotate(45deg)',
         },
     },
-}
+};
 
 export const infillMarks = [
     {
@@ -45,9 +45,8 @@ export const infillMarks = [
     {
         value: 100,
         label: '100%',
-    }
-
-]
+    },
+];
 
 export const resMarks = [
     {
@@ -57,9 +56,8 @@ export const resMarks = [
     {
         value: 0.3,
         label: 'נמוכה',
-    }
-
-]
+    },
+];
 
 export const colors = {
     כחול: '#2410de',
@@ -75,23 +73,24 @@ export const colors = {
     אפור: '#607d8b',
     כסף: '#919191',
     זהב: '#ffab0f',
-}
+};
 
 export const initialPrintSettings = {
     material: 'PLA',
     infill: 20,
     resolution: 0.2,
-    color: 'חום',
+    color: 'אפור',
     isSupports: false,
-    isVase: false
-}
+    isVase: false,
+};
 
 export const steps = ['העלאת קובץ להדפסה', 'הגדרות הדפסה', 'שלח לאישור'];
-export const materials = ['ABS', 'PLA', 'PETG', 'Nylon', 'TPU']
+export const materials = ['ABS', 'PLA', 'PETG', 'Nylon', 'TPU'];
 export const popovers = {
-    material: 'הפלסטיק הסטנדרטי הוא PLA. ה-PETG ו-ABS עמידים יותר, ו-TPU הינו חומר גמיש',
+    material:
+        'הפלסטיק הסטנדרטי הוא PLA. ה-PETG ו-ABS עמידים יותר, ו-TPU הינו חומר גמיש',
     infill: 'אחוז המילוי קובע את משקל וחוזק המודל, הסטנדרט הינו 20%',
     res: 'הרזולוציה משפיעה על זמן ההדפסה וגימור המוצר - גובה שכבה נמוך יותר יעזור למוצר אסתטי יותר',
     vase: 'אם המוצר הינו עציץ/אגרטל - ניתן להדפיס במצב חסכוני בעל גימור נקי',
-    support: 'אם חלק מהמודל מודפס באוויר, כנראה שיידרשו תמיכות'
-}
+    support: 'אם חלק מהמודל מודפס באוויר, כנראה שיידרשו תמיכות',
+};

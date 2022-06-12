@@ -23,7 +23,7 @@ export const cleanDescription = desc => {
     );
     desc = desc.replace('רק ב- ProMaker', 'אצלנו ב - Cubee-Club');
     desc = desc.replace(regex2, 'Cubee-Club ');
-    desc = desc.replace('בProMaker', 'ב-Cubee-Club')
+    desc = desc.replace('בProMaker', 'ב-Cubee-Club');
     return desc;
 };
 

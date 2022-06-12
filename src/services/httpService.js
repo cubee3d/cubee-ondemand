@@ -62,7 +62,7 @@ export default {
 async function ajax(endpoint, method = 'get', data = null, apiKey = null) {
     try {
         let formData = new FormData();
-        formData.append('file', data)
+        formData.append('file', data);
         const res = await axios({
             url: `${API_URL}${endpoint}`,
             method,
@@ -70,7 +70,7 @@ async function ajax(endpoint, method = 'get', data = null, apiKey = null) {
             headers: {
                 'x-api-key': 'yPLsXXF6ialkaUbjGy0IRiV0YEVG4EYr',
                 'Access-Control-Allow-Origin': '*',
-                "Content-Type": 'multipart/form-data'
+                'Content-Type': 'multipart/form-data',
             },
         });
         return res.data;
@@ -91,7 +91,6 @@ async function ajax(endpoint, method = 'get', data = null, apiKey = null) {
                 message: err.response.data,
                 status: err.response.status,
             },
-    
+        };
     }
-}
 }
