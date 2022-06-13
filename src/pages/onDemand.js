@@ -86,6 +86,7 @@ export const OnDemand = ({ location }) => {
     const onFileSelect = async event => {
         event.persist();
         setIsLoading(true);
+        if(!apiKey) return notificationHandler.error('יש להכניס מפתח')
         const filer = event.target.files[0];
         if (filer?.name.toLowerCase().slice(-3) !== 'stl')
             return notificationHandler.error('STL מצטערים, רק קבצי');
