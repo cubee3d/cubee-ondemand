@@ -1,9 +1,12 @@
 /* global StlViewer */
 
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useContext } from 'react';
 import LoadingButton from '@mui/lab/LoadingButton';
+import { SnackbarHandlerContext } from '../contexts/SnackbarHandlerContext';
+
 import { Button, Tooltip, Typography, Popover, TextField } from '@mui/material';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
+import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import LiveHelpIcon from '@mui/icons-material/LiveHelp';
 import {
     materials,
@@ -19,6 +22,9 @@ import ThreeDRotationIcon from '@mui/icons-material/ThreeDRotation';
 import Slider, { SliderThumb } from '@mui/material/Slider';
 import { styled } from '@mui/material/styles';
 import { ViewerLoader } from './ViewerLoader';
+import { useTranslation } from 'react-i18next';
+import { LanguageContext } from '../contexts/LanguageContext';
+
 const PrettoSlider = styled(Slider)(prettoSliderSettings);
 
 export const Step2PrintSettings = ({
@@ -28,52 +34,40 @@ export const Step2PrintSettings = ({
     setPrintSettings,
     setStlViewerColor,
     stlViewerColor,
-    // stlViewer,
     onCalculate,
     selectedFile,
-    // setStlViewer,
 }) => {
-
+    const {language, setLanguage} = useContext(LanguageContext)
     const [stlViewer, setStlViewer] = useState(null)
     const [initialCamera, setInitialCamera] = useState(null)
     const divRef = useRef(null);
     const [isLoadedViewer, setIsLoadedViewer] = useState(false)
     const [isAnimating, setIsAnimating] = useState(true)
+    const notificationHandler = useContext(SnackbarHandlerContext);
+    const { t } = useTranslation(["step2"])
+
     const onModelLoaded = (stlViewer1) => {
-        //  Here stlViewer1 is not "loaded" as well
         setIsLoadedViewer(true)
-        console.log(stlViewer1, 'model loadeds');
         setInitialCamera(stlViewer1.get_camera_state())
-        console.log(stlViewer1.get_camera_state());
         setStlViewer(stlViewer1);
-        // window.stlViewer1=stlViewer1
     }
 
     useEffect(() => {
-        console.log(stlViewer, 'stlviewer instacace');
         const stlViewer1 = new StlViewer(divRef.current, {
-            ready_callback: e => console.log(e),
-            // all_loaded_callback: (e)=> onModelLoaded(stlViewer1),
             canvas_width: '100%',
-            // on_model_mouseclick: () => onModelClick(stlViewer1),
             canvas_height: '100%',
-            // loading_progress_callback: loadProgress,
             model_loaded_callback: () => onModelLoaded(stlViewer1)
-
         });
-        //here it is loaded
-        console.log(stlViewer1);
         stlViewer1.add_model({
             local_file: selectedFile,
             color: stlViewerColor,
             animation: { delta: { rotationx: 1, rotationy: 1.1, rotationz: 1.2, msec: 8000, loop: true }, }
         });
-        // onModelLoaded(stlViewer1); // just testing..
-        return () => console.log('unmount')
+
+        return () => console.log('unmount debug')
     }, []);
 
     const resetCamera = () => {
-        console.log(initialCamera, stlViewer);
         stlViewer.set_camera_state(initialCamera)
     }
 
@@ -88,22 +82,22 @@ export const Step2PrintSettings = ({
         stlViewer.animate_model(1, { animation: null })
     }
     const onModelRelease = () => {
-        if(isAnimating) stlViewer.animate_model(1, { delta: { rotationx: 1, rotationy: 1.1, rotationz: 1.2, msec: 8000, loop: true }, }) 
+        if (isAnimating) stlViewer.animate_model(1, { delta: { rotationx: 1, rotationy: 1.1, rotationz: 1.2, msec: 8000, loop: true }, })
     }
 
     const style = {
         top: 0,
         left: 0,
         width: '600px',
-        height: '650px',
+        height: '600px',
         numWidth: 600,
-        numHeight: 650,
+        numHeight: 600,
         marginTop: 10,
     };
     const [anchorEl, setAnchorEl] = useState(null);
     const [popoverContent, setPopoverContent] = useState('');
     const handlePopoverOpen = event => {
-        setPopoverContent(popovers[event.target.id]);
+        setPopoverContent(popovers[language.lang][event.target.id]);
         setAnchorEl(event.currentTarget);
     };
     const handlePopoverClose = () => {
@@ -118,7 +112,7 @@ export const Step2PrintSettings = ({
     };
     const handleChangeInfill = ({ target }) => {
         setPrintSettings(prevForm => {
-            return { ...prevForm, infill: target.value };
+            return { ...prevForm, infill: target.value, isVase: false };
         });
     };
     const handleChangeRes = ({ target }) => {
@@ -128,12 +122,12 @@ export const Step2PrintSettings = ({
     };
     const handleChangeSupports = ({ target }) => {
         setPrintSettings(prevForm => {
-            return { ...prevForm, isSupports: target.checked };
+            return { ...prevForm, isSupports: target.checked, isVase: false };
         });
     };
     const handleChangeVase = ({ target }) => {
         setPrintSettings(prevForm => {
-            return { ...prevForm, isVase: target.checked };
+            return { ...prevForm, isVase: target.checked, infill: 0, isSupports: false };
         });
     };
     const onChangeColor = color => {
@@ -148,7 +142,13 @@ export const Step2PrintSettings = ({
         setStlViewerColor(colors[initialPrintSettings.color]);
         stlViewer.set_color(1, colors[initialPrintSettings.color]);
     };
-
+    const handleChangeCopies = ({target}) =>{
+        if(target.value < 1) return 
+        setPrintSettings(prevForm => {
+            return { ...prevForm, copies: target.value };
+        });
+    }
+    console.log(language);
 
     return (
         <>
@@ -157,17 +157,19 @@ export const Step2PrintSettings = ({
                 variant="outlined"
                 size="small"
                 color="black"
-                style={{ flex: 1, marginLeft: 'auto' }}
-                startIcon={<ArrowForwardIosIcon />}
+                style={{ flex: 1, marginLeft: 'auto', direction: language.dir==='ltr'? 'rtl': 'unset' }}
+                startIcon={language.lang === 'heb'? <ArrowForwardIosIcon /> : <></>}
+                endIcon={language.lang === 'en'? <ArrowBackIosIcon /> : <></>}
                 onClick={onChangeFile}
+                disabled={isLoading}
             >
-                החלפת קובץ
+                {t("replace_file")}
             </Button>
             <div className="stl-settings-cont">
                 <div className="settings">
                     <div className="setting">
                         <div className="title-question-cont">
-                            <h3>חומר הדפסה</h3>
+                            <h3>{t("material")}</h3>
                             <LiveHelpIcon
                                 fontSize="small"
                                 id="material"
@@ -203,7 +205,7 @@ export const Step2PrintSettings = ({
                     </div>
                     <div className="setting">
                         <div className="title-question-cont">
-                            <h3>אחוזי מילוי (Infill)</h3>
+                            <h3>{t("infill")}</h3>
                             <LiveHelpIcon
                                 fontSize="small"
                                 id="infill"
@@ -221,7 +223,7 @@ export const Step2PrintSettings = ({
                     </div>
                     <div className="setting">
                         <div className="title-question-cont">
-                            <h3>רזולוציה (גובה שכבה)</h3>
+                            <h3>{t("res")}</h3>
                             <LiveHelpIcon
                                 fontSize="small"
                                 id="res"
@@ -236,14 +238,14 @@ export const Step2PrintSettings = ({
                             min={0.1}
                             max={0.3}
                             step={0.01}
-                            marks={resMarks}
+                            marks={resMarks[language.lang]}
                             onChange={handleChangeRes}
                             track="inverted"
                             color="blue"
                         />
                     </div>
                     <div className="setting">
-                        <h3>צבע</h3>
+                        <h3>{t("color")}</h3>
                         <div className="colors">
                             {Object.values(colors).map((hexColor, idx) => {
                                 return (
@@ -285,7 +287,7 @@ export const Step2PrintSettings = ({
                                 checked={printSettings.isSupports}
                                 onChange={handleChangeSupports}
                             />
-                            <h3 className="inline">הוסף תמיכות</h3>
+                            <h3 className="inline">{t("add_supports")}</h3>
                             <LiveHelpIcon
                                 fontSize="small"
                                 id="support"
@@ -301,7 +303,7 @@ export const Step2PrintSettings = ({
                                 checked={printSettings.isVase}
                                 onChange={handleChangeVase}
                             />
-                            <h3 className="inline">מצב ואזה</h3>
+                            <h3 className="inline">{t("vase_mode")}</h3>
                             <LiveHelpIcon
                                 fontSize="small"
                                 id="vase"
@@ -310,13 +312,31 @@ export const Step2PrintSettings = ({
                             />
                         </div>
                     </div>
+                    <div className="setting">
+                        {/* <div className="form-field"> */}
+                        <h3 className="inline">{t("copies")}</h3>
+                            <TextField
+                                required
+                                color="blue"
+                                name="copies"
+                                type="number"
+                                min={1}
+                                max={10}
+                                className='copies-field'
+                                value={printSettings.copies}
+                                size={'small'}
+                                onChange={handleChangeCopies}
+                            />
+                        {/* </div> */}
+                    </div>
                     <div className="cta-cont">
                         <Button
                             variant="link"
                             color="white"
                             onClick={onResetSettings}
+                            disabled={isLoading}
                         >
-                            איפוס הגדרות
+                            {t("reset_settings")}
                         </Button>
                         <LoadingButton
                             variant="contained"
@@ -325,18 +345,20 @@ export const Step2PrintSettings = ({
                             loading={isLoading}
                             endIcon={<ThreeDRotationIcon />}
                             onClick={onCalculate}
+                            loadingPosition="center"
+                        // loadingIndicator={"מחשב"}
                         >
-                            המשך
+                            {t("continue")}
                         </LoadingButton>
                     </div>
                 </div>
                 <div className='viewer-cont' style={{ position: 'relative', backgroundColor: '#f5f5f5', borderRadius: 20 }}>
                     <div className='viewer-btns'>
                         <Button onClick={resetCamera} variant='outlined' color='blue'>
-                            אפס תצוגה
+                        {t("reset_viewer")}
                         </Button>
                         <Button onClick={toggleAnimation} variant='outlined' color='blue'>
-                            {isAnimating? "עצור אנימציה" : "הפעל אנימציה"}
+                            {isAnimating ? t("stop_animation") : t("start_animation")}
                         </Button>
                     </div>
                     {!isLoadedViewer && <ViewerLoader />}

@@ -14,13 +14,13 @@ async function submitPrintOrder(orderObj) {
 }
 
 async function uploadFileToCubee(file, apiKey) {
-    // return await httpService.post('upload',file, apiKey)
+    return await httpService.postFile('upload',file, apiKey)
     return {
         data: '4d1649aa-2756-4efb-ab72-0c5a84de63da',
     };
 }
-async function calculateSlicer(printSettingsObj) {
-    // return await httpService.postCalculate(printSettingsObj)
+async function calculateSlicer(printSettingsObj, apiKey) {
+    return await httpService.post('calc', printSettingsObj, apiKey)
     return {
         printTime: 4.82,
         weight: 50.7,
