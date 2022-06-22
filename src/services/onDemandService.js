@@ -3,33 +3,32 @@ import httpService from './httpService';
 export default {
     uploadFileToCubee,
     calculateSlicer,
-    submitPrintOrder
+    submitPrintOrder,
 };
 
-async function submitPrintOrder(orderObj){
+async function submitPrintOrder(orderObj) {
     // return await httpService.postOrder(orderObj)
     return {
-        orderId: '43256'
-    }
+        orderId: '43256',
+    };
 }
 
 async function uploadFileToCubee(file, apiKey) {
-    // return await httpService.post('upload',file, apiKey)
+    return await httpService.postFile('upload',file, apiKey)
     return {
-        data: "4d1649aa-2756-4efb-ab72-0c5a84de63da"
-    }
+        data: '4d1649aa-2756-4efb-ab72-0c5a84de63da',
+    };
 }
-async function calculateSlicer(printSettingsObj) {
-    // return await httpService.postCalculate(printSettingsObj)
+async function calculateSlicer(printSettingsObj, apiKey) {
+    return await httpService.post('calc', printSettingsObj, apiKey)
     return {
-        "printTime": 4.82,
-        "weight": 50.7,
-        "price": 24.08,
-        "dimensions": {
-            "height": 99.0,
-            "width": 51.0,
-            "length": 58.0
-        }
-    }
+        printTime: 4.82,
+        weight: 50.7,
+        price: 24.08,
+        dimensions: {
+            height: 99.0,
+            width: 51.0,
+            length: 58.0,
+        },
+    };
 }
-

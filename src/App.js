@@ -1,4 +1,4 @@
-import { useState, useContext } from 'react';
+import { useState, useContext, useEffect, Suspense } from 'react';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import Snackbar from '@mui/material/Snackbar';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
@@ -7,11 +7,19 @@ import { SnackbarContext } from './contexts/SnackbarContext';
 import Alert from '@mui/material/Alert';
 import Slide from '@mui/material/Slide';
 import { OnDemand } from './pages/onDemand';
-import { Test } from './pages/test';
+
+import i18n from './i18n/i18n';
+import { LanguageContext } from './contexts/LanguageContext';
 
 const theme = createTheme({
   components: {
+    Button:{
+      textTransform: 'none'
+    },
     MuiTypography: {
+      button:{
+        textTransform: 'none'
+      },
       defaultProps: {
         variantMapping: {
           h1: 'h2',
@@ -67,7 +75,14 @@ const theme = createTheme({
 });
 
 function App() {
+  useEffect(() => {
+    i18n.changeLanguage('heb')
+  }, [])
   const [snack, setSnack] = useState({});
+  const [language, setLanguage] = useState({
+    lang: 'heb',
+    dir: 'rtl'
+  })
   const notificationHandler = {
     success: message => showNotification('success', message),
     error: message => showNotification('error', message),
@@ -95,47 +110,45 @@ function App() {
   };
 
   return (
-    <ThemeProvider theme={theme}>
-      <SnackbarHandlerContext.Provider
-        value={notificationHandler}
-      >
-        <SnackbarContext.Provider value={{ snack, setSnack }}>
-          {
-            <Snackbar
-              TransitionComponent={Slide}
-              onClose={handleClose}
-              autoHideDuration={3000}
-              anchorOrigin={{
-                vertical: 'bottom',
-                horizontal: 'center',
-              }}
-              dir="ltr"
-              open={snack.open}
-            >
-              <Alert
-                onClose={handleClose}
-                severity={snack.severity}
-                sx={{ width: '100%' }}
-              >
-                {snack.message}
-                {/* <Button onClick={handleClose}>Share</Button> */}
-              </Alert>
-            </Snackbar>
-          }
-          <Router>
-            <div className={'content'}>
-              <Switch>
-                <Route
-                  path="/"
-                  exact
-                  component={OnDemand}
-                />
-              </Switch>
-            </div>
-          </Router>
-        </SnackbarContext.Provider>
-      </SnackbarHandlerContext.Provider>
-    </ThemeProvider>
+    <Suspense fallback={null}>
+      <ThemeProvider theme={theme}>
+        <LanguageContext.Provider value={{ language, setLanguage }}>
+          <SnackbarHandlerContext.Provider value={notificationHandler}>
+            <SnackbarContext.Provider value={{ snack, setSnack }}>
+              {
+                <Snackbar
+                  TransitionComponent={Slide}
+                  onClose={handleClose}
+                  autoHideDuration={3000}
+                  anchorOrigin={{
+                    vertical: 'bottom',
+                    horizontal: 'center',
+                  }}
+                  dir="ltr"
+                  open={snack.open}
+                >
+                  <Alert
+                    onClose={handleClose}
+                    severity={snack.severity}
+                    sx={{ width: '100%' }}
+                  >
+                    {snack.message}
+                    {/* <Button onClick={handleClose}>Share</Button> */}
+                  </Alert>
+                </Snackbar>
+              }
+              <Router>
+                <div className={'content'}>
+                  <Switch>
+                    <Route path="/" exact component={OnDemand} />
+                  </Switch>
+                </div>
+              </Router>
+            </SnackbarContext.Provider>
+          </SnackbarHandlerContext.Provider>
+        </LanguageContext.Provider>
+      </ThemeProvider>
+    </Suspense>
   );
 }
 

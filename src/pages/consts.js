@@ -35,7 +35,7 @@ export const prettoSliderSettings = {
             transform: 'rotate(45deg)',
         },
     },
-}
+};
 
 export const infillMarks = [
     {
@@ -45,21 +45,31 @@ export const infillMarks = [
     {
         value: 100,
         label: '100%',
-    }
-
-]
-
-export const resMarks = [
-    {
-        value: 0.1,
-        label: 'גבוהה',
     },
-    {
-        value: 0.3,
-        label: 'נמוכה',
-    }
+];
 
-]
+export const resMarks = {
+    en: [
+        {
+            value: 0.1,
+            label: 'High',
+        },
+        {
+            value: 0.3,
+            label: 'Low',
+        },
+    ],
+    heb: [
+        {
+            value: 0.1,
+            label: 'גבוהה',
+        },
+        {
+            value: 0.3,
+            label: 'נמוכה',
+        },
+    ]
+};
 
 export const colors = {
     כחול: '#2410de',
@@ -75,23 +85,45 @@ export const colors = {
     אפור: '#607d8b',
     כסף: '#919191',
     זהב: '#ffab0f',
-}
+};
 
 export const initialPrintSettings = {
     material: 'PLA',
     infill: 20,
     resolution: 0.2,
-    color: 'חום',
+    color: 'אפור',
     isSupports: false,
-    isVase: false
-}
+    isVase: false,
+    copies: 1
+};
 
-export const steps = ['העלאת קובץ להדפסה', 'הגדרות הדפסה', 'שלח לאישור'];
-export const materials = ['ABS', 'PLA', 'PETG', 'Nylon', 'TPU']
+// export const steps = ['העלאת קובץ להדפסה', 'הגדרות הדפסה', 'שלח לאישור'];
+export const steps = ['Upload 3D File', 'Print Settings', 'Confirm & Send'];
+export const materials = ['ABS', 'PLA', 'PETG', 'NYLON', 'TPU'];
 export const popovers = {
-    material: 'הפלסטיק הסטנדרטי הוא PLA. ה-PETG ו-ABS עמידים יותר, ו-TPU הינו חומר גמיש',
-    infill: 'אחוז המילוי קובע את משקל וחוזק המודל, הסטנדרט הינו 20%',
-    res: 'הרזולוציה משפיעה על זמן ההדפסה וגימור המוצר - גובה שכבה נמוך יותר יעזור למוצר אסתטי יותר',
-    vase: 'אם המוצר הינו עציץ/אגרטל - ניתן להדפיס במצב חסכוני בעל גימור נקי',
-    support: 'אם חלק מהמודל מודפס באוויר, כנראה שיידרשו תמיכות'
+    heb: {
+        material:
+            'הפלסטיק הסטנדרטי הוא PLA. ה-PETG ו-ABS עמידים יותר, ו-TPU הינו חומר גמיש',
+        infill: 'אחוז המילוי קובע את משקל וחוזק המודל, הסטנדרט הינו 20%',
+        res: 'הרזולוציה משפיעה על זמן ההדפסה וגימור המוצר - גובה שכבה נמוך יותר יעזור למוצר אסתטי יותר',
+        vase: 'אם המוצר הינו עציץ/אגרטל - ניתן להדפיס במצב חסכוני בעל גימור נקי',
+        support: 'אם חלק מהמודל מודפס באוויר, כנראה שיידרשו תמיכות',
+    },
+    en:{
+        material:
+            'The standard is PLA. ABS & PETG are more tough, and TPU is flexible material',
+        infill: 'Infill density determines the weight and strength of the model. standard is 20%',
+        res: 'Resolution affects the finish of the print, lower layer height - higher resolution',
+        vase: 'If the model is a vase, Vase mode will give a more solid and beautiful result',
+        support: 'If a partf of the model is printing "on air", supports are needed.',
+    }
+};
+
+
+export const materialIds = {
+    PLA: 13,
+    ABS: 12,
+    PETG: 1171,
+    TPU: 1170,
+    NYLON: 1172
 }

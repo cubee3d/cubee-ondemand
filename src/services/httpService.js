@@ -13,6 +13,9 @@ export default {
     post(endpoint, data, token) {
         return ajax(endpoint, 'POST', data, token);
     },
+    postFile(endpoint, data, token) {
+        return ajaxFile(endpoint, 'POST', data, token);
+    },
     put(endpoint, data, token) {
         return ajax(endpoint, 'PUT', data, token);
     },
@@ -24,59 +27,21 @@ export default {
     // }
 };
 
-// async function ajaxFile(file, apiKey) {
-//     try {
-//         let formData = new FormData();
-//         formData.append('file', file)
-//         const res = await axios({
-//             url: 'https://cubee-api.staging.cubee3d.com/v1/file/upload/',
-//             // url: 'https://cubee-api.staging.cubee3d.com/v1/test',
-//             method: 'POST',
-//             // formData,
-//             data: null,
-//             headers: {
-//                 // 'x-api-key': apiKey,
-//                 'Access-Control-Allow-Origin': '*',
-//             },
-//         })
-//         console.log(res)
-//         return res
-//     } catch (err) {
-//         if (!err.response)
-//             return {
-//                 error: {
-//                     message:
-//                         'Oops, there is a problem with the server, please try again',
-//                     status: 500,
-//                 },
-//             };
-//         return {
-//             error: {
-//                 message: err.response.data,
-//                 status: err.response.status,
-//             },
-//         };
-//     }
-// }
-
-async function ajax(endpoint, method = 'get', data = null, apiKey = null) {
+async function ajax(endpoint, method='get', data=null, apiKey=null){
     try {
-        let formData = new FormData();
-        formData.append('file', data)
         const res = await axios({
             url: `${API_URL}${endpoint}`,
             method,
-            data: formData,
+            data,
             headers: {
                 'x-api-key': 'yPLsXXF6ialkaUbjGy0IRiV0YEVG4EYr',
                 'Access-Control-Allow-Origin': '*',
-                "Content-Type": 'multipart/form-data'
             },
         });
         return res.data;
     } catch (err) {
+        console.log(err);
         if (!err.response) {
-            console.log(err);
             return {
                 error: {
                     message:
@@ -85,13 +50,46 @@ async function ajax(endpoint, method = 'get', data = null, apiKey = null) {
                 },
             };
         }
-        console.log(err);
         return {
             error: {
                 message: err.response.data,
                 status: err.response.status,
             },
-    
+        };
     }
 }
+
+async function ajaxFile(endpoint, method = 'get', data = null, apiKey = null) {
+    try {
+        let formData = new FormData();
+        formData.append('file', data);
+        const res = await axios({
+            url: `${API_URL}${endpoint}`,
+            method,
+            data: formData,
+            headers: {
+                'x-api-key': 'yPLsXXF6ialkaUbjGy0IRiV0YEVG4EYr',
+                'Access-Control-Allow-Origin': '*',
+                'Content-Type': 'multipart/form-data',
+            },
+        });
+        return res.data;
+    } catch (err) {
+        console.log(err);
+        if (!err.response) {
+            return {
+                error: {
+                    message:
+                        'Oops, there is a problem with the server, please try again',
+                    status: 500,
+                },
+            };
+        }
+        return {
+            error: {
+                message: err.response.data,
+                status: err.response.status,
+            },
+        };
+    }
 }

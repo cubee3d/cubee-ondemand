@@ -1,0 +1,22 @@
+{
+    "replace_file": "החלפת קובץ",
+    "material": "חומר הדפסה",
+    "infill": "אחוזי מילוי (Infill)",
+    "res": "רזולוציה (גובה שכבה)",
+    "color": "צבע",
+    "add_supports": "הוסף תמיכות",
+    "vase_mode": "מצב ואזה",
+    "copies": "עותקים",
+    "reset_settings": "אפס הגדרות",
+    "continue": "המשך",
+    "reset_viewer": "אפס תצוגה",
+    "stop_animation": "עצור אנימציה",
+    "start_animation": "הפעל אנימציה",
+    "low": "נמוכה",
+    "high": "גבוהה",
+    "file_name": "שם הקובץ",
+    "file_size": "גודל (MB)",
+    "image": "תמונה",
+    "action": "פעולה",
+    "upload_file": "הוסף קובץ"
+}
