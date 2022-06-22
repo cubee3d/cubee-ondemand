@@ -13,5 +13,10 @@
     "stop_animation": "Stop Animation",
     "start_animation": "Start Animation",
     "low": "Low",
-    "high": "High"
+    "high": "High",
+    "file_name": "File Name",
+    "file_size": "Size (MB)",
+    "image": "Image",
+    "action": "Action",
+    "upload_file": "Add New File"
 }

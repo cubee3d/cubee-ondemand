@@ -21,6 +21,8 @@ import { useTranslation } from 'react-i18next';
 import i18n from '../i18n/i18n';
 import { MenuItem, Select, Switch } from '@mui/material';
 import LanguageIcon from '@mui/icons-material/Language';
+import { Step2FilesTable } from '../cmps/Step2FilesTable';
+import {generateUuid} from '../services/utils'
 
 export const OnDemand = ({ location }) => {
     const { t } = useTranslation(["common"])
@@ -57,21 +59,35 @@ export const OnDemand = ({ location }) => {
         numWidth: 600,
         numHeight: 650,
     };
-
+    
     const [selectedFile, setSelectedFile] = useState(null);
+    const [uploadedFiles, setUploadedFiles] = useState([]);
+    const [printsSettingsArr, setPrintsSettingsArr] = useState([initialPrintSettings])
+    const [uploadedFilesSnapshots, setUploadedFilesSnaps] = useState([])
     const [cubeeFileIdName, setCubeeFileIdName] = useState(null);
     const [slicedInfo, setSlicedInfo] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
     // const [isFileLoaded, setFileLoaded] = useState(false);
 
-    const onFileSelect = async event => {
+
+    const onFirstFileSelect = async event => {
         event.persist();
         setIsLoading(true);
         if (!apiKey) return notificationHandler.error('יש להכניס מפתח')
         const filer = event.target.files[0];
-        if (filer?.name.toLowerCase().slice(-3) !== 'stl')
-            return notificationHandler.error('STL מצטערים, רק קבצי');
-        setSelectedFile(filer);
+        if (filer?.name.toLowerCase().slice(-3) !== 'stl') console.log('long name')
+            // return notificationHandler.error('STL מצטערים, רק קבצי');
+        // console.log(filer);
+        const uuid = generateUuid()
+        setSelectedFile({
+            uuid,
+            file: filer
+        });
+        setUploadedFiles([{uuid, file: filer}])
+        setUploadedFilesSnaps([{
+            uuid,
+            snapUrl: ''
+        }])
         // setTimeout(() => {
         //     setFileLoaded(true);
         // }, 10);
@@ -90,6 +106,24 @@ export const OnDemand = ({ location }) => {
         setActiveStep(prevActive => prevActive + 1);
     };
 
+    const onAddFile = async event =>{
+        event.persist();
+        // setIsLoading(true);
+        if (!apiKey) return notificationHandler.error('יש להכניס מפתח')
+        const filer = event.target.files[0];
+        const uuid = generateUuid()
+        setUploadedFiles(prevArr => [...prevArr, {uuid, file: filer}   ])
+    }
+
+    const handleRemoveFile = uuid =>{
+        const idx = uploadedFiles.findIndex(file => file.uuid === uuid)
+        setUploadedFiles(prevArr => prevArr.splice(idx, 1))
+        
+
+        //NOT WORKING AS EXPECTED
+        if(selectedFile.uuid === uuid) setSelectedFile(uploadedFiles[0])
+    }
+
     const onChangeFile = () => {
         setCubeeFileIdName(null);
         // setFileLoaded(false);
@@ -98,6 +132,12 @@ export const OnDemand = ({ location }) => {
         setActiveStep(prevActive => prevActive - 1);
 
     };
+
+    const handleChangeSelectedFile = (uuid) =>{
+        const idx = uploadedFiles.findIndex(file => file.uuid === uuid)
+        setSelectedFile(uploadedFiles[idx])
+    }
+
     const onCalculate = async () => {
         setIsLoading(true);
         const printSettingsObj = {
@@ -123,7 +163,12 @@ export const OnDemand = ({ location }) => {
         setActiveStep(prevActive => prevActive + 1);
     };
     const onSubmitPrintOrder = async () => {
-        return window.location.href = `https://promaker.co.il/cart/?add-to-cart=4232&quantity=${Math.ceil(slicedInfo.price)}`;
+        
+        var data = { printsSettingsArr }
+        var event = new CustomEvent('myCustomEvent', { detail: data })
+        window.parent.document.dispatchEvent(event)
+
+        // return window.location.href = `https://promaker.co.il/cart/?add-to-cart=4232&quantity=${Math.ceil(slicedInfo.price)}`;
         const isFormFilled = Object.values(contactForm).every(field => field);
         if (!isFormFilled)
             return notificationHandler.warning('יש למלא את כל השדות');
@@ -182,23 +227,34 @@ export const OnDemand = ({ location }) => {
                     <StepWelcomeFile
                         isLoading={isLoading}
                         apiKey={apiKey}
-                        onFileSelect={onFileSelect}
+                        onFirstFileSelect={onFirstFileSelect}
                     />
                 );
             case 1:
                 return (
-                    <Step2PrintSettings
-                        isLoading={isLoading}
-                        onChangeFile={onChangeFile}
-                        printSettings={printSettings}
-                        setPrintSettings={setPrintSettings}
-                        stlViewerColor={stlViewerColor}
-                        setStlViewerColor={setStlViewerColor}
-                        // stlViewer={stlViewer}
-                        onCalculate={onCalculate}
-                        // setStlViewer={setStlViewer}
-                        selectedFile={selectedFile}
+                    <>
+                    <Step2FilesTable 
+                    selectedFile={selectedFile}
+                    uploadedFiles={uploadedFiles}
+                    onAddFile={onAddFile}
+                    handleChangeSelectedFile={handleChangeSelectedFile}
+                    uploadedFilesSnapshots={uploadedFilesSnapshots}
+                    handleRemoveFile={handleRemoveFile}
                     />
+                        <Step2PrintSettings
+                            isLoading={isLoading}
+                            onChangeFile={onChangeFile}
+                            printSettings={printSettings}
+                            setPrintSettings={setPrintSettings}
+                            stlViewerColor={stlViewerColor}
+                            setStlViewerColor={setStlViewerColor}
+                            // stlViewer={stlViewer}
+                            onCalculate={onCalculate}
+                            // setStlViewer={setStlViewer}
+                            selectedFile={selectedFile}
+                            
+                        />
+                    </>
                 );
             case 2:
                 return (
@@ -212,6 +268,7 @@ export const OnDemand = ({ location }) => {
                         contactForm={contactForm}
                         copies={printSettings.copies}
                         onSubmitPrintOrder={onSubmitPrintOrder}
+                        uploadedFiles={uploadedFiles}
                     />
                 )
         }
@@ -263,8 +320,8 @@ export const OnDemand = ({ location }) => {
                                 value={language.lang}
                                 anchorEl={selectRef}
                                 color={'blue'}
-                                >
-                                <MenuItem  value={'heb'}>עברית</MenuItem>
+                            >
+                                <MenuItem value={'heb'}>עברית</MenuItem>
                                 <MenuItem value={'en'}>English</MenuItem>
                             </Select>
                         </div>

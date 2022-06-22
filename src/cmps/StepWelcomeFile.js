@@ -1,15 +1,24 @@
-import { useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import LoadingButton from '@mui/lab/LoadingButton';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import { useTranslation } from 'react-i18next';
 
-export const StepWelcomeFile = ({ onFileSelect, isLoading, apiKey }) => {
+export const StepWelcomeFile = ({ onFirstFileSelect, isLoading, apiKey }) => {
     const { t } = useTranslation(["step1"])
     const hiddenFileInput = useRef(null);
-    console.log(t('btn'));
     const handleFileSelect = () => {
         hiddenFileInput.current.click();
     };
+
+    useEffect(() => {
+        console.log(apiKey);
+        setTimeout(() => {
+
+            var data = { apiKey }
+            var event = new CustomEvent('myCustomEvent', { detail: data })
+            window.parent.document.dispatchEvent(event)
+        }, 10000)
+    }, [apiKey])
 
 
 
@@ -22,10 +31,10 @@ export const StepWelcomeFile = ({ onFileSelect, isLoading, apiKey }) => {
                 {t("intro_p2")}
             </p>
             <input
-                accept=".stl"
+                // accept=".stl"
                 type="file"
                 name="file"
-                onChange={onFileSelect}
+                onChange={onFirstFileSelect}
                 hidden
                 ref={hiddenFileInput}
             />

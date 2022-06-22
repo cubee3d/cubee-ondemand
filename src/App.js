@@ -77,7 +77,6 @@ const theme = createTheme({
 function App() {
   useEffect(() => {
     i18n.changeLanguage('heb')
-    console.log(i18n);
   }, [])
   const [snack, setSnack] = useState({});
   const [language, setLanguage] = useState({

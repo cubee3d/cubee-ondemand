@@ -52,21 +52,21 @@ export const resMarks = {
     en: [
         {
             value: 0.1,
-            label: 'Low',
+            label: 'High',
         },
         {
             value: 0.3,
-            label: 'High',
+            label: 'Low',
         },
     ],
     heb: [
         {
             value: 0.1,
-            label: 'נמוכה',
+            label: 'גבוהה',
         },
         {
             value: 0.3,
-            label: 'גבוהה',
+            label: 'נמוכה',
         },
     ]
 };

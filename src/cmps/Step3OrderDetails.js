@@ -12,7 +12,7 @@ import { LanguageContext } from '../contexts/LanguageContext';
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 
-export const Step3OrderDetails = ({ cubeeFileIdName, slicedInfo, onPrevStep, selectedFile, stlViewerColor, setContactForm, contactForm, copies, onSubmitPrintOrder }) => {
+export const Step3OrderDetails = ({ cubeeFileIdName, slicedInfo, onPrevStep, selectedFile, stlViewerColor, setContactForm, contactForm, copies, onSubmitPrintOrder, uploadedFiles }) => {
     const [isLoading, setIsLoading] = useState(false)
     const { language, setLanguage } = useContext(LanguageContext)
     const { t } = useTranslation(["step3"])
@@ -24,9 +24,7 @@ export const Step3OrderDetails = ({ cubeeFileIdName, slicedInfo, onPrevStep, sel
         setIsLoadedViewer(true)
         setMiniStlViewer(stlViewer1);
         setTimeout(()=>{
-
             var canvas = document.querySelector("canvas")
-            console.log(canvas);
             var Pic = canvas.toDataURL("image/png");
             setBlob(Pic)
         },2000)
@@ -39,7 +37,7 @@ export const Step3OrderDetails = ({ cubeeFileIdName, slicedInfo, onPrevStep, sel
             model_loaded_callback: () => onModelLoaded(stlViewer1)
         });
         stlViewer1.add_model({
-            local_file: selectedFile,
+            local_file: selectedFile.file,
             color: stlViewerColor,
             animation: { delta: { rotationx: 1, rotationy: 1.1, rotationz: 1.2, msec: 10000, loop: true }, }
 

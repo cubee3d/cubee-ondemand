@@ -13,5 +13,10 @@
     "stop_animation": "עצור אנימציה",
     "start_animation": "הפעל אנימציה",
     "low": "נמוכה",
-    "high": "גבוהה"
+    "high": "גבוהה",
+    "file_name": "שם הקובץ",
+    "file_size": "גודל (MB)",
+    "image": "תמונה",
+    "action": "פעולה",
+    "upload_file": "הוסף קובץ"
 }

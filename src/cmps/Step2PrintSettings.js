@@ -37,7 +37,7 @@ export const Step2PrintSettings = ({
     onCalculate,
     selectedFile,
 }) => {
-    const {language, setLanguage} = useContext(LanguageContext)
+    const { language, setLanguage } = useContext(LanguageContext)
     const [stlViewer, setStlViewer] = useState(null)
     const [initialCamera, setInitialCamera] = useState(null)
     const divRef = useRef(null);
@@ -50,22 +50,43 @@ export const Step2PrintSettings = ({
         setIsLoadedViewer(true)
         setInitialCamera(stlViewer1.get_camera_state())
         setStlViewer(stlViewer1);
+        setIsLoadedViewer(true)
+        console.log('model loaded');
     }
 
     useEffect(() => {
-        const stlViewer1 = new StlViewer(divRef.current, {
-            canvas_width: '100%',
-            canvas_height: '100%',
-            model_loaded_callback: () => onModelLoaded(stlViewer1)
-        });
-        stlViewer1.add_model({
-            local_file: selectedFile,
-            color: stlViewerColor,
-            animation: { delta: { rotationx: 1, rotationy: 1.1, rotationz: 1.2, msec: 8000, loop: true }, }
-        });
+        if (stlViewer) {
+            stlViewer.clean()
+            stlViewer.set_camera_state(initialCamera)
+            // stlViewer.dispose()
+            // stlViewer.remove_model(1)
+            setIsLoadedViewer(false)
+            stlViewer.add_model({
+                local_file: selectedFile.file,
+                color: stlViewerColor,
+                
+                // animation: { delta: { rotationx: 1, rotationy: 1.1, rotationz: 1.2, msec: 8000, loop: true }, }
+            });
+
+        }
+        else {
+            const stlViewer1 = new StlViewer(divRef.current, {
+                canvas_width: '100%',
+                canvas_height: '100%',
+                model_loaded_callback: () => onModelLoaded(stlViewer1),
+                all_loaded_callback: () => console.log('loaded file')
+                // jszip_path: "./scripts/jszip.min.js",
+                // jszip_utils_path: "./scripts/jszip-utils.min.js"
+            });
+            stlViewer1.add_model({
+                local_file: selectedFile.file,
+                color: stlViewerColor,
+                // animation: { delta: { rotationx: 1, rotationy: 1.1, rotationz: 1.2, msec: 8000, loop: true }, }
+            });
+        }
 
         return () => console.log('unmount debug')
-    }, []);
+    }, [selectedFile]);
 
     const resetCamera = () => {
         stlViewer.set_camera_state(initialCamera)
@@ -142,14 +163,14 @@ export const Step2PrintSettings = ({
         setStlViewerColor(colors[initialPrintSettings.color]);
         stlViewer.set_color(1, colors[initialPrintSettings.color]);
     };
-    const handleChangeCopies = ({target}) =>{
-        if(target.value < 1) return 
+    const handleChangeCopies = ({ target }) => {
+        if (target.value < 1) return
         setPrintSettings(prevForm => {
             return { ...prevForm, copies: target.value };
         });
     }
-    console.log(language);
 
+    if (!selectedFile) return <></>
     return (
         <>
             <Button
@@ -157,9 +178,9 @@ export const Step2PrintSettings = ({
                 variant="outlined"
                 size="small"
                 color="black"
-                style={{ flex: 1, marginLeft: 'auto', direction: language.dir==='ltr'? 'rtl': 'unset' }}
-                startIcon={language.lang === 'heb'? <ArrowForwardIosIcon /> : <></>}
-                endIcon={language.lang === 'en'? <ArrowBackIosIcon /> : <></>}
+                style={{ flex: 1, marginLeft: 'auto', direction: language.dir === 'ltr' ? 'rtl' : 'unset' }}
+                startIcon={language.lang === 'heb' ? <ArrowForwardIosIcon /> : <></>}
+                endIcon={language.lang === 'en' ? <ArrowBackIosIcon /> : <></>}
                 onClick={onChangeFile}
                 disabled={isLoading}
             >
@@ -315,18 +336,18 @@ export const Step2PrintSettings = ({
                     <div className="setting">
                         {/* <div className="form-field"> */}
                         <h3 className="inline">{t("copies")}</h3>
-                            <TextField
-                                required
-                                color="blue"
-                                name="copies"
-                                type="number"
-                                min={1}
-                                max={10}
-                                className='copies-field'
-                                value={printSettings.copies}
-                                size={'small'}
-                                onChange={handleChangeCopies}
-                            />
+                        <TextField
+                            required
+                            color="blue"
+                            name="copies"
+                            type="number"
+                            min={1}
+                            max={10}
+                            className='copies-field'
+                            value={printSettings.copies}
+                            size={'small'}
+                            onChange={handleChangeCopies}
+                        />
                         {/* </div> */}
                     </div>
                     <div className="cta-cont">
@@ -355,7 +376,7 @@ export const Step2PrintSettings = ({
                 <div className='viewer-cont' style={{ position: 'relative', backgroundColor: '#f5f5f5', borderRadius: 20 }}>
                     <div className='viewer-btns'>
                         <Button onClick={resetCamera} variant='outlined' color='blue'>
-                        {t("reset_viewer")}
+                            {t("reset_viewer")}
                         </Button>
                         <Button onClick={toggleAnimation} variant='outlined' color='blue'>
                             {isAnimating ? t("stop_animation") : t("start_animation")}
