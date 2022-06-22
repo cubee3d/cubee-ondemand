@@ -10,16 +10,13 @@ export const StepWelcomeFile = ({ onFirstFileSelect, isLoading, apiKey }) => {
         hiddenFileInput.current.click();
     };
 
-    useEffect(() => {
-        console.log(apiKey);
-        setTimeout(() => {
+    useEffect(()=>{
+        setTimeout(()=>{
 
-            var data = { apiKey }
             var event = new CustomEvent('myCustomEvent', { detail: data })
             window.parent.document.dispatchEvent(event)
-        }, 10000)
-    }, [apiKey])
-
+        },3000)
+    })
 
 
     return (
