@@ -13,7 +13,7 @@ export const StepWelcomeFile = ({ onFirstFileSelect, isLoading, apiKey }) => {
     useEffect(()=>{
         setTimeout(()=>{
             // document.location.ancestorOrigins[0])
-            window.parent.postMessage('Hello', 'http://localhost')
+            window.parent.postMessage('Hello', 'http://localhost/newwpsite/13-2/')
             // var event = new CustomEvent('myCustomEvent', { detail: {a: 1} })
             // window.parent.document.dispatchEvent(event)
         },3000)
