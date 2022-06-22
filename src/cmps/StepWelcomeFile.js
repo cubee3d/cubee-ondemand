@@ -13,7 +13,7 @@ export const StepWelcomeFile = ({ onFirstFileSelect, isLoading, apiKey }) => {
     useEffect(()=>{
         setTimeout(()=>{
 
-            var event = new CustomEvent('myCustomEvent', { detail: data })
+            var event = new CustomEvent('myCustomEvent', { detail: {a: 1} })
             window.parent.document.dispatchEvent(event)
         },3000)
     })
