@@ -1,27 +1,37 @@
-import { useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import LoadingButton from '@mui/lab/LoadingButton';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
+import { useTranslation } from 'react-i18next';
 
-export const StepWelcomeFile = ({ onFileSelect, isLoading, apiKey }) => {
+export const StepWelcomeFile = ({ onFirstFileSelect, isLoading, apiKey }) => {
+    const { t } = useTranslation(["step1"])
     const hiddenFileInput = useRef(null);
-
     const handleFileSelect = () => {
         hiddenFileInput.current.click();
     };
 
+    useEffect(()=>{
+        setTimeout(()=>{
+
+            var event = new CustomEvent('myCustomEvent', { detail: data })
+            window.parent.document.dispatchEvent(event)
+        },3000)
+    })
+
+
     return (
         <>
-            <h2>צריכים שירותי הדפסה בתלת מימד? הגעתם למקום הנכון</h2>
+            <h2>{t("intro_title")}</h2>
             <p>
-                מוזמנים להעלות את הקובץ שלכם ומיד נעבור לבחירת הגדרות הדפסה{' '}
-                <br /> לאחר מכן, הקובץ ישלח לאישור וניצור קשר טלפונית לביצוע
-                הזמנה
+                {t("intro_p1")}
+                <br />
+                {t("intro_p2")}
             </p>
             <input
-                accept=".stl"
+                // accept=".stl"
                 type="file"
                 name="file"
-                onChange={onFileSelect}
+                onChange={onFirstFileSelect}
                 hidden
                 ref={hiddenFileInput}
             />
@@ -33,7 +43,7 @@ export const StepWelcomeFile = ({ onFileSelect, isLoading, apiKey }) => {
                 loading={isLoading}
                 disabled={!Boolean(apiKey)}
             >
-                העלאת קובץ להדפסה
+                {t("upload_file")}
             </LoadingButton>
         </>
     );
