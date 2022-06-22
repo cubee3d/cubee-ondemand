@@ -165,8 +165,7 @@ export const OnDemand = ({ location }) => {
     const onSubmitPrintOrder = async () => {
         
         var data = { printsSettingsArr }
-        var event = new CustomEvent('myCustomEvent', { detail: data })
-        window.parent.document.dispatchEvent(event)
+        window.parent.postMessage({data}, 'http://localhost/newwpsite/13-2/')
 
         // return window.location.href = `https://promaker.co.il/cart/?add-to-cart=4232&quantity=${Math.ceil(slicedInfo.price)}`;
         const isFormFilled = Object.values(contactForm).every(field => field);
