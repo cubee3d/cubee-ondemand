@@ -24,6 +24,9 @@ import LanguageIcon from '@mui/icons-material/Language';
 import { Step2FilesTable } from '../cmps/Step2FilesTable';
 import {generateUuid} from '../services/utils'
 
+
+// * This is the Mother Component of the website.
+// * This component manages the whole state of the app.
 export const OnDemand = ({ location }) => {
     const { t } = useTranslation(["common"])
     const [apiKey, setApiKey] = useState(null);
@@ -69,7 +72,11 @@ export const OnDemand = ({ location }) => {
     const [isLoading, setIsLoading] = useState(false);
     // const [isFileLoaded, setFileLoaded] = useState(false);
 
-
+    // * When the first file iss uploaded, this function is being called
+    // * from the StepWelcomeFile -> it gets the event(file)
+    // * it sets the selectedFile automatically,
+    // * it sets the UploadedFiles array,
+    // * it sets an empty object on the fileSnaps array
     const onFirstFileSelect = async event => {
         event.persist();
         setIsLoading(true);
