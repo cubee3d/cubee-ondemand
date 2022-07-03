@@ -18,7 +18,8 @@ export const Step2STLViewer = ({
     selectedFile,
     stlViewerColor,
     isLoadedViewer,
-    setIsLoadedViewer
+    setIsLoadedViewer,
+    triggerResetViewer
 }) => {
     const { t } = useTranslation(["step2"])
     const [stlViewer, setStlViewer] = useState(null)
@@ -30,16 +31,16 @@ export const Step2STLViewer = ({
         stlViewer.set_camera_state(initialCamera)
     }
     const toggleAnimation = () => {
-        isAnimating ?
-            stlViewer.animate_model(1, { animation: null }) :
-            stlViewer.animate_model(1, { delta: { rotationx: 1, rotationy: 1.1, rotationz: 1.2, msec: 8000, loop: true }, })
+        // isAnimating ?
+        //     stlViewer.animate_model(1, { animation: null }) :
+        //     stlViewer.animate_model(1, { delta: { rotationx: 1, rotationy: 1.1, rotationz: 1.2, msec: 8000, loop: true }, })
         setIsAnimating(!isAnimating)
     }
     const onModelClick = () => {
-        stlViewer.animate_model(1, { animation: null })
+        // stlViewer.animate_model(1, { animation: null })
     }
     const onModelRelease = () => {
-        if (isAnimating) stlViewer.animate_model(1, { delta: { rotationx: 1, rotationy: 1.1, rotationz: 1.2, msec: 8000, loop: true }, })
+        // if (isAnimating) stlViewer.animate_model(1, { delta: { rotationx: 1, rotationy: 1.1, rotationz: 1.2, msec: 8000, loop: true }, })
     }
 
     const onModelLoaded = (stlViewer1) => {
@@ -47,11 +48,15 @@ export const Step2STLViewer = ({
         setInitialCamera(stlViewer1.get_camera_state())
         setStlViewer(stlViewer1);
         setIsLoadedViewer(true)
-        setTimeout(()=>{
-            stlViewer1.animate_model(1, { delta: { rotationx: 1, rotationy: 1.1, rotationz: 1.2, msec: 8000, loop: true }, })
-        },800)
+        // setTimeout(()=>{
+        //     stlViewer1.animate_model(1, { delta: { rotationx: 1, rotationy: 1.1, rotationz: 1.2, msec: 8000, loop: true }, })
+        // },800)
         console.log('model loaded');
     }
+
+    useEffect(()=>{
+        if(isLoadedViewer) resetCamera()
+    },[triggerResetViewer])
 
     useEffect(() => {
         if (stlViewer) {
@@ -95,7 +100,6 @@ export const Step2STLViewer = ({
             stlViewer.set_color(1, stlViewerColor);
         }
     }, [stlViewerColor])
-
     return (
         <div className='viewer-cont' style={{ position: 'relative', backgroundColor: '#f5f5f5', borderRadius: 20 }}>
             <div className='viewer-btns'>
