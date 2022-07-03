@@ -23,7 +23,6 @@ import { MenuItem, Select, Switch } from '@mui/material';
 import LanguageIcon from '@mui/icons-material/Language';
 import { Step2FilesTable } from '../cmps/Step2FilesTable';
 import { generateUuid } from '../services/utils'
-import { Step2STLViewer } from '../cmps/Step2STLViewer';
 
 
 // * This is the Mother Component of the website.
@@ -64,23 +63,16 @@ export const OnDemand = ({ location }) => {
         numHeight: 650,
     };
 
-    // ! TO REMOVE WHEN DONE:
     const [selectedFile, setSelectedFile] = useState(null);
+    const [uploadedFiles, setUploadedFiles] = useState([]);
     const [printsSettingsArr, setPrintsSettingsArr] = useState([initialPrintSettings])
     const [uploadedFilesSnapshots, setUploadedFilesSnaps] = useState([])
     const [cubeeFileIdName, setCubeeFileIdName] = useState(null);
-    // ! ENDOF
-
     const [slicedInfo, setSlicedInfo] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
 
-    
+    const [uploadedFilesDataMap, setUploadedFilesDataMap] = useState({})
     const [selectedUuid, setSelectedUuid] = useState(null)
-    const [uploadedFiles, setUploadedFiles] = useState({})
-    const [filesPrintSettings, setFilesPrintSettings] = useState({})
-    const [filesSnapshots, setFilesSnapshots] = useState({})
-    const [isLoadedViewer, setIsLoadedViewer] = useState(false)
-
     // const [isFileLoaded, setFileLoaded] = useState(false);
 
     // * When the first file iss uploaded, this function is being called
@@ -88,8 +80,6 @@ export const OnDemand = ({ location }) => {
     // * it sets the selectedFile automatically,
     // * it sets the UploadedFiles array,
     // * it sets an empty object on the fileSnaps array
-    // * CHANGES
-    // TODO ADD VALIDATION CHECK OF FILE FORMAT
     const onFirstFileSelect = async event => {
         event.persist();
         setIsLoading(true);
@@ -97,7 +87,20 @@ export const OnDemand = ({ location }) => {
         const filer = event.target.files[0];
         if (filer?.name.toLowerCase().slice(-3) !== 'stl') console.log('long name')
         // return notificationHandler.error('STL מצטערים, רק קבצי');
+        // console.log(filer);
         const uuid = generateUuid()
+        setSelectedFile({
+            uuid,
+            file: filer
+        });
+        setUploadedFiles([{ uuid, file: filer }])
+        setUploadedFilesSnaps([{
+            uuid,
+            snapUrl: ''
+        }])
+        // setTimeout(() => {
+        //     setFileLoaded(true);
+        // }, 10);
         const cubeeFileIdRes = await onDemandService.uploadFileToCubee(filer, apiKey);
         if (cubeeFileIdRes.error) {
             setIsLoading(false);
@@ -105,49 +108,37 @@ export const OnDemand = ({ location }) => {
                 'אופס, יש בעיה בשרת, נא לנסות שוב'
             );
         }
-        addNewFileToState(uuid, filer)
-        updateFilesPrintSettings(uuid, initialPrintSettings)
-        updateFileSnapshot(uuid, '')
+
+        // * NEW
+        const fileData = {
+            uuid,
+            fileName: filer.name,
+            file: filer,
+            printSettings: initialPrintSettings,
+            snapshotUrl: '',
+            cubeeFileId: cubeeFileIdRes.data
+        }
+        addNewFileDataToState(fileData)
         setSelectedUuid(uuid)
+        // *
+
+        setCubeeFileIdName({
+            fileId: cubeeFileIdRes.data,
+            fileName: filer.name,
+        });
         setIsLoading(false);
         setActiveStep(prevActive => prevActive + 1);
     };
 
-    const updateFilesPrintSettings = (uuid, newPrintSettings) => {
-        setFilesPrintSettings(prevData => {
+    const addNewFileDataToState = (fileData) =>{
+        setUploadedFilesDataMap(prevData => {
             return {
                 ...prevData,
-                [uuid]: {
-                    printSettings: newPrintSettings,
-                    uuid
-                }
+                [fileData.uuid]: fileData
             }
         })
     }
 
-    const addNewFileToState = (uuid, file) => {
-        setUploadedFiles(prevData => {
-            return {
-                ...prevData,
-                [uuid]: {
-                    uuid,
-                    file
-                }
-            }
-        })
-    }
-
-    const updateFileSnapshot = (uuid, snapshotURL) => {
-        setFilesSnapshots(prevData => {
-            return {
-                ...prevData,
-                [uuid]: {
-                    snapshotURL,
-                    uuid
-                }
-            }
-        })
-    }
 
     const onAddFile = async event => {
         event.persist();
@@ -276,31 +267,27 @@ export const OnDemand = ({ location }) => {
                 return (
                     <>
                         <Step2FilesTable
-                            selectedUuid={selectedUuid}
-                            uploadedFiles={Object.values(uploadedFiles)}
+                            selectedFile={selectedFile}
+                            uploadedFiles={uploadedFiles}
                             onAddFile={onAddFile}
                             handleChangeSelectedFile={handleChangeSelectedFile}
                             uploadedFilesSnapshots={uploadedFilesSnapshots}
                             handleRemoveFile={handleRemoveFile}
-                            isLoadedViewer={isLoadedViewer}
                         />
-                        <div className='stl-settings-cont'>
-                            <Step2PrintSettings
-                                // onChangeFile={onChangeFile}
-                                isLoading={isLoading}
-                                printSettings={filesPrintSettings[selectedUuid].printSettings}
-                                currentUuid={selectedUuid}
-                                setStlViewerColor={setStlViewerColor}
-                                onCalculate={onCalculate}
-                                updateFilesPrintSettings={updateFilesPrintSettings}
-                            />
-                            <Step2STLViewer
-                                isLoadedViewer={isLoadedViewer}
-                                setIsLoadedViewer={setIsLoadedViewer}
-                                selectedFile={uploadedFiles[selectedUuid]}
-                                stlViewerColor={stlViewerColor}
-                            />
-                        </div>
+                        <Step2PrintSettings
+                            isLoading={isLoading}
+                            onChangeFile={onChangeFile}
+                            // printSettings={printSettings}
+                            printSettings={uploadedFilesDataMap[selectedUuid].printSettings}
+                            setPrintSettings={setPrintSettings}
+                            stlViewerColor={stlViewerColor}
+                            setStlViewerColor={setStlViewerColor}
+                            // stlViewer={stlViewer}
+                            onCalculate={onCalculate}
+                            // setStlViewer={setStlViewer}
+                            // selectedFile={selectedFile}
+                            selectedFile={{uuid: selectedUuid, file: uploadedFilesDataMap[selectedUuid].file}}
+                        />
                     </>
                 );
             case 2:

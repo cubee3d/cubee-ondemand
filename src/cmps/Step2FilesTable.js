@@ -12,8 +12,15 @@ import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import { LoadingButton } from '@mui/lab';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 
-export const Step2FilesTable = ({ handleChangeSelectedFile, selectedFile, uploadedFiles, onAddFile, handleRemoveFile }) => {
+export const Step2FilesTable = ({ handleChangeSelectedFile,
+    uploadedFiles,
+    onAddFile,
+    handleRemoveFile,
+    selectedUuid,
+    isLoadedViewer
+}) => {
     const { t } = useTranslation(["step2"])
+
     function createData(name, calories, fat, carbs, protein) {
         return { name, calories, fat, carbs, protein };
     }
@@ -23,20 +30,21 @@ export const Step2FilesTable = ({ handleChangeSelectedFile, selectedFile, upload
         hiddenFileInput.current.click();
     };
 
-    const onChangeSelectedFile = (uuid) =>{
+    const onChangeSelectedFile = (uuid) => {
         handleChangeSelectedFile(uuid)
     }
 
-    const onRemoveFile = (uuid) =>{
+    const onRemoveFile = (uuid) => {
         handleRemoveFile(uuid)
     }
+
     useEffect(() => {
-        setTimeout(() => {
+        if (isLoadedViewer) {
             var canvas = document.querySelector("canvas")
             var Pic = canvas.toDataURL("image/png");
             setBlob(Pic)
-        }, 2000)
-    }, [selectedFile])
+        }
+    }, [isLoadedViewer])
 
     const [blob, setBlob] = useState(null)
 
@@ -49,7 +57,7 @@ export const Step2FilesTable = ({ handleChangeSelectedFile, selectedFile, upload
         // createData('Cupcake', 305, 3.7, 67),
         // createData('Gingerbread', 356, 16.0, 49),
     ];
-    if (!selectedFile) return <></>
+    if (!selectedUuid) return <></>
     return (
         <>
             <TableContainer sx={{ height: 'auto', maxHeight: 200, width: '80%' }}>
