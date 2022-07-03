@@ -11,7 +11,7 @@ export const StepWelcomeFile = ({ onFirstFileSelect, isLoading, apiKey }) => {
     };
 
     useEffect(()=>{
-        window.parent.postMessage({hello:'Hello'}, 'http://localhost/')
+        // window.parent.postMessage({hello:'Hello'}, 'http://localhost/')
     },[])
 
     return (

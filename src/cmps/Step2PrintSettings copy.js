@@ -21,23 +21,100 @@ import Switch from '@mui/material/Switch';
 import ThreeDRotationIcon from '@mui/icons-material/ThreeDRotation';
 import Slider, { SliderThumb } from '@mui/material/Slider';
 import { styled } from '@mui/material/styles';
+import { ViewerLoader } from './ViewerLoader';
 import { useTranslation } from 'react-i18next';
 import { LanguageContext } from '../contexts/LanguageContext';
 
 const PrettoSlider = styled(Slider)(prettoSliderSettings);
 
 export const Step2PrintSettings = ({
-    // onChangeFile,
+    onChangeFile,
     isLoading,
     printSettings,
-    currentUuid,
+    setPrintSettings,
     setStlViewerColor,
+    stlViewerColor,
     onCalculate,
-    updateFilesPrintSettings
+    selectedFile,
 }) => {
-    const { language } = useContext(LanguageContext)
+    const { language, setLanguage } = useContext(LanguageContext)
+    const [stlViewer, setStlViewer] = useState(null)
+    const [initialCamera, setInitialCamera] = useState(null)
+    const divRef = useRef(null);
+    const [isLoadedViewer, setIsLoadedViewer] = useState(false)
+    const [isAnimating, setIsAnimating] = useState(true)
     const notificationHandler = useContext(SnackbarHandlerContext);
     const { t } = useTranslation(["step2"])
+
+    const onModelLoaded = (stlViewer1) => {
+        setIsLoadedViewer(true)
+        setInitialCamera(stlViewer1.get_camera_state())
+        setStlViewer(stlViewer1);
+        setIsLoadedViewer(true)
+        console.log('model loaded');
+    }
+
+    useEffect(() => {
+        if (stlViewer) {
+            stlViewer.clean()
+            stlViewer.set_camera_state(initialCamera)
+            // stlViewer.dispose()
+            // stlViewer.remove_model(1)
+            setIsLoadedViewer(false)
+            stlViewer.add_model({
+                local_file: selectedFile.file,
+                color: stlViewerColor,
+                
+                // animation: { delta: { rotationx: 1, rotationy: 1.1, rotationz: 1.2, msec: 8000, loop: true }, }
+            });
+
+        }
+        else {
+            const stlViewer1 = new StlViewer(divRef.current, {
+                canvas_width: '100%',
+                canvas_height: '100%',
+                model_loaded_callback: () => onModelLoaded(stlViewer1),
+                all_loaded_callback: () => console.log('loaded file')
+                // jszip_path: "./scripts/jszip.min.js",
+                // jszip_utils_path: "./scripts/jszip-utils.min.js"
+            });
+            stlViewer1.add_model({
+                local_file: selectedFile.file,
+                color: stlViewerColor,
+                // animation: { delta: { rotationx: 1, rotationy: 1.1, rotationz: 1.2, msec: 8000, loop: true }, }
+            });
+        }
+
+        return () => console.log('unmount debug')
+    }, [selectedFile]);
+
+    const resetCamera = () => {
+        stlViewer.set_camera_state(initialCamera)
+    }
+
+    const toggleAnimation = () => {
+        isAnimating ?
+            stlViewer.animate_model(1, { animation: null }) :
+            stlViewer.animate_model(1, { delta: { rotationx: 1, rotationy: 1.1, rotationz: 1.2, msec: 8000, loop: true }, })
+        setIsAnimating(!isAnimating)
+    }
+
+    const onModelClick = () => {
+        stlViewer.animate_model(1, { animation: null })
+    }
+    const onModelRelease = () => {
+        if (isAnimating) stlViewer.animate_model(1, { delta: { rotationx: 1, rotationy: 1.1, rotationz: 1.2, msec: 8000, loop: true }, })
+    }
+
+    const style = {
+        top: 0,
+        left: 0,
+        width: '600px',
+        height: '600px',
+        numWidth: 600,
+        numHeight: 600,
+        marginTop: 10,
+    };
     const [anchorEl, setAnchorEl] = useState(null);
     const [popoverContent, setPopoverContent] = useState('');
     const handlePopoverOpen = event => {
@@ -49,68 +126,54 @@ export const Step2PrintSettings = ({
     };
     const isPopoverOpen = Boolean(anchorEl);
 
-    // * UPDATED 
     const handleChangeMaterial = material => {
-        updateFilesPrintSettings(currentUuid, {
-            ...printSettings,
-            material
-        })
+        setPrintSettings(prevForm => {
+            return { ...prevForm, material };
+        });
     };
-
     const handleChangeInfill = ({ target }) => {
-        updateFilesPrintSettings(currentUuid, {
-            ...printSettings,
-            infill: target.value, isVase: false
-        })
+        setPrintSettings(prevForm => {
+            return { ...prevForm, infill: target.value, isVase: false };
+        });
     };
-    
     const handleChangeRes = ({ target }) => {
-        updateFilesPrintSettings(currentUuid, {
-            ...printSettings,
-            resolution: target.value
-        })
+        setPrintSettings(prevForm => {
+            return { ...prevForm, resolution: target.value };
+        });
     };
-
     const handleChangeSupports = ({ target }) => {
-        updateFilesPrintSettings(currentUuid, {
-            ...printSettings,
-            isSupports: target.checked, isVase: false
-        })
+        setPrintSettings(prevForm => {
+            return { ...prevForm, isSupports: target.checked, isVase: false };
+        });
     };
-
     const handleChangeVase = ({ target }) => {
-        updateFilesPrintSettings(currentUuid, {
-            ...printSettings,
-            isVase: target.checked, infill: 0, isSupports: false
-        })
+        setPrintSettings(prevForm => {
+            return { ...prevForm, isVase: target.checked, infill: 0, isSupports: false };
+        });
     };
-
     const onChangeColor = color => {
-        updateFilesPrintSettings(currentUuid, {
-            ...printSettings,
-            color
-        })
+        setPrintSettings(prevForm => {
+            return { ...prevForm, color };
+        });
         setStlViewerColor(colors[color]);
+        stlViewer.set_color(1, colors[color]);
     };
-
     const onResetSettings = () => {
-        updateFilesPrintSettings(currentUuid, initialPrintSettings)
+        setPrintSettings(initialPrintSettings);
         setStlViewerColor(colors[initialPrintSettings.color]);
+        stlViewer.set_color(1, colors[initialPrintSettings.color]);
     };
-    
     const handleChangeCopies = ({ target }) => {
         if (target.value < 1) return
-        updateFilesPrintSettings(currentUuid, {
-            ...printSettings,
-            copies: target.value
-        })
+        setPrintSettings(prevForm => {
+            return { ...prevForm, copies: target.value };
+        });
     }
-    // * ENDOF UPDATED
 
-
+    if (!selectedFile) return <></>
     return (
         <>
-            {/* <Button
+            <Button
                 className="back-btn"
                 variant="outlined"
                 size="small"
@@ -122,7 +185,8 @@ export const Step2PrintSettings = ({
                 disabled={isLoading}
             >
                 {t("replace_file")}
-            </Button> */}
+            </Button>
+            <div className="stl-settings-cont">
                 <div className="settings">
                     <div className="setting">
                         <div className="title-question-cont">
@@ -309,6 +373,19 @@ export const Step2PrintSettings = ({
                         </LoadingButton>
                     </div>
                 </div>
+                <div className='viewer-cont' style={{ position: 'relative', backgroundColor: '#f5f5f5', borderRadius: 20 }}>
+                    <div className='viewer-btns'>
+                        <Button onClick={resetCamera} variant='outlined' color='blue'>
+                            {t("reset_viewer")}
+                        </Button>
+                        <Button onClick={toggleAnimation} variant='outlined' color='blue'>
+                            {isAnimating ? t("stop_animation") : t("start_animation")}
+                        </Button>
+                    </div>
+                    {!isLoadedViewer && <ViewerLoader />}
+                    <div className="bigdiv" style={style} ref={divRef} onMouseDown={onModelClick} onMouseUp={onModelRelease} />
+                </div>
+            </div>
             <Popover
                 id="mouse-over-popover"
                 sx={{
