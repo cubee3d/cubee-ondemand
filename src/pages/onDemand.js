@@ -80,7 +80,9 @@ export const OnDemand = ({ location }) => {
     const [filesPrintSettings, setFilesPrintSettings] = useState({})
     const [filesSnapshots, setFilesSnapshots] = useState({})
     const [isLoadedViewer, setIsLoadedViewer] = useState(false)
+
     const [triggerResetViewer, setTriggerResetViewer] = useState(false)
+
     // const [isFileLoaded, setFileLoaded] = useState(false);
 
     // * When the first file iss uploaded, this function is being called

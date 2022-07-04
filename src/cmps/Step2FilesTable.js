@@ -25,7 +25,6 @@ export const Step2FilesTable = ({ handleChangeSelectedFile,
 
 }) => {
     const { t } = useTranslation(["step2"])
-
     const hiddenFileInput = useRef(null);
 
     const handleFileSelect = () => {
@@ -69,7 +68,6 @@ export const Step2FilesTable = ({ handleChangeSelectedFile,
     },[triggerResetViewer])
 
     const [blob, setBlob] = useState(null)
-
     if (!selectedUuid) return <></>
     return (
         <>
