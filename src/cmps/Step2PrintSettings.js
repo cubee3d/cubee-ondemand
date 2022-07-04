@@ -107,7 +107,6 @@ export const Step2PrintSettings = ({
     }
     // * ENDOF UPDATED
 
-
     return (
         <>
             {/* <Button
