@@ -174,17 +174,16 @@ export const OnDemand = ({ location }) => {
         delete uploadedFilesCopy[uuid]
         delete filesSnapshotsCopy[uuid]
         delete filesPrintSettingsCopy[uuid]
-        console.log(uploadedFilesCopy)
         if (selectedUuid === uuid) {
-            console.log('same uuid')
             if (Object.keys(uploadedFilesCopy).length) {
-                setSelectedUuid(Object.keys(uploadedFiles)[0])
+                setSelectedUuid(Object.keys(uploadedFilesCopy)[0])
             }
             else {
                 setActiveStep(prevActive => prevActive - 1);
                 setSelectedUuid(null)
                 setUploadedFiles({})
                 setFilesPrintSettings({})
+                setIsLoadedViewer(false)
                 return setFilesSnapshots({})
             }
         }
