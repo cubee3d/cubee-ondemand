@@ -7,17 +7,19 @@ import { SnackbarContext } from './contexts/SnackbarContext';
 import Alert from '@mui/material/Alert';
 import Slide from '@mui/material/Slide';
 import { OnDemand } from './pages/onDemand';
-
+import Lottie from 'lottie-react';
+import desktop from './assets/images/desktop.json';
 import i18n from './i18n/i18n';
 import { LanguageContext } from './contexts/LanguageContext';
+import { useTranslation } from 'react-i18next';
 
 const theme = createTheme({
   components: {
-    Button:{
+    Button: {
       textTransform: 'none'
     },
     MuiTypography: {
-      button:{
+      button: {
         textTransform: 'none'
       },
       defaultProps: {
@@ -75,9 +77,12 @@ const theme = createTheme({
 });
 
 function App() {
+  const { t } = useTranslation(["common"])
   useEffect(() => {
     i18n.changeLanguage('heb')
   }, [])
+  const [isDesktop, setIsDesktop] = useState(window.screen.width > 800)
+
   const [snack, setSnack] = useState({});
   const [language, setLanguage] = useState({
     lang: 'heb',
@@ -108,7 +113,15 @@ function App() {
       return { ...prevSnack, open: false };
     });
   };
-
+  if (!isDesktop) return (
+    <>
+      <div className='desktop-only'>
+        <h3>{t('desktopOnlyTitle')}</h3>
+        <h4>{t('desktopOnlyP')}</h4>
+        <Lottie animationData={desktop} loop={true} autoPlay={true} />
+      </div>
+    </>
+  )
   return (
     <Suspense fallback={null}>
       <ThemeProvider theme={theme}>

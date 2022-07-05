@@ -24,6 +24,7 @@ import LanguageIcon from '@mui/icons-material/Language';
 import { Step2FilesTable } from '../cmps/Step2FilesTable';
 import { generateUuid } from '../services/utils'
 import { Step2STLViewer } from '../cmps/Step2STLViewer';
+import { Step2Calculating } from '../cmps/Step2Calculating';
 
 
 // * This is the Mother Component of the website.
@@ -52,8 +53,6 @@ export const OnDemand = ({ location }) => {
         colors[initialPrintSettings.color]
     );
     const [orderId, setOrderId] = useState(null);
-    const url =
-        'https://storage.googleapis.com/ucloud-v3/ccab50f18fb14c91ccca300a.stl';
 
     const style = {
         top: 0,
@@ -80,9 +79,9 @@ export const OnDemand = ({ location }) => {
     const [filesPrintSettings, setFilesPrintSettings] = useState({})
     const [filesSnapshots, setFilesSnapshots] = useState({})
     const [isLoadedViewer, setIsLoadedViewer] = useState(false)
-
     const [triggerResetViewer, setTriggerResetViewer] = useState(false)
-
+    const [filesSlicedInfo, setFilesSlicedInfo] = useState({})
+    const [isCalculating, setIsCalculating] = useState(false)
     // const [isFileLoaded, setFileLoaded] = useState(false);
 
     // * When the first file iss uploaded, this function is being called
@@ -91,20 +90,33 @@ export const OnDemand = ({ location }) => {
     // * it sets the UploadedFiles array,
     // * it sets an empty object on the fileSnaps array
     // * CHANGES
-    // TODO ADD VALIDATION CHECK OF FILE FORMAT
     const onFirstFileSelect = async event => {
         event.persist();
-        await handleNewFileUpload(event.target.files[0])
+        const isSuccess = await handleNewFileUpload(event.target.files[0])
+        if (!isSuccess) return
         setActiveStep(prevActive => prevActive + 1);
     };
 
-    const updateFilesPrintSettings = (uuid, newPrintSettings) => {
+    const updateFilesPrintSettings = (uuid, newPrintSettings, cubeeFileId = null) => {
+        if (cubeeFileId) {
+            return setFilesPrintSettings(prevData => {
+                return {
+                    ...prevData,
+                    [uuid]: {
+                        printSettings: newPrintSettings,
+                        uuid,
+                        cubeeFileId
+                    }
+                }
+            })
+        }
         setFilesPrintSettings(prevData => {
             return {
                 ...prevData,
                 [uuid]: {
                     printSettings: newPrintSettings,
-                    uuid
+                    uuid,
+                    cubeeFileId: prevData[uuid].cubeeFileId
                 }
             }
         })
@@ -136,13 +148,11 @@ export const OnDemand = ({ location }) => {
 
     const onAddFile = async file => {
         handleNewFileUpload(file)
-
     }
 
     const takeSnapshot = () => {
         //TODO: RESET THE VIEW, THEN TAKE A NEW SNAPSHOT
         setTriggerResetViewer(!triggerResetViewer)
-
     }
 
 
@@ -150,20 +160,30 @@ export const OnDemand = ({ location }) => {
     const handleNewFileUpload = async (file) => {
         setIsLoading(true);
         if (!apiKey) return notificationHandler.error('יש להכניס מפתח')
-        if (file?.name.toLowerCase().slice(-3) !== 'stl') console.log('checkvalidation')
+        const fileExtension = file?.name.toLowerCase().slice(-3)
+        if (fileExtension !== 'stl' &&
+            fileExtension !== 'obj' &&
+            fileExtension !== '3mf') {
+            notificationHandler.error('רק תלת מימד')
+            setIsLoading(false)
+            return false
+        }
         const uuid = generateUuid()
         const cubeeFileIdRes = await onDemandService.uploadFileToCubee(file, apiKey);
         if (cubeeFileIdRes.error) {
             setIsLoading(false);
-            return notificationHandler.error(
+            notificationHandler.error(
                 'אופס, יש בעיה בשרת, נא לנסות שוב'
             );
+            return false
         }
         addNewFileToState(uuid, file)
-        updateFilesPrintSettings(uuid, initialPrintSettings)
+        updateFilesPrintSettings(uuid, initialPrintSettings, cubeeFileIdRes.data)
         updateFileSnapshot(uuid, '')
         setSelectedUuid(uuid)
+        setStlViewerColor(colors[initialPrintSettings.color])
         setIsLoading(false);
+        return true
     }
 
     // const checkIsAlreadyUploaded
@@ -187,66 +207,110 @@ export const OnDemand = ({ location }) => {
         delete uploadedFilesCopy[uuid]
         delete filesSnapshotsCopy[uuid]
         delete filesPrintSettingsCopy[uuid]
-        console.log(uploadedFilesCopy)
         if (selectedUuid === uuid) {
-            console.log('same uuid')
             if (Object.keys(uploadedFilesCopy).length) {
-                setSelectedUuid(Object.keys(uploadedFiles)[0])
+                setSelectedUuid(Object.keys(uploadedFilesCopy)[0])
             }
             else {
                 setActiveStep(prevActive => prevActive - 1);
                 setSelectedUuid(null)
                 setUploadedFiles({})
                 setFilesPrintSettings({})
+                setIsLoadedViewer(false)
                 return setFilesSnapshots({})
             }
         }
         setUploadedFiles(uploadedFilesCopy)
         setFilesPrintSettings(filesPrintSettingsCopy)
         setFilesSnapshots(filesSnapshotsCopy)
-
-        //NOT WORKING AS EXPECTED
-        // if (selectedFile.uuid === uuid) setSelectedFile(uploadedFiles[0])
     }
 
-    const onChangeFile = () => {
-        setCubeeFileIdName(null);
-        // setFileLoaded(false);
-        setPrintSettings(initialPrintSettings);
-        setStlViewerColor(colors[initialPrintSettings.color])
-        setActiveStep(prevActive => prevActive - 1);
-
-    };
-
     const handleChangeSelectedFile = (uuid) => {
-        const idx = uploadedFiles.findIndex(file => file.uuid === uuid)
-        setSelectedFile(uploadedFiles[idx])
+        if (uuid === selectedUuid) return
+        if (filesPrintSettings[selectedUuid].color) {
+            setTriggerResetViewer(!triggerResetViewer)
+        }
+        setSelectedUuid(uuid)
+        setStlViewerColor(colors[filesPrintSettings[uuid].printSettings.color])
     }
 
     const onCalculate = async () => {
         setIsLoading(true);
-        const printSettingsObj = {
-            fileId: cubeeFileIdName.fileId,
-            infillDensity: printSettings.infill,
-            layerHeight: printSettings.resolution,
-            materialId: materialIds[printSettings.material],
-            processType: 'FDM',
-            colorId: 10,
-            support: printSettings.isSupports,
-            vaseMode: printSettings.isVase,
-            currencyCode: 'ILS',
-        };
-        const res = await onDemandService.calculateSlicer(printSettingsObj);
-        if (res.error) {
-            setIsLoading(false);
-            return notificationHandler.error(
-                'אופס, לא הצלחנו לחשב את ההדפסה, נסה שוב'
-            );
+        setIsCalculating(true)
+        const queries = Object.values(filesPrintSettings).map(file => {
+            return {
+                fileId: file.cubeeFileId,
+                infillDensity: file.printSettings.infill,
+                layerHeight: file.printSettings.resolution,
+                materialId: materialIds[file.printSettings.material],
+                processType: 'FDM',
+                colorId: 10,
+                support: file.printSettings.isSupports,
+                vaseMode: file.printSettings.isVase,
+                currencyCode: 'ILS',
+            }
+        })
+        const sleep = ms => new Promise(r => setTimeout(r, ms));
+        await sleep(1000);
+        const results = await Promise.all(queries.map(onDemandService.calculateSlicer));
+        console.log(results)
+        const errors = results.filter(result => {
+            if (result.error) return result
+        })
+        if (errors.length) {
+            setIsCalculating(false)
+            setIsLoading(false)
+            return notificationHandler.error(`לא הצלחנו לחשב, ${errors[0].error.message.message}`)
+            //THERE WAS AN ERROR
         }
+
+        const printSettingsValues = Object.values(filesPrintSettings)
+        const slicedInfo = results.map((result, idx) => {
+            const currentUuid = printSettingsValues
+                .find(file => file.cubeeFileId === result.fileId).uuid
+            console.log(currentUuid)
+            const fileName = uploadedFiles[currentUuid].file.name
+            const snapshotURL = filesSnapshots[currentUuid].snapshotURL
+            const copies = Number(filesPrintSettings[currentUuid].printSettings.copies)
+            return {
+                ...result,
+                fileName,
+                snapshotURL,
+                copies 
+            }
+        })
+
+        console.log(slicedInfo)
         setIsLoading(false);
-        setSlicedInfo(res);
+        setFilesSlicedInfo(slicedInfo)
         setActiveStep(prevActive => prevActive + 1);
+        setIsCalculating(false)
+
+        // console.log(errors)
+        // const printSettingsObj = {
+        //     fileId: test.cubeeFileId,
+        //     infillDensity: test.printSettings.infill,
+        //     layerHeight: test.printSettings.resolution,
+        //     materialId: materialIds[test.printSettings.material],
+        //     processType: 'FDM',
+        //     colorId: 10,
+        //     support: test.printSettings.isSupports,
+        //     vaseMode: test.printSettings.isVase,
+        //     currencyCode: 'ILS',
+        // };
+        // const res = await onDemandService.calculateSlicer(printSettingsObj);
+        // if (res.error) {
+        //     setIsLoading(false);
+        //     return notificationHandler.error(
+        //         'אופס, לא הצלחנו לחשב את ההדפסה, נסה שוב'
+        //     );
+        // }
+        // setIsLoading(false);
+        // console.log(res)
+        // setSlicedInfo(res);
+        // setActiveStep(prevActive => prevActive + 1);
     };
+
     const onSubmitPrintOrder = async () => {
 
         var data = { printsSettingsArr }
@@ -270,7 +334,6 @@ export const OnDemand = ({ location }) => {
             notificationHandler.error('לא הצלחנו לבצע את ההזמנה, נסה שוב');
             setIsLoading(false);
         }
-        console.log(res);
         setOrderId(res.orderId);
     };
 
@@ -283,7 +346,6 @@ export const OnDemand = ({ location }) => {
     };
 
     const toggleLang = ({ target }) => {
-        console.log(target.value);
         if (target.value === 'en') {
             i18n.changeLanguage('en')
             setLanguage({
@@ -303,10 +365,6 @@ export const OnDemand = ({ location }) => {
         }
     }
 
-    useEffect(() => {
-        console.log(uploadedFiles);
-    }, [uploadedFiles])
-
     const renderStep = () => {
         switch (activeStep) {
             case 0:
@@ -318,6 +376,7 @@ export const OnDemand = ({ location }) => {
                     />
                 );
             case 1:
+                if (isCalculating) return <Step2Calculating />
                 return (
                     <>
                         <Step2FilesTable
@@ -336,8 +395,11 @@ export const OnDemand = ({ location }) => {
                             }))}
                             triggerResetViewer={triggerResetViewer}
                             takeSnapshot={takeSnapshot}
+                            isLoading={isLoading}
+                            onCalculate={onCalculate}
                         />
                         <div className='stl-settings-cont'>
+
                             <Step2PrintSettings
                                 // onChangeFile={onChangeFile}
                                 isLoading={isLoading}
@@ -346,6 +408,7 @@ export const OnDemand = ({ location }) => {
                                 setStlViewerColor={setStlViewerColor}
                                 onCalculate={onCalculate}
                                 updateFilesPrintSettings={updateFilesPrintSettings}
+                                fileName={uploadedFiles[selectedUuid]?.file.name}
                             />
                             <Step2STLViewer
                                 triggerResetViewer={triggerResetViewer}
@@ -361,7 +424,7 @@ export const OnDemand = ({ location }) => {
                 return (
                     <Step3OrderDetails
                         cubeeFileIdName={cubeeFileIdName}
-                        slicedInfo={slicedInfo}
+                        filesSlicedInfo={filesSlicedInfo}
                         onPrevStep={onPrevStep}
                         selectedFile={selectedFile}
                         stlViewerColor={stlViewerColor}
@@ -382,8 +445,6 @@ export const OnDemand = ({ location }) => {
     const handleOpen = () => {
         setOpen(true);
     };
-
-
 
     const [open, setOpen] = React.useState(false);
 

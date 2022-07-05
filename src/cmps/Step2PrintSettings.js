@@ -33,7 +33,8 @@ export const Step2PrintSettings = ({
     currentUuid,
     setStlViewerColor,
     onCalculate,
-    updateFilesPrintSettings
+    updateFilesPrintSettings,
+    fileName
 }) => {
     const { language } = useContext(LanguageContext)
     const notificationHandler = useContext(SnackbarHandlerContext);
@@ -123,6 +124,12 @@ export const Step2PrintSettings = ({
                 {t("replace_file")}
             </Button> */}
                 <div className="settings">
+                    {
+                        fileName?.length < 20? 
+                        <p>{fileName}</p> 
+                        :
+                        <p>{fileName.slice(0,16)}...{fileName.slice(-3)}</p>
+                    }
                     <div className="setting">
                         <div className="title-question-cont">
                             <h3>{t("material")}</h3>
@@ -294,7 +301,7 @@ export const Step2PrintSettings = ({
                         >
                             {t("reset_settings")}
                         </Button>
-                        <LoadingButton
+                        {/* <LoadingButton
                             variant="contained"
                             color="blue"
                             className="whiteText"
@@ -305,7 +312,7 @@ export const Step2PrintSettings = ({
                         // loadingIndicator={"מחשב"}
                         >
                             {t("continue")}
-                        </LoadingButton>
+                        </LoadingButton> */}
                     </div>
                 </div>
             <Popover
