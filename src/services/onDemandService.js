@@ -6,21 +6,21 @@ export default {
     submitPrintOrder,
 };
 
-async function submitPrintOrder(orderObj) {
-    // return await httpService.postOrder(orderObj)
+function submitPrintOrder(orderObj) {
+    // return httpService.postOrder(orderObj)
     return {
         orderId: '43256',
     };
 }
 
-async function uploadFileToCubee(file, apiKey) {
-    return await httpService.postFile('upload',file, apiKey)
+function uploadFileToCubee(file, apiKey) {
+    return httpService.postFile('upload',file, apiKey)
     return {
         data: '4d1649aa-2756-4efb-ab72-0c5a84de63da',
     };
 }
-async function calculateSlicer(printSettingsObj, apiKey) {
-    return await httpService.post('calc', printSettingsObj, apiKey)
+function calculateSlicer(printSettingsObj, apiKey) {
+    return httpService.post('calc', printSettingsObj, apiKey)
     return {
         printTime: 4.82,
         weight: 50.7,
