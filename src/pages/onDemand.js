@@ -155,42 +155,6 @@ export const OnDemand = ({ location }) => {
         setTriggerResetViewer(!triggerResetViewer)
     }
 
-    const addSnapshot = (uuid, snapshotURL) => {
-        setFilesSnapshots(prevData => {
-            return {
-                ...prevData,
-                [uuid]: {
-                    uuid,
-                    snapshotURL
-                }
-            }
-        })
-    }
-
-    const handleRemoveFile = uuid => {
-        const uploadedFilesCopy = { ...uploadedFiles }
-        const filesSnapshotsCopy = { ...filesSnapshots }
-        const filesPrintSettingsCopy = { ...filesPrintSettings }
-        delete uploadedFilesCopy[uuid]
-        delete filesSnapshotsCopy[uuid]
-        delete filesPrintSettingsCopy[uuid]
-        if (selectedUuid === uuid) {
-            if (Object.keys(uploadedFilesCopy).length) {
-                setSelectedUuid(Object.keys(uploadedFilesCopy)[0])
-            }
-            else {
-                setActiveStep(prevActive => prevActive - 1);
-                setSelectedUuid(null)
-                setUploadedFiles({})
-                setFilesPrintSettings({})
-                setIsLoadedViewer(false)
-                return setFilesSnapshots({})
-            }
-        }
-        setUploadedFiles(uploadedFilesCopy)
-        setFilesPrintSettings(filesPrintSettingsCopy)
-        setFilesSnapshots(filesSnapshotsCopy)
-
         // TODO: Check about dupliactions
         const handleNewFileUpload = async (file) => {
             setIsLoading(true);
@@ -526,14 +490,17 @@ export const OnDemand = ({ location }) => {
                         <div className="onDemand-step">{renderStep()}</div>
 
                     </div>
-                ) : (
-                    <div className="print-order-submitted">
-                        <h1>קיבלנו את ההזמנה שלך #{orderId}</h1>
-                        <h2>תודה שבחרת בנו לביצוע ההדפסה</h2>
-                        <h3>נחזור אליך ממש בקרוב :)</h3>
-                    </div>
-                )}
-            </>
-        );
-    };
-}
+                    <div className="onDemand-step">{renderStep()}</div>
+
+                </div>
+            ) : (
+                <div className="print-order-submitted">
+                    <h1>קיבלנו את ההזמנה שלך #{orderId}</h1>
+                    <h2>תודה שבחרת בנו לביצוע ההדפסה</h2>
+                    <h3>נחזור אליך ממש בקרוב :)</h3>
+                </div>
+            )}
+        </>
+    );
+};
+
