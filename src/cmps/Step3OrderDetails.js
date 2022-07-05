@@ -11,8 +11,23 @@ import { useTranslation } from 'react-i18next';
 import { LanguageContext } from '../contexts/LanguageContext';
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
+import Table from '@mui/material/Table';
+import TableBody from '@mui/material/TableBody';
+import TableCell from '@mui/material/TableCell';
+import TableContainer from '@mui/material/TableContainer';
+import TableHead from '@mui/material/TableHead';
+import TableRow from '@mui/material/TableRow';
 
-export const Step3OrderDetails = ({ cubeeFileIdName, slicedInfo, onPrevStep, selectedFile, stlViewerColor, setContactForm, contactForm, copies, onSubmitPrintOrder, uploadedFiles }) => {
+export const Step3OrderDetails = ({ cubeeFileIdName,
+    filesSlicedInfo,
+    onPrevStep,
+    selectedFile,
+    stlViewerColor,
+    setContactForm,
+    contactForm,
+    copies,
+    onSubmitPrintOrder,
+    uploadedFiles }) => {
     const [isLoading, setIsLoading] = useState(false)
     const { language, setLanguage } = useContext(LanguageContext)
     const { t } = useTranslation(["step3"])
@@ -20,40 +35,16 @@ export const Step3OrderDetails = ({ cubeeFileIdName, slicedInfo, onPrevStep, sel
     const miniDivRef = useRef(null)
     const [isLoadedViewer, setIsLoadedViewer] = useState(false)
     const [orderComment, setOrderComment] = useState('');
-    const onModelLoaded = (stlViewer1) => {
-        setIsLoadedViewer(true)
-        setMiniStlViewer(stlViewer1);
-        setTimeout(()=>{
-            var canvas = document.querySelector("canvas")
-            var Pic = canvas.toDataURL("image/png");
-            setBlob(Pic)
-        },2000)
-    }
+    
+    const [total,setTotal] = useState()
 
-    useEffect(() => {
-        const stlViewer1 = new StlViewer(miniDivRef.current, {
-            canvas_width: '100%',
-            canvas_height: '100%',
-            model_loaded_callback: () => onModelLoaded(stlViewer1)
-        });
-        stlViewer1.add_model({
-            local_file: selectedFile.file,
-            color: stlViewerColor,
-            animation: { delta: { rotationx: 1, rotationy: 1.1, rotationz: 1.2, msec: 10000, loop: true }, }
-
-        });
-        return () => console.log('unmount debug')
-    }, [])
-
-
-    const miniStyle = {
-        top: 0,
-        left: 0,
-        width: '300px',
-        height: '350px',
-        numWidth: 300,
-        numHeight: 350,
-    };
+    useEffect(()=>{
+        let totalPrice = 0;
+        filesSlicedInfo.forEach((file)=>{
+            totalPrice += Math.ceil(file.price) * file.copies
+        })
+        setTotal(totalPrice)
+    },[])
 
 
     const handleChangeContact = e => {
@@ -75,126 +66,62 @@ export const Step3OrderDetails = ({ cubeeFileIdName, slicedInfo, onPrevStep, sel
     return (
         <>
             <h2>{t('print_conc')}</h2>
-            <div className="data-viewer-cont">
-                <div className="data" style={{ textAlign: language.lang == 'heb' ? 'right' : 'left' }}>
-                    {cubeeFileIdName.fileName.length > 15 ? (
-                        <Tooltip
-                            title={cubeeFileIdName.fileName}
-                            arrow
-                        >
-                            <h3>
-                                {t("file_name")}
-                                {cubeeFileIdName.fileName.slice(
-                                    0,
-                                    12
-                                )}
-                                ...stl
-                            </h3>
-                        </Tooltip>
-                    ) : (
-                        <h3>
-                            {t("file_name")} {cubeeFileIdName.fileName}
-                        </h3>
-                    )}
-                    <h3>
-                        {t("dimensions")} {slicedInfo.dimensions.height}x
-                        {slicedInfo.dimensions.width}x
-                        {slicedInfo.dimensions.length} {t("mm")}
-                    </h3>
-                    <h3>
-                        {t("EPT")}{' '}
-                        {Math.floor(slicedInfo.printTime)} {t("hours")},{' '}
-                        {Math.floor(
-                            Number(
-                                (
-                                    slicedInfo.printTime -
-                                    Math.floor(slicedInfo.printTime)
-                                ).toFixed(2)
-                            ) * 60
-                        )}{' '}
-                        {t("minutes")}
-                    </h3>
-                    <h3>
-                        {t("EW")} {slicedInfo.weight} {t("gram")}
-                    </h3>
-                    {copies == 1 ?
-                        <>
-                            <h2>
-                                {t("EP")} ₪{Math.ceil(slicedInfo.price)}
-                            </h2>
-                        </>
-                        :
-                        <>
-                            <h2>{t("EPU")} ₪{Math.ceil(slicedInfo.price)}</h2>
-                            <h2>{t("EPriceT")}{copies} {t("units")}: ₪{Math.ceil(slicedInfo.price) * copies}</h2>
-                        </>
-                    }
-                </div>
-                <div className='mini-viewer-cont' style={{ position: 'relative' }}>
-                    {!isLoadedViewer && <ViewerLoader />}
-                    <div
-                        className="minidiv"
-                        style={miniStyle}
-                        ref={miniDivRef}
-                    />
-                </div>
-
-            </div>
-            {/* <img src={blob} style={{width: 200, height: 200, objectFit: 'contain'}} /> */}
-            {/* <div>
-                <h2>פרטים ליצירת קשר:</h2>
-                <div className="address-form">
-                    <div className="left-fields">
-                        <div className="form-field">
-                            <span>שם מלא:</span>
-                            <TextField
-                                placeholder="אסי ישראלי"
-                                required
-                                name="name"
-                                color="primary"
-                                value={contactForm.name}
-                                onChange={handleChangeContact}
-                            />
-                        </div>
-                        <div className="form-field">
-                            <span>אימייל: </span>
-                            <TextField
-                                placeholder="Asi123@gmail.com"
-                                required
-                                color="primary"
-                                name="email"
-                                value={contactForm.email}
-                                onChange={handleChangeContact}
-                            />
-                        </div>
-                    </div>
-                    <div className="right-fields">
-                        <div className="form-field">
-                            <span>מספר טלפון: </span>
-                            <TextField
-                                placeholder="05X-XXXXXXXX"
-                                required
-                                color="primary"
-                                name="phoneNumber"
-                                value={contactForm.phoneNumber}
-                                onChange={handleChangeContact}
-                            />
-                        </div>
-                        <div className="form-field">
-                            <span>הערות מיוחדות: </span>
-                            <TextField
-                                color="primary"
-                                className="textarea-field"
-                                placeholder="הערות \ בקשות מיוחדות"
-                                name="comment"
-                                value={orderComment}
-                                onChange={handleChangeComment}
-                            />
-                        </div>
-                    </div>
-                </div>
-            </div> */}
-            <div className="cta-cont">
+            <TableContainer sx={{ height: 'auto', maxHeight: 200, width: '100%' }}>
+                <Table stickyHeader sx={{ minWidth: 400 }} aria-label="simple table">
+                    <TableHead>
+                        <TableRow>
+                            <TableCell width={'5%'} align="center">{t('image')}</TableCell>
+                            <TableCell width={'20%'} align="center">{t('file_name')}</TableCell>
+                            {/* <TableCell align="center">{t('file_size')}</TableCell> */}
+                            <TableCell width={'15%'} align="center">{t('dimensions')}</TableCell>
+                            <TableCell width={'20%'} align="center">{t('EPT')}</TableCell>
+                            <TableCell align="center">{t('EW')}</TableCell>
+                            <TableCell align="center">{t('EPU')}</TableCell>
+                            <TableCell align="center">{t('EP')}</TableCell>
+                        </TableRow>
+                    </TableHead>
+                    <TableBody>
+                        {filesSlicedInfo.map(file => (
+                            <TableRow
+                                key={file.fileId}
+                                sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                            >
+                                <TableCell align="center">
+                                    <img className="model-img" src={file.snapshotURL || null} style={{ width: 70, height: 70, objectFit: 'contain', margin: 'auto', display: 'block' }} />                                </TableCell>
+                                {
+                                    file.fileName < 21 ?
+                                        <TableCell align="center">{file.fileName}</TableCell>
+                                        :
+                                        <TableCell align="center">{file.fileName.slice(0, 16)}...{file.fileName.slice(-3)}</TableCell>
+                                }
+                                <TableCell align="center">{file.dimensions.height}x
+                                    {file.dimensions.width}x
+                                    {file.dimensions.length}{t("mm")}</TableCell>
+                                <TableCell align="center">
+                                    {Math.floor(file.printTime) > 0 && Math.floor(file.printTime)} {Math.floor(file.printTime) > 0 && t("hours")}{Math.floor(file.printTime) > 0 && ","}
+                                    {Math.floor(
+                                        Number(
+                                            (
+                                                file.printTime -
+                                                Math.floor(file.printTime)
+                                            ).toFixed(2)
+                                        ) * 60
+                                    )}{' '}
+                                    {t("minutes")}</TableCell>
+                                <TableCell align="center">{file.weight} {t("gram")}</TableCell>
+                                <TableCell align="center">₪{Math.ceil(file.price)}</TableCell>
+                                {file.copies > 1 ?
+                                    <TableCell align="center">{file.copies} {t("units")}: ₪{Math.ceil(file.price) * file.copies}</TableCell>
+                                    :
+                                    <TableCell align="center">₪{Math.ceil(file.price)}</TableCell>
+                                }
+                            </TableRow>
+                        ))}
+                    </TableBody>
+                </Table>
+            </TableContainer>
+            <h2>{t("total")}: ₪{total}</h2>
+            <div className="cta-btns-cont">
                 <Button
                     // endIcon={language.lang === 'heb' ? <ArrowForwardIosIcon /> : <></>}
                     startIcon={language.lang === 'en' ? <ArrowBackIosIcon /> : <ArrowForwardIosIcon />}

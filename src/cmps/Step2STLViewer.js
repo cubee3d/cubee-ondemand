@@ -28,7 +28,7 @@ export const Step2STLViewer = ({
     const divRef = useRef(null);
 
     const resetCamera = () => {
-        stlViewer.set_camera_state(initialCamera)
+        if (stlViewer) stlViewer.set_camera_state(initialCamera)
     }
     const toggleAnimation = () => {
         // isAnimating ?
@@ -52,6 +52,7 @@ export const Step2STLViewer = ({
         //     stlViewer1.animate_model(1, { delta: { rotationx: 1, rotationy: 1.1, rotationz: 1.2, msec: 8000, loop: true }, })
         // },800)
         console.log('model loaded');
+        window.viewer = stlViewer1
     }
 
     useEffect(()=>{
@@ -59,10 +60,17 @@ export const Step2STLViewer = ({
     },[triggerResetViewer])
 
     useEffect(() => {
+        if (isLoadedViewer) {
+            resetCamera()
+        }
+    }, [triggerResetViewer])
+
+    useEffect(() => {
         if (stlViewer) {
             stlViewer.clean()
-            stlViewer.set_camera_state(initialCamera)
+            // stlViewer.set_camera_state(initialCamera)
             // stlViewer.dispose()
+            // document.querySelector('canvas').remove()
             // stlViewer.remove_model(1)
             setIsLoadedViewer(false)
             stlViewer.add_model({
@@ -74,20 +82,20 @@ export const Step2STLViewer = ({
 
         }
         else {
-            const stlViewer1 = new StlViewer(divRef.current, {
-                canvas_width: '100%',
-                canvas_height: '100%',
-                model_loaded_callback: () => onModelLoaded(stlViewer1),
-                all_loaded_callback: () => console.log('loaded al models')
+        const stlViewer1 = new StlViewer(divRef.current, {
+            canvas_width: '100%',
+            canvas_height: '100%',
+            model_loaded_callback: () => onModelLoaded(stlViewer1),
+            all_loaded_callback: () => onModelLoaded(stlViewer1)
 
-                // jszip_path: "./scripts/jszip.min.js",
-                // jszip_utils_path: "./scripts/jszip-utils.min.js"
-            });
-            stlViewer1.add_model({
-                local_file: selectedFile.file,
-                color: stlViewerColor,
-                // animation: { delta: { rotationx: 1, rotationy: 1.1, rotationz: 1.2, msec: 8000, loop: true }, }
-            });
+            // jszip_path: "./scripts/jszip.min.js",
+            // jszip_utils_path: "./scripts/jszip-utils.min.js"
+        });
+        stlViewer1.add_model({
+            local_file: selectedFile.file,
+            color: stlViewerColor,
+            // animation: { delta: { rotationx: 1, rotationy: 1.1, rotationz: 1.2, msec: 8000, loop: true }, }
+        });
         }
 
         return () => console.log('unmount debug')
@@ -95,10 +103,12 @@ export const Step2STLViewer = ({
 
 
     useEffect(() => {
-        console.log('colorChanged', stlViewerColor);
-        if (stlViewer) {
-            stlViewer.set_color(1, stlViewerColor);
+        const updateColor = () => {
+            if (stlViewer) {
+                stlViewer.set_color(1, stlViewerColor);
+            }
         }
+        updateColor()
     }, [stlViewerColor])
     return (
         <div className='viewer-cont' style={{ position: 'relative', backgroundColor: '#f5f5f5', borderRadius: 20 }}>

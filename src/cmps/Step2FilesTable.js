@@ -11,6 +11,7 @@ import { Button, IconButton } from '@mui/material';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import { LoadingButton } from '@mui/lab';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
+import ThreeDRotationIcon from '@mui/icons-material/ThreeDRotation';
 
 export const Step2FilesTable = ({ handleChangeSelectedFile,
     onAddFile,
@@ -21,8 +22,9 @@ export const Step2FilesTable = ({ handleChangeSelectedFile,
     addSnapshot,
     filesSnapshots,
     triggerResetViewer,
-    takeSnapshot
-
+    takeSnapshot,
+    isLoading,
+    onCalculate
 }) => {
     const { t } = useTranslation(["step2"])
     const hiddenFileInput = useRef(null);
@@ -40,34 +42,32 @@ export const Step2FilesTable = ({ handleChangeSelectedFile,
         handleRemoveFile(uuid)
     }
 
-    const handleAddFile = (event) =>{
-        console.log(selectedUuid)
-        if(selectedUuid) takeSnapshot()
+    const handleAddFile = (event) => {
         event.persist();
-        if(!event.target.value) return
+        if (selectedUuid) takeSnapshot()
+        if (!event.target.value) return
         onAddFile(event.target.files[0])
         hiddenFileInput.current.value = null
     }
 
     useEffect(() => {
         if (isLoadedViewer) {
-            if(filesSnapshots[selectedUuid].snapshotURL) return
-            var canvas = document.querySelector("canvas")
-            var Pic = canvas?.toDataURL("image/png");
-            addSnapshot(selectedUuid, Pic)
-            setBlob(Pic)
+            setTimeout(() => {
+                if (filesSnapshots[selectedUuid].snapshotURL) return
+                var canvas = document.querySelector("canvas")
+                var Pic = canvas?.toDataURL("image/png");
+                addSnapshot(selectedUuid, Pic)
+            }, 100)
         }
     }, [isLoadedViewer])
 
-    useEffect(()=>{
-        setTimeout(()=>{
-            var canvas = document.querySelector("canvas")
-            var Pic = canvas?.toDataURL("image/png");
-            addSnapshot(selectedUuid, Pic)
-        },100)
-    },[triggerResetViewer])
-
-    const [blob, setBlob] = useState(null)
+    // useEffect(() => {
+    //     setTimeout(() => {
+    //         var canvas = document.querySelector("canvas")
+    //         var Pic = canvas?.toDataURL("image/png");
+    //         addSnapshot(selectedUuid, Pic)
+    //     }, 200)
+    // }, [triggerResetViewer])
     if (!selectedUuid) return <></>
     return (
         <>
@@ -77,7 +77,7 @@ export const Step2FilesTable = ({ handleChangeSelectedFile,
                         <TableRow>
                             <TableCell align="center">{t('image')}</TableCell>
                             <TableCell align="center">{t('file_name')}</TableCell>
-                            <TableCell align="center">{t('file_size')}</TableCell>
+                            {/* <TableCell align="center">{t('file_size')}</TableCell> */}
                             <TableCell align="center">{t('action')}</TableCell>
                         </TableRow>
                     </TableHead>
@@ -87,17 +87,20 @@ export const Step2FilesTable = ({ handleChangeSelectedFile,
                                 key={fileObj.uuid}
                                 sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                             >
-                                <TableCell align="center" onClick={() => onChangeSelectedFile(fileObj.uuid)}>
-                                    <img className="model-img" src={filesSnapshots[fileObj.uuid]?.snapshotURL || null} style={{ width: 70, height: 70, objectFit: 'contain', margin: 'auto', display: 'block' }} />
-                                </TableCell>
-                                <TableCell align="center">{fileObj.fileName}</TableCell>
-                                {/* <TableCell align="center">{(fileObj.file.size / 1024 / 1024).toFixed(2)}MB</TableCell> */}
-                                <TableCell align="center">{(fileObj.uuid)}</TableCell>
-                                <TableCell align="center">
+                                <TableCell className={selectedUuid===fileObj.uuid? 'active-cell': ''} align="center" onClick={() => onChangeSelectedFile(fileObj.uuid)}>
+                                    <img className="model-img" src={filesSnapshots[fileObj.uuid]?.snapshotURL || null} style={{ width: 70, height: 70, objectFit: 'contain', margin: 'auto', display: 'block' }} />                                </TableCell>
+                                {
+                                    fileObj.fileName.length < 20 ?
+                                        <TableCell className={selectedUuid===fileObj.uuid? 'active-cell': ''} align="center">{fileObj.fileName}</TableCell>
+                                        :
+                                        <TableCell className={selectedUuid===fileObj.uuid? 'active-cell': ''} align="center">{fileObj.fileName.slice(0, 16)}...{fileObj.fileName.slice(-3)}</TableCell>
+                                }
+                                {/* <TableCell align="center">{(fileObj.fileSize / 1024 / 1024).toFixed(2)}MB</TableCell> */}
+                                <TableCell align="center" className={selectedUuid===fileObj.uuid? 'active-cell': ''}>
                                     <IconButton
                                         variant="text"
                                         size="small"
-                                        onClick={()=>onRemoveFile(fileObj.uuid)}
+                                        onClick={() => onRemoveFile(fileObj.uuid)}
                                         color="blue"
                                     >
                                         <DeleteForeverIcon className="cart-icon" />
@@ -116,15 +119,30 @@ export const Step2FilesTable = ({ handleChangeSelectedFile,
                 hidden
                 ref={hiddenFileInput}
             />
-            <LoadingButton
-                endIcon={<CloudUploadIcon />}
-                variant="contained"
-                color="warn"
-                onClick={handleFileSelect}
-                loading={false}
-            >
-                {t("upload_file")}
-            </LoadingButton>
+            <div className='add-continue-btns-cont'>
+                <LoadingButton
+                    endIcon={<CloudUploadIcon />}
+                    variant="contained"
+                    color="warn"
+                    onClick={handleFileSelect}
+                    loading={isLoading}
+                >
+                    {t("upload_file")}
+                </LoadingButton>
+                <LoadingButton
+                    variant="contained"
+                    color="warn"
+                    // className="whiteText"
+                    loading={isLoading}
+                    endIcon={<ThreeDRotationIcon />}
+                    onClick={onCalculate}
+                    loadingPosition="center"
+                // loadingIndicator={"מחשב"}
+                >
+                    {t("continue")}
+                </LoadingButton>
+
+            </div>
         </>
     )
 }

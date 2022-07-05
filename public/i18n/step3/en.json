@@ -1,19 +1,20 @@
 {
     "print_conc": "Print Conclusion",
-    "file_name": "File Name:",
-    "dimensions": "Dimensions:",
+    "file_name": "File Name",
+    "dimensions": "Dimensions",
     "mm": "mm",
-    "EPT": "Estimated Print Time:",
+    "EPT": "Estimated Print Time",
     "hours": "hours",
     "minutes": "minutes",
-    "EW": "Estimated Weight:",
+    "EW": "Estimated Weight",
     "gram": "g",
-    "EP": "Estimated Price:",
-    "EPU": "Estimated Price Per Unit:",
+    "EP": "Estimated Price",
+    "EPU": "Estimated Price Per Unit",
     "EPriceT": "Estimated Price for ",
     "units": "units",
     "change_settings": "Change Settings",
     "send_for_confirm":"Send For Confirmation",
-    "contact": "Contact Via Whatsapp"
-
+    "contact": "Contact Via Whatsapp",
+    "image": "Image",
+    "total": "Total"
 }

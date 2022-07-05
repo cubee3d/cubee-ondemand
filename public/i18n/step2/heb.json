@@ -8,7 +8,7 @@
     "vase_mode": "מצב ואזה",
     "copies": "עותקים",
     "reset_settings": "אפס הגדרות",
-    "continue": "המשך",
+    "continue": "המשך לקבלת הצעת מחיר",
     "reset_viewer": "אפס תצוגה",
     "stop_animation": "עצור אנימציה",
     "start_animation": "הפעל אנימציה",
@@ -18,5 +18,8 @@
     "file_size": "גודל (MB)",
     "image": "תמונה",
     "action": "פעולה",
-    "upload_file": "הוסף קובץ"
+    "upload_file": "הוסף קובץ",
+    "analyzingTitle": "אנחנו מחשבים את ההדפסה שלך",
+    "analyzingP": "זה יכול לקחת עד שתי דקות,",
+    "analyzingP2": "יש להשאיר את העמוד פתוח עד לסיום."
 }

@@ -34,7 +34,8 @@ async function ajax(endpoint, method='get', data=null, apiKey=null){
             method,
             data,
             headers: {
-                'x-api-key': 'yPLsXXF6ialkaUbjGy0IRiV0YEVG4EYr',
+                // 'x-api-key': 'yPLsXXF6ialkaUbjGy0IRiV0YEVG4EYr',
+                'x-api-key': 'HXREGyX1onfC6d-_Z99EvBzQavgOayET',
                 'Access-Control-Allow-Origin': '*',
             },
         });
@@ -68,7 +69,7 @@ async function ajaxFile(endpoint, method = 'get', data = null, apiKey = null) {
             method,
             data: formData,
             headers: {
-                'x-api-key': 'yPLsXXF6ialkaUbjGy0IRiV0YEVG4EYr',
+                'x-api-key': 'HXREGyX1onfC6d-_Z99EvBzQavgOayET',
                 'Access-Control-Allow-Origin': '*',
                 'Content-Type': 'multipart/form-data',
             },

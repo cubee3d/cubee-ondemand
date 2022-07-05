@@ -1,5 +1,7 @@
 {
     "Upload 3D File": "Upload 3D File",
     "Print Settings": "Print Settings",
-    "Confirm & Send": "Confirm & Send"
+    "Confirm & Send": "Confirm & Send",
+    "desktopOnlyTitle": "Sorry, this app is desktop only",
+    "desktopOnlyP": "Please open in PC or Laptop in order to use the app"
 }
