@@ -155,6 +155,42 @@ export const OnDemand = ({ location }) => {
         setTriggerResetViewer(!triggerResetViewer)
     }
 
+    const addSnapshot = (uuid, snapshotURL) => {
+        setFilesSnapshots(prevData => {
+            return {
+                ...prevData,
+                [uuid]: {
+                    uuid,
+                    snapshotURL
+                }
+            }
+        })
+    }
+
+    const handleRemoveFile = uuid => {
+        const uploadedFilesCopy = { ...uploadedFiles }
+        const filesSnapshotsCopy = { ...filesSnapshots }
+        const filesPrintSettingsCopy = { ...filesPrintSettings }
+        delete uploadedFilesCopy[uuid]
+        delete filesSnapshotsCopy[uuid]
+        delete filesPrintSettingsCopy[uuid]
+        console.log(uploadedFilesCopy)
+        if (selectedUuid === uuid) {
+            console.log('same uuid')
+            if (Object.keys(uploadedFilesCopy).length) {
+                setSelectedUuid(Object.keys(uploadedFiles)[0])
+            }
+            else {
+                setActiveStep(prevActive => prevActive - 1);
+                setSelectedUuid(null)
+                setUploadedFiles({})
+                setFilesPrintSettings({})
+                return setFilesSnapshots({})
+            }
+        }
+        setUploadedFiles(uploadedFilesCopy)
+        setFilesPrintSettings(filesPrintSettingsCopy)
+        setFilesSnapshots(filesSnapshotsCopy)
 
     // TODO: Check about dupliactions
     const handleNewFileUpload = async (file) => {

@@ -38,6 +38,7 @@ export const Step2FilesTable = ({ handleChangeSelectedFile,
     }
 
     const onRemoveFile = (uuid) => {
+        console.log(uuid)
         handleRemoveFile(uuid)
     }
 
@@ -67,7 +68,6 @@ export const Step2FilesTable = ({ handleChangeSelectedFile,
     //         addSnapshot(selectedUuid, Pic)
     //     }, 200)
     // }, [triggerResetViewer])
-
     if (!selectedUuid) return <></>
     return (
         <>

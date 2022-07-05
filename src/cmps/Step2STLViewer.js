@@ -55,6 +55,10 @@ export const Step2STLViewer = ({
         window.viewer = stlViewer1
     }
 
+    useEffect(()=>{
+        if(isLoadedViewer) resetCamera()
+    },[triggerResetViewer])
+
     useEffect(() => {
         if (isLoadedViewer) {
             resetCamera()
@@ -106,7 +110,6 @@ export const Step2STLViewer = ({
         }
         updateColor()
     }, [stlViewerColor])
-
     return (
         <div className='viewer-cont' style={{ position: 'relative', backgroundColor: '#f5f5f5', borderRadius: 20 }}>
             <div className='viewer-btns'>
