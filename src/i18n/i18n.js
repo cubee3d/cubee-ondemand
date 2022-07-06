@@ -1,31 +1,22 @@
-import i18n from 'i18next'
-import Backend from 'i18next-http-backend'
-import languageDetector from 'i18next-browser-languagedetector'
-import { initReactI18next } from 'react-i18next'
+import i18n from 'i18next';
+import Backend from 'i18next-http-backend';
+import languageDetector from 'i18next-browser-languagedetector';
+import { initReactI18next } from 'react-i18next';
 
 i18n.use(Backend)
     .use(languageDetector)
     .use(initReactI18next)
     .init({
         backend: {
-            loadPath: "./i18n/{{ns}}/{{lng}}.json"
+            loadPath: './i18n/{{ns}}/{{lng}}.json',
         },
-        fallbackLng: "en",
+        fallbackLng: 'en',
         debug: false,
-        ns:[
-            "common",
-            "step1",
-            "step2",
-            "step3",
-            "step4",
-        ],
-        
+        ns: ['common', 'step1', 'step2', 'step3', 'step4'],
+
         interpolation: {
-            // escapeValue: false,
-            formatSeparator: ","
+            formatSeparator: ',',
         },
+    });
 
-
-    })
-
-    export default i18n
+export default i18n;

@@ -68,7 +68,7 @@ export const resMarks = {
             value: 0.3,
             label: 'נמוכה',
         },
-    ]
+    ],
 };
 
 export const colors = {
@@ -95,7 +95,7 @@ export const initialPrintSettings = {
     color: 'אפור',
     isSupports: false,
     isVase: false,
-    copies: 1
+    copies: 1,
 };
 
 // export const steps = ['העלאת קובץ להדפסה', 'הגדרות הדפסה', 'שלח לאישור'];
@@ -110,21 +110,21 @@ export const popovers = {
         vase: 'אם המוצר הינו עציץ/אגרטל - ניתן להדפיס במצב חסכוני בעל גימור נקי',
         support: 'אם חלק מהמודל מודפס באוויר, כנראה שיידרשו תמיכות',
     },
-    en:{
+    en: {
         material:
             'The standard is PLA. ABS & PETG are more tough, and TPU is flexible material',
         infill: 'Infill density determines the weight and strength of the model. standard is 20%',
         res: 'Resolution affects the finish of the print, lower layer height - higher resolution',
         vase: 'If the model is a vase, Vase mode will give a more solid and beautiful result',
-        support: 'If a partf of the model is printing "on air", supports are needed.',
-    }
+        support:
+            'If a partf of the model is printing "on air", supports are needed.',
+    },
 };
-
 
 export const materialIds = {
     PLA: 13,
     ABS: 12,
     PETG: 1171,
     TPU: 1170,
-    NYLON: 1172
-}
+    NYLON: 1172,
+};

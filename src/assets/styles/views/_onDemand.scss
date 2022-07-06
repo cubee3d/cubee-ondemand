@@ -1,4 +1,4 @@
-.desktop-only{
+.desktop-only {
     margin: 0 auto;
     text-align: center;
     position: absolute;
@@ -45,23 +45,23 @@
 
     height: 30px;
 }
-td, th{
+td,
+th {
     font-family: 'varela' !important;
 }
-th{
+th {
     font-weight: 800 !important;
 }
-.model-img{
+.model-img {
     cursor: pointer;
 }
-.cta-btns-cont{
+.cta-btns-cont {
     display: flex;
     justify-content: space-between;
     width: 70%;
     button {
         width: 240px;
     }
-
 }
 .onDemand-step {
     // text-align: center;
@@ -110,11 +110,11 @@ th{
             display: flex;
             flex-direction: column;
             gap: 24px;
-            p{
+            p {
                 margin: 0 auto;
                 text-overflow: ellipsis;
                 width: 80%;
-                white-space:nowrap;
+                white-space: nowrap;
             }
             .copies-field {
                 width: 60px;
@@ -201,14 +201,14 @@ th{
     .MuiButton-startIcon {
         margin-left: 10px !important;
     }
-    .add-continue-btns-cont{
+    .add-continue-btns-cont {
         display: flex;
         gap: 20px;
     }
-    table{
+    table {
         border-radius: 10px;
     }
-    .active-cell{
+    .active-cell {
         background-color: rgb(202, 222, 236);
     }
 }

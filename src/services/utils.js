@@ -9,7 +9,6 @@ export const phoneNumberValidation = phoneNumber => {
     return false;
 };
 
-export const generateUuid = () =>{
-    return Math.random().toString(16).slice(2)
-
-}
+export const generateUuid = () => {
+    return Math.random().toString(16).slice(2);
+};

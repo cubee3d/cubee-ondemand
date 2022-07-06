@@ -12,39 +12,56 @@ import { LanguageContext } from '../contexts/LanguageContext';
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 
-export const Step3OrderDetails = ({ cubeeFileIdName, slicedInfo, onPrevStep, selectedFile, stlViewerColor, setContactForm, contactForm, copies, onSubmitPrintOrder, uploadedFiles }) => {
-    const [isLoading, setIsLoading] = useState(false)
-    const { language, setLanguage } = useContext(LanguageContext)
-    const { t } = useTranslation(["step4"])
-    const [miniStlViewer, setMiniStlViewer] = useState(null)
-    const miniDivRef = useRef(null)
-    const [isLoadedViewer, setIsLoadedViewer] = useState(false)
+export const Step3OrderDetails = ({
+    cubeeFileIdName,
+    slicedInfo,
+    onPrevStep,
+    selectedFile,
+    stlViewerColor,
+    setContactForm,
+    contactForm,
+    copies,
+    onSubmitPrintOrder,
+    uploadedFiles,
+}) => {
+    const [isLoading, setIsLoading] = useState(false);
+    const { language, setLanguage } = useContext(LanguageContext);
+    const { t } = useTranslation(['step4']);
+    const [miniStlViewer, setMiniStlViewer] = useState(null);
+    const miniDivRef = useRef(null);
+    const [isLoadedViewer, setIsLoadedViewer] = useState(false);
     const [orderComment, setOrderComment] = useState('');
-    const onModelLoaded = (stlViewer1) => {
-        setIsLoadedViewer(true)
+    const onModelLoaded = stlViewer1 => {
+        setIsLoadedViewer(true);
         setMiniStlViewer(stlViewer1);
-        setTimeout(()=>{
-            var canvas = document.querySelector("canvas")
-            var Pic = canvas.toDataURL("image/png");
-            setBlob(Pic)
-        },2000)
-    }
+        setTimeout(() => {
+            var canvas = document.querySelector('canvas');
+            var Pic = canvas.toDataURL('image/png');
+            setBlob(Pic);
+        }, 2000);
+    };
 
     useEffect(() => {
         const stlViewer1 = new StlViewer(miniDivRef.current, {
             canvas_width: '100%',
             canvas_height: '100%',
-            model_loaded_callback: () => onModelLoaded(stlViewer1)
+            model_loaded_callback: () => onModelLoaded(stlViewer1),
         });
         stlViewer1.add_model({
             local_file: selectedFile.file,
             color: stlViewerColor,
-            animation: { delta: { rotationx: 1, rotationy: 1.1, rotationz: 1.2, msec: 10000, loop: true }, }
-
+            animation: {
+                delta: {
+                    rotationx: 1,
+                    rotationy: 1.1,
+                    rotationz: 1.2,
+                    msec: 10000,
+                    loop: true,
+                },
+            },
         });
-        return () => console.log('unmount debug')
-    }, [])
-
+        return () => console.log('unmount debug');
+    }, []);
 
     const miniStyle = {
         top: 0,
@@ -54,7 +71,6 @@ export const Step3OrderDetails = ({ cubeeFileIdName, slicedInfo, onPrevStep, sel
         numWidth: 300,
         numHeight: 350,
     };
-
 
     const handleChangeContact = e => {
         e.persist();
@@ -69,41 +85,39 @@ export const Step3OrderDetails = ({ cubeeFileIdName, slicedInfo, onPrevStep, sel
         setOrderComment(e.target.value);
     };
 
-    const [blob, setBlob] = useState(null)
-
+    const [blob, setBlob] = useState(null);
 
     return (
         <>
             <h2>{t('print_conc')}</h2>
             <div className="data-viewer-cont">
-                <div className="data" style={{ textAlign: language.lang == 'heb' ? 'right' : 'left' }}>
+                <div
+                    className="data"
+                    style={{
+                        textAlign: language.lang == 'heb' ? 'right' : 'left',
+                    }}
+                >
                     {cubeeFileIdName.fileName.length > 15 ? (
-                        <Tooltip
-                            title={cubeeFileIdName.fileName}
-                            arrow
-                        >
+                        <Tooltip title={cubeeFileIdName.fileName} arrow>
                             <h3>
-                                {t("file_name")}
-                                {cubeeFileIdName.fileName.slice(
-                                    0,
-                                    12
-                                )}
+                                {t('file_name')}
+                                {cubeeFileIdName.fileName.slice(0, 12)}
                                 ...stl
                             </h3>
                         </Tooltip>
                     ) : (
                         <h3>
-                            {t("file_name")} {cubeeFileIdName.fileName}
+                            {t('file_name')} {cubeeFileIdName.fileName}
                         </h3>
                     )}
                     <h3>
-                        {t("dimensions")} {slicedInfo.dimensions.height}x
+                        {t('dimensions')} {slicedInfo.dimensions.height}x
                         {slicedInfo.dimensions.width}x
-                        {slicedInfo.dimensions.length} {t("mm")}
+                        {slicedInfo.dimensions.length} {t('mm')}
                     </h3>
                     <h3>
-                        {t("EPT")}{' '}
-                        {Math.floor(slicedInfo.printTime)} {t("hours")},{' '}
+                        {t('EPT')} {Math.floor(slicedInfo.printTime)}{' '}
+                        {t('hours')},{' '}
                         {Math.floor(
                             Number(
                                 (
@@ -112,25 +126,34 @@ export const Step3OrderDetails = ({ cubeeFileIdName, slicedInfo, onPrevStep, sel
                                 ).toFixed(2)
                             ) * 60
                         )}{' '}
-                        {t("minutes")}
+                        {t('minutes')}
                     </h3>
                     <h3>
-                        {t("EW")} {slicedInfo.weight} {t("gram")}
+                        {t('EW')} {slicedInfo.weight} {t('gram')}
                     </h3>
-                    {copies == 1 ?
+                    {copies == 1 ? (
                         <>
                             <h2>
-                                {t("EP")} ₪{Math.ceil(slicedInfo.price)}
+                                {t('EP')} ₪{Math.ceil(slicedInfo.price)}
                             </h2>
                         </>
-                        :
+                    ) : (
                         <>
-                            <h2>{t("EPU")} ₪{Math.ceil(slicedInfo.price)}</h2>
-                            <h2>{t("EPriceT")}{copies} {t("units")}: ₪{Math.ceil(slicedInfo.price) * copies}</h2>
+                            <h2>
+                                {t('EPU')} ₪{Math.ceil(slicedInfo.price)}
+                            </h2>
+                            <h2>
+                                {t('EPriceT')}
+                                {copies} {t('units')}: ₪
+                                {Math.ceil(slicedInfo.price) * copies}
+                            </h2>
                         </>
-                    }
+                    )}
                 </div>
-                <div className='mini-viewer-cont' style={{ position: 'relative' }}>
+                <div
+                    className="mini-viewer-cont"
+                    style={{ position: 'relative' }}
+                >
                     {!isLoadedViewer && <ViewerLoader />}
                     <div
                         className="minidiv"
@@ -138,7 +161,6 @@ export const Step3OrderDetails = ({ cubeeFileIdName, slicedInfo, onPrevStep, sel
                         ref={miniDivRef}
                     />
                 </div>
-
             </div>
             {/* <img src={blob} style={{width: 200, height: 200, objectFit: 'contain'}} /> */}
             {/* <div>
@@ -197,10 +219,16 @@ export const Step3OrderDetails = ({ cubeeFileIdName, slicedInfo, onPrevStep, sel
             <div className="cta-cont">
                 <Button
                     // endIcon={language.lang === 'heb' ? <ArrowForwardIosIcon /> : <></>}
-                    startIcon={language.lang === 'en' ? <ArrowBackIosIcon /> : <ArrowForwardIosIcon />}
+                    startIcon={
+                        language.lang === 'en' ? (
+                            <ArrowBackIosIcon />
+                        ) : (
+                            <ArrowForwardIosIcon />
+                        )
+                    }
                     onClick={onPrevStep}
                 >
-                    {t("change_settings")}
+                    {t('change_settings')}
                 </Button>
 
                 <LoadingButton
@@ -211,21 +239,18 @@ export const Step3OrderDetails = ({ cubeeFileIdName, slicedInfo, onPrevStep, sel
                     endIcon={<ViewInArRoundedIcon />}
                     onClick={onSubmitPrintOrder}
                 >
-                    {t("send_for_confirm")}
+                    {t('send_for_confirm')}
                 </LoadingButton>
-                <a
-                    target="_blank"
-                    href="https://wa.me/972737433201"
-                >
+                <a target="_blank" href="https://wa.me/972737433201">
                     <Button
                         variant="outlined"
                         color="blue"
                         endIcon={<WhatsAppIcon />}
                     >
-                        {t("contact")}
+                        {t('contact')}
                     </Button>
                 </a>
             </div>
         </>
     );
-}
+};
