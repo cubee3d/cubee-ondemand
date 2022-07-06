@@ -266,7 +266,7 @@ export const OnDemand = ({ location }) => {
     };
 
     const onSubmitPrintOrder = async () => {
-        window.parent.postMessage(filesSlicedInfo, 'http://localhost/newwpsite/13-2/');
+        window.parent.postMessage({array: filesSlicedInfo}, '*');
 
         // return window.location.href = `https://promaker.co.il/cart/?add-to-cart=4232&quantity=${Math.ceil(slicedInfo.price)}`;
         // const isFormFilled = Object.values(contactForm).every(field => field);
