@@ -1,7 +1,7 @@
 {
     "replace_file": "Replace File",
     "material": "Print Material",
-    "infill": "Infill Density(%)",
+    "infill": "Infill Density (%)",
     "res": "Resolution (Layer Height)",
     "color": "Color",
     "add_supports": "Add Supports",

@@ -1,47 +1,33 @@
 /* global StlViewer */
 
-import React, { useEffect, useState, useContext, useRef, useCallback } from 'react';
+import React, { useEffect, useState, useContext, useRef } from 'react';
 import Stepper from '@mui/material/Stepper';
 import Step from '@mui/material/Step';
 import StepLabel from '@mui/material/StepLabel';
 import { SnackbarHandlerContext } from '../contexts/SnackbarHandlerContext';
 import { LanguageContext } from '../contexts/LanguageContext';
 import onDemandService from '../services/onDemandService';
-import { emailValidation, phoneNumberValidation } from '../services/utils';
-import {
-    steps,
-    initialPrintSettings,
-    colors,
-    materialIds
-} from './consts';
+import { steps, initialPrintSettings, colors, materialIds } from './consts';
 import { StepWelcomeFile } from '../cmps/StepWelcomeFile';
 import { Step2PrintSettings } from '../cmps/Step2PrintSettings';
 import { Step3OrderDetails } from '../cmps/Step3OrderDetails';
 import { useTranslation } from 'react-i18next';
 import i18n from '../i18n/i18n';
-import { MenuItem, Select, Switch } from '@mui/material';
+import { MenuItem, Select } from '@mui/material';
 import LanguageIcon from '@mui/icons-material/Language';
 import { Step2FilesTable } from '../cmps/Step2FilesTable';
-import { generateUuid } from '../services/utils'
 import { Step2STLViewer } from '../cmps/Step2STLViewer';
 import { Step2Calculating } from '../cmps/Step2Calculating';
-
+import { generateUuid } from '../services/utils';
 
 // * This is the Mother Component of the website.
 // * This component manages the whole state of the app.
 export const OnDemand = ({ location }) => {
-    const { t } = useTranslation(["common"])
+    const { t } = useTranslation(['common']);
     const [apiKey, setApiKey] = useState(null);
-    const { language, setLanguage } = useContext(LanguageContext)
+    const { language, setLanguage } = useContext(LanguageContext);
     const notificationHandler = useContext(SnackbarHandlerContext);
-    useEffect(() => {
-        const searchQuery = new URLSearchParams(location.search);
-        if (searchQuery.get('k')) {
-            setApiKey(searchQuery.get('k'));
-        } else {
-            notificationHandler.warning('יש להכניס מפתח על מנת להשתמש ביישום');
-        }
-    }, []);
+
     const [activeStep, setActiveStep] = useState(0);
     const [contactForm, setContactForm] = useState({
         name: '',
@@ -63,47 +49,38 @@ export const OnDemand = ({ location }) => {
         numHeight: 650,
     };
 
-    // ! TO REMOVE WHEN DONE:
-    const [selectedFile, setSelectedFile] = useState(null);
-    const [printsSettingsArr, setPrintsSettingsArr] = useState([initialPrintSettings])
-    const [uploadedFilesSnapshots, setUploadedFilesSnaps] = useState([])
-    const [cubeeFileIdName, setCubeeFileIdName] = useState(null);
-    // ! ENDOF
-
-    const [slicedInfo, setSlicedInfo] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
-
-
-    const [selectedUuid, setSelectedUuid] = useState(null)
-    // const [debouncedSelectedUuid, setDebouncedSelectedUuid] = useState(null)
-    const [uploadedFiles, setUploadedFiles] = useState({})
-    const [filesPrintSettings, setFilesPrintSettings] = useState({})
-    const [filesSnapshots, setFilesSnapshots] = useState({})
-    const [isLoadedViewer, setIsLoadedViewer] = useState(false)
-    const [triggerResetViewer, setTriggerResetViewer] = useState(false)
-    const [filesSlicedInfo, setFilesSlicedInfo] = useState({})
-    const [isCalculating, setIsCalculating] = useState(false)
-    // const [isFileLoaded, setFileLoaded] = useState(false);
-
+    const [selectedUuid, setSelectedUuid] = useState(null);
+    const [uploadedFiles, setUploadedFiles] = useState({});
+    const [filesPrintSettings, setFilesPrintSettings] = useState({});
+    const [filesSnapshots, setFilesSnapshots] = useState({});
+    const [isLoadedViewer, setIsLoadedViewer] = useState(false);
+    const [filesSlicedInfo, setFilesSlicedInfo] = useState({});
+    const [isCalculating, setIsCalculating] = useState(false);
     const [isModelLoaded, setModelLoaded] = useState(false);
 
-
-    // const debouncedSelectedUuid = React.usede
+    useEffect(() => {
+        const searchQuery = new URLSearchParams(location.search);
+        if (searchQuery.get('k')) {
+            setApiKey(searchQuery.get('k'));
+        } else {
+            notificationHandler.warning(t('noApikey'));
+        }
+    }, []);
 
     // * When the first file iss uploaded, this function is being called
-    // * from the StepWelcomeFile -> it gets the event(file)
-    // * it sets the selectedFile automatically,
-    // * it sets the UploadedFiles array,
-    // * it sets an empty object on the fileSnaps array
-    // * CHANGES
     const onFirstFileSelect = async event => {
         event.persist();
-        const isSuccess = await handleNewFileUpload(event.target.files[0])
-        if (!isSuccess) return
+        const isSuccess = await handleNewFileUpload(event.target.files[0]);
+        if (!isSuccess) return;
         setActiveStep(prevActive => prevActive + 1);
     };
 
-    const updateFilesPrintSettings = (uuid, newPrintSettings, cubeeFileId = null) => {
+    const updateFilesPrintSettings = (
+        uuid,
+        newPrintSettings,
+        cubeeFileId = null
+    ) => {
         if (cubeeFileId) {
             return setFilesPrintSettings(prevData => {
                 return {
@@ -111,10 +88,10 @@ export const OnDemand = ({ location }) => {
                     [uuid]: {
                         printSettings: newPrintSettings,
                         uuid,
-                        cubeeFileId
-                    }
-                }
-            })
+                        cubeeFileId,
+                    },
+                };
+            });
         }
         setFilesPrintSettings(prevData => {
             return {
@@ -122,11 +99,11 @@ export const OnDemand = ({ location }) => {
                 [uuid]: {
                     printSettings: newPrintSettings,
                     uuid,
-                    cubeeFileId: prevData[uuid].cubeeFileId
-                }
-            }
-        })
-    }
+                    cubeeFileId: prevData[uuid].cubeeFileId,
+                },
+            };
+        });
+    };
 
     const addNewFileToState = (uuid, file) => {
         setUploadedFiles(prevData => {
@@ -134,11 +111,11 @@ export const OnDemand = ({ location }) => {
                 ...prevData,
                 [uuid]: {
                     uuid,
-                    file
-                }
-            }
-        })
-    }
+                    file,
+                },
+            };
+        });
+    };
 
     const updateFileSnapshot = (uuid, snapshotURL) => {
         setFilesSnapshots(prevData => {
@@ -146,53 +123,51 @@ export const OnDemand = ({ location }) => {
                 ...prevData,
                 [uuid]: {
                     snapshotURL,
-                    uuid
-                }
-            }
-        })
-    }
+                    uuid,
+                },
+            };
+        });
+    };
 
     const onAddFile = async file => {
-        handleNewFileUpload(file)
-    }
+        handleNewFileUpload(file);
+    };
 
-    const takeSnapshot = () => {
-        //TODO: RESET THE VIEW, THEN TAKE A NEW SNAPSHOT
-        setTriggerResetViewer(!triggerResetViewer)
-    }
-
-
-    // TODO: Check about dupliactions
-    const handleNewFileUpload = async (file) => {
+    const handleNewFileUpload = async file => {
         setIsLoading(true);
-        if (!apiKey) return notificationHandler.error('יש להכניס מפתח')
-        const fileExtension = file?.name.toLowerCase().slice(-3)
-        if (fileExtension !== 'stl' &&
+        if (!apiKey) return notificationHandler.error(t('noApikey'));
+        const fileExtension = file?.name.toLowerCase().slice(-3);
+        if (
+            fileExtension !== 'stl' &&
             fileExtension !== 'obj' &&
-            fileExtension !== '3mf') {
-            notificationHandler.error('רק תלת מימד')
-            setIsLoading(false)
-            return false
+            fileExtension !== '3mf'
+        ) {
+            notificationHandler.error(t('only3DFiles'));
+            setIsLoading(false);
+            return false;
         }
-        const uuid = generateUuid()
-        const cubeeFileIdRes = await onDemandService.uploadFileToCubee(file, apiKey);
+        const uuid = generateUuid();
+        const cubeeFileIdRes = await onDemandService.uploadFileToCubee(
+            file,
+            apiKey
+        );
         if (cubeeFileIdRes.error) {
             setIsLoading(false);
-            notificationHandler.error(
-                'אופס, יש בעיה בשרת, נא לנסות שוב'
-            );
-            return false
+            notificationHandler.error(t('serverError'));
+            return false;
         }
-        addNewFileToState(uuid, file)
-        updateFilesPrintSettings(uuid, initialPrintSettings, cubeeFileIdRes.data)
-        updateFileSnapshot(uuid, '')
-        setSelectedUuid(uuid)
-        setStlViewerColor(colors[initialPrintSettings.color])
+        addNewFileToState(uuid, file);
+        updateFilesPrintSettings(
+            uuid,
+            initialPrintSettings,
+            cubeeFileIdRes.data
+        );
+        updateFileSnapshot(uuid, '');
+        setSelectedUuid(uuid);
+        setStlViewerColor(colors[initialPrintSettings.color]);
         setIsLoading(false);
-        return true
-    }
-
-    // const checkIsAlreadyUploaded
+        return true;
+    };
 
     const addSnapshot = (uuid, snapshotURL) => {
         setFilesSnapshots(prevData => {
@@ -200,62 +175,44 @@ export const OnDemand = ({ location }) => {
                 ...prevData,
                 [uuid]: {
                     uuid,
-                    snapshotURL
-                }
-            }
-        })
-    }
-
-    const handleRemoveFile = uuid => {
-        const uploadedFilesCopy = { ...uploadedFiles }
-        const filesSnapshotsCopy = { ...filesSnapshots }
-        const filesPrintSettingsCopy = { ...filesPrintSettings }
-        delete uploadedFilesCopy[uuid]
-        delete filesSnapshotsCopy[uuid]
-        delete filesPrintSettingsCopy[uuid]
-        if (selectedUuid === uuid) {
-            if (Object.keys(uploadedFilesCopy).length) {
-                setSelectedUuid(Object.keys(uploadedFilesCopy)[0])
-            }
-            else {
-                setActiveStep(prevActive => prevActive - 1);
-                setSelectedUuid(null)
-                setUploadedFiles({})
-                setFilesPrintSettings({})
-                setIsLoadedViewer(false)
-                return setFilesSnapshots({})
-            }
-        }
-        setUploadedFiles(uploadedFilesCopy)
-        setFilesPrintSettings(filesPrintSettingsCopy)
-        setFilesSnapshots(filesSnapshotsCopy)
-    }
-
-    const handleChangeSelectedFile = (uuid) => {
-        console.log(uuid);
-        console.log(filesPrintSettings)
-        setStlViewerColor(colors[filesPrintSettings[uuid].printSettings.color])
-        setSelectedUuid(uuid)
-    }
-
-    const debounce = func => {
-        let timer;
-        return function (...args) {
-            console.log(args, func);
-            const context = this;
-            if (timer) clearTimeout(timer);
-            timer = setTimeout(() => {
-                timer = null;
-                func.apply(context, args);
-            }, 300);
-        };
+                    snapshotURL,
+                },
+            };
+        });
     };
 
-    const optimised = useCallback(debounce(handleChangeSelectedFile), [filesPrintSettings]);
+    const handleRemoveFile = uuid => {
+        const uploadedFilesCopy = { ...uploadedFiles };
+        const filesSnapshotsCopy = { ...filesSnapshots };
+        const filesPrintSettingsCopy = { ...filesPrintSettings };
+        delete uploadedFilesCopy[uuid];
+        delete filesSnapshotsCopy[uuid];
+        delete filesPrintSettingsCopy[uuid];
+        if (selectedUuid === uuid) {
+            if (Object.keys(uploadedFilesCopy).length) {
+                setSelectedUuid(Object.keys(uploadedFilesCopy)[0]);
+            } else {
+                setActiveStep(prevActive => prevActive - 1);
+                setSelectedUuid(null);
+                setUploadedFiles({});
+                setFilesPrintSettings({});
+                setIsLoadedViewer(false);
+                return setFilesSnapshots({});
+            }
+        }
+        setUploadedFiles(uploadedFilesCopy);
+        setFilesPrintSettings(filesPrintSettingsCopy);
+        setFilesSnapshots(filesSnapshotsCopy);
+    };
+
+    const handleChangeSelectedFile = uuid => {
+        setStlViewerColor(colors[filesPrintSettings[uuid].printSettings.color]);
+        setSelectedUuid(uuid);
+    };
 
     const onCalculate = async () => {
         setIsLoading(true);
-        setIsCalculating(true)
+        setIsCalculating(true);
         const queries = Object.values(filesPrintSettings).map(file => {
             return {
                 fileId: file.cubeeFileId,
@@ -267,98 +224,110 @@ export const OnDemand = ({ location }) => {
                 support: file.printSettings.isSupports,
                 vaseMode: file.printSettings.isVase,
                 currencyCode: 'ILS',
-            }
-        })
+            };
+        });
         const sleep = ms => new Promise(r => setTimeout(r, ms));
         await sleep(1000);
-        const results = await Promise.all(queries.map(onDemandService.calculateSlicer));
-        console.log(results)
+        const results = await Promise.all(
+            queries.map(onDemandService.calculateSlicer)
+        );
         const errors = results.filter(result => {
-            if (result.error) return result
-        })
+            if (result.error) return result;
+        });
         if (errors.length) {
-            setIsCalculating(false)
-            setIsLoading(false)
-            return notificationHandler.error(`לא הצלחנו לחשב, ${errors[0].error.message.message}`)
-            //THERE WAS AN ERROR
+            setIsCalculating(false);
+            setIsLoading(false);
+            return notificationHandler.error(
+                `לא הצלחנו לחשב, ${errors[0].error.message.message}`
+            );
         }
 
-        const printSettingsValues = Object.values(filesPrintSettings)
-        const slicedInfo = results.map((result, idx) => {
-            const currentUuid = printSettingsValues
-                .find(file => file.cubeeFileId === result.fileId).uuid
-            console.log(currentUuid)
-            const fileName = uploadedFiles[currentUuid].file.name
-            const snapshotURL = filesSnapshots[currentUuid].snapshotURL
-            const copies = Number(filesPrintSettings[currentUuid].printSettings.copies)
+        const printSettingsValues = Object.values(filesPrintSettings);
+        const slicedInfo = results.map(result => {
+            const currentUuid = printSettingsValues.find(
+                file => file.cubeeFileId === result.fileId
+            ).uuid;
+            const fileName = uploadedFiles[currentUuid].file.name;
+            const snapshotURL = filesSnapshots[currentUuid].snapshotURL;
+            const copies = Number(
+                filesPrintSettings[currentUuid].printSettings.copies
+            );
             return {
                 ...result,
                 fileName,
                 snapshotURL,
-                copies
-            }
-        })
-
-        console.log(slicedInfo)
+                copies,
+            };
+        });
         setIsLoading(false);
-        setFilesSlicedInfo(slicedInfo)
+        setFilesSlicedInfo(slicedInfo);
         setActiveStep(prevActive => prevActive + 1);
-        setIsCalculating(false)
+        setIsCalculating(false);
     };
 
     const onSubmitPrintOrder = async () => {
-
-        var data = { printsSettingsArr }
-        window.parent.postMessage({ data }, 'http://localhost/newwpsite/13-2/')
+        window.parent.postMessage({}, 'http://localhost/newwpsite/13-2/');
 
         // return window.location.href = `https://promaker.co.il/cart/?add-to-cart=4232&quantity=${Math.ceil(slicedInfo.price)}`;
-        const isFormFilled = Object.values(contactForm).every(field => field);
-        if (!isFormFilled)
-            return notificationHandler.warning('יש למלא את כל השדות');
-        if (!phoneNumberValidation(contactForm.phoneNumber))
-            return notificationHandler.warning('יש להזין מספר טלפון נייד תקין');
-        if (!emailValidation(contactForm.email))
-            return notificationHandler.warning('יש להזין מייל תקין');
-        setIsLoading(true);
-        const res = await onDemandService.submitPrintOrder({
-            calculated: { ...slicedInfo },
-            settings: { ...printSettings },
-            fileId: cubeeFileIdName.fileId,
-        });
-        if (res.error) {
-            notificationHandler.error('לא הצלחנו לבצע את ההזמנה, נסה שוב');
-            setIsLoading(false);
-        }
-        setOrderId(res.orderId);
+        // const isFormFilled = Object.values(contactForm).every(field => field);
+        // if (!isFormFilled)
+        //     return notificationHandler.warning('יש למלא את כל השדות');
+        // if (!phoneNumberValidation(contactForm.phoneNumber))
+        //     return notificationHandler.warning('יש להזין מספר טלפון נייד תקין');
+        // if (!emailValidation(contactForm.email))
+        //     return notificationHandler.warning('יש להזין מייל תקין');
+        // setIsLoading(true);
+        // const res = await onDemandService.submitPrintOrder({
+        //     calculated: { ...slicedInfo },
+        //     settings: { ...printSettings },
+        //     fileId: cubeeFileIdName.fileId,
+        // });
+        // if (res.error) {
+        //     notificationHandler.error('לא הצלחנו לבצע את ההזמנה, נסה שוב');
+        //     setIsLoading(false);
+        // }
+        // setOrderId(res.orderId);
     };
 
     const onPrevStep = () => {
         setActiveStep(prevActive => prevActive - 1);
-        document.querySelector('canvas').width = style.numWidth; //.style= {border: '5px solid black'}
-        document.querySelector('canvas').height = style.numHeight; //.style= {border: '5px solid black'}
-        document.querySelector('canvas').style = {};
-        setSlicedInfo(null);
+        // document.querySelector('canvas').width = style.numWidth; //.style= {border: '5px solid black'}
+        // document.querySelector('canvas').height = style.numHeight; //.style= {border: '5px solid black'}
+        // document.querySelector('canvas').style = {};
     };
 
     const toggleLang = ({ target }) => {
         if (target.value === 'en') {
-            i18n.changeLanguage('en')
+            i18n.changeLanguage('en');
             setLanguage({
                 lang: 'en',
-                dir: 'ltr'
-            })
-            document.querySelector('.content').classList.add('ltr-body')
-            return
-        }
-        else {
-            i18n.changeLanguage('heb')
+                dir: 'ltr',
+            });
+            document.querySelector('.content').classList.add('ltr-body');
+            return;
+        } else {
+            i18n.changeLanguage('heb');
             setLanguage({
                 lang: 'heb',
-                dir: 'rtl'
-            })
-            document.querySelector('.content').classList.remove('ltr-body')
+                dir: 'rtl',
+            });
+            document.querySelector('.content').classList.remove('ltr-body');
         }
-    }
+    };
+
+    // * For the language Select
+    const handleClose = () => {
+        setOpen(false);
+    };
+
+    const handleOpen = () => {
+        setOpen(true);
+    };
+
+    const [open, setOpen] = React.useState(false);
+
+    const selectRef = useRef(null);
+    // *
 
     const renderStep = () => {
         switch (activeStep) {
@@ -371,7 +340,7 @@ export const OnDemand = ({ location }) => {
                     />
                 );
             case 1:
-                if (isCalculating) return <Step2Calculating />
+                if (isCalculating) return <Step2Calculating />;
                 return (
                     <>
                         <Step2FilesTable
@@ -380,34 +349,38 @@ export const OnDemand = ({ location }) => {
                             filesSnapshots={filesSnapshots}
                             onAddFile={onAddFile}
                             handleChangeSelectedFile={handleChangeSelectedFile}
-                            uploadedFilesSnapshots={uploadedFilesSnapshots}
                             handleRemoveFile={handleRemoveFile}
                             isLoadedViewer={isLoadedViewer}
-                            uploadedFilesData={Object.values(uploadedFiles).map(fileData => ({
-                                uuid: fileData.uuid,
-                                fileName: fileData.file.name,
-                                fileSize: fileData.file.size,
-                            }))}
-                            triggerResetViewer={triggerResetViewer}
-                            takeSnapshot={takeSnapshot}
+                            uploadedFilesData={Object.values(uploadedFiles).map(
+                                fileData => ({
+                                    uuid: fileData.uuid,
+                                    fileName: fileData.file.name,
+                                    fileSize: fileData.file.size,
+                                })
+                            )}
                             isLoading={isLoading}
                             onCalculate={onCalculate}
                             isModelLoaded={isModelLoaded}
                         />
-                        <div className='stl-settings-cont'>
-
+                        <div className="stl-settings-cont">
                             <Step2PrintSettings
                                 // onChangeFile={onChangeFile}
                                 isLoading={isLoading}
-                                printSettings={filesPrintSettings[selectedUuid]?.printSettings}
+                                printSettings={
+                                    filesPrintSettings[selectedUuid]
+                                        ?.printSettings
+                                }
                                 currentUuid={selectedUuid}
                                 setStlViewerColor={setStlViewerColor}
                                 onCalculate={onCalculate}
-                                updateFilesPrintSettings={updateFilesPrintSettings}
-                                fileName={uploadedFiles[selectedUuid]?.file.name}
+                                updateFilesPrintSettings={
+                                    updateFilesPrintSettings
+                                }
+                                fileName={
+                                    uploadedFiles[selectedUuid]?.file.name
+                                }
                             />
                             <Step2STLViewer
-                                triggerResetViewer={triggerResetViewer}
                                 isLoadedViewer={isLoadedViewer}
                                 setIsLoadedViewer={setIsLoadedViewer}
                                 selectedFile={uploadedFiles[selectedUuid]}
@@ -420,37 +393,22 @@ export const OnDemand = ({ location }) => {
             case 2:
                 return (
                     <Step3OrderDetails
-                        cubeeFileIdName={cubeeFileIdName}
                         filesSlicedInfo={filesSlicedInfo}
                         onPrevStep={onPrevStep}
-                        selectedFile={selectedFile}
-                        stlViewerColor={stlViewerColor}
-                        setContactForm={setContactForm}
-                        contactForm={contactForm}
-                        copies={printSettings.copies}
                         onSubmitPrintOrder={onSubmitPrintOrder}
-                        uploadedFiles={uploadedFiles}
                     />
-                )
+                );
         }
     };
 
-    const handleClose = () => {
-        setOpen(false);
-    };
-
-    const handleOpen = () => {
-        setOpen(true);
-    };
-
-    const [open, setOpen] = React.useState(false);
-
-    const selectRef = useRef(null)
     return (
         <>
             {!orderId ? (
                 <div>
-                    <div style={{ display: 'flex' }} className='stepper-language'>
+                    <div
+                        style={{ display: 'flex' }}
+                        className="stepper-language"
+                    >
                         <Stepper
                             activeStep={activeStep}
                             dir={language.dir}
@@ -469,8 +427,19 @@ export const OnDemand = ({ location }) => {
                             })}
                         </Stepper>
                         {/* <Switch defaultChecked onChange={toggleLang} /> */}
-                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }} className='language-select'>
-                            <LanguageIcon onClick={handleOpen} className='lang-btn' ref={selectRef} />
+                        <div
+                            style={{
+                                display: 'flex',
+                                flexDirection: 'column',
+                                alignItems: 'center',
+                            }}
+                            className="language-select"
+                        >
+                            <LanguageIcon
+                                onClick={handleOpen}
+                                className="lang-btn"
+                                ref={selectRef}
+                            />
                             <Select
                                 open={open}
                                 onClose={handleClose}
@@ -486,7 +455,6 @@ export const OnDemand = ({ location }) => {
                         </div>
                     </div>
                     <div className="onDemand-step">{renderStep()}</div>
-
                 </div>
             ) : (
                 <div className="print-order-submitted">

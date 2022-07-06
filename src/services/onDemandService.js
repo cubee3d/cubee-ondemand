@@ -14,13 +14,13 @@ function submitPrintOrder(orderObj) {
 }
 
 function uploadFileToCubee(file, apiKey) {
-    return httpService.postFile('upload',file, apiKey)
+    return httpService.postFile('upload', file, apiKey);
     return {
         data: '4d1649aa-2756-4efb-ab72-0c5a84de63da',
     };
 }
 function calculateSlicer(printSettingsObj, apiKey) {
-    return httpService.post('calc', printSettingsObj, apiKey)
+    return httpService.post('calc', printSettingsObj, apiKey);
     return {
         printTime: 4.82,
         weight: 50.7,

@@ -27,7 +27,7 @@ export default {
     // }
 };
 
-async function ajax(endpoint, method='get', data=null, apiKey=null){
+async function ajax(endpoint, method = 'get', data = null, apiKey = null) {
     try {
         const res = await axios({
             url: `${API_URL}${endpoint}`,

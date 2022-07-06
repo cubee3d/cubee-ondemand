@@ -4,26 +4,26 @@ import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import { useTranslation } from 'react-i18next';
 
 export const StepWelcomeFile = ({ onFirstFileSelect, isLoading, apiKey }) => {
-    const { t } = useTranslation(["step1"])
+    const { t } = useTranslation(['step1']);
     const hiddenFileInput = useRef(null);
+
     const handleFileSelect = () => {
         hiddenFileInput.current.click();
     };
 
-    useEffect(()=>{
+    useEffect(() => {
         // window.parent.postMessage({hello:'Hello'}, 'http://localhost/')
-    },[])
+    }, []);
 
     return (
         <>
-            <h2>{t("intro_title")}</h2>
+            <h2>{t('intro_title')}</h2>
             <p>
-                {t("intro_p1")}
+                {t('intro_p1')}
                 <br />
-                {t("intro_p2")}
+                {t('intro_p2')}
             </p>
             <input
-                // accept=".stl"
                 type="file"
                 name="file"
                 onChange={onFirstFileSelect}
@@ -38,7 +38,7 @@ export const StepWelcomeFile = ({ onFirstFileSelect, isLoading, apiKey }) => {
                 loading={isLoading}
                 disabled={!Boolean(apiKey)}
             >
-                {t("upload_file")}
+                {t('upload_file')}
             </LoadingButton>
         </>
     );
