@@ -1,6 +1,6 @@
 /* global StlViewer */
 
-import React, { useEffect, useState, useContext, useRef } from 'react';
+import React, { useEffect, useState, useContext, useRef, useCallback } from 'react';
 import Stepper from '@mui/material/Stepper';
 import Step from '@mui/material/Step';
 import StepLabel from '@mui/material/StepLabel';
@@ -75,6 +75,7 @@ export const OnDemand = ({ location }) => {
 
 
     const [selectedUuid, setSelectedUuid] = useState(null)
+    // const [debouncedSelectedUuid, setDebouncedSelectedUuid] = useState(null)
     const [uploadedFiles, setUploadedFiles] = useState({})
     const [filesPrintSettings, setFilesPrintSettings] = useState({})
     const [filesSnapshots, setFilesSnapshots] = useState({})
@@ -83,6 +84,11 @@ export const OnDemand = ({ location }) => {
     const [filesSlicedInfo, setFilesSlicedInfo] = useState({})
     const [isCalculating, setIsCalculating] = useState(false)
     // const [isFileLoaded, setFileLoaded] = useState(false);
+
+    const [isModelLoaded, setModelLoaded] = useState(false);
+
+
+    // const debouncedSelectedUuid = React.usede
 
     // * When the first file iss uploaded, this function is being called
     // * from the StepWelcomeFile -> it gets the event(file)
@@ -226,13 +232,26 @@ export const OnDemand = ({ location }) => {
     }
 
     const handleChangeSelectedFile = (uuid) => {
-        if (uuid === selectedUuid) return
-        if (filesPrintSettings[selectedUuid].color) {
-            setTriggerResetViewer(!triggerResetViewer)
-        }
-        setSelectedUuid(uuid)
+        console.log(uuid);
+        console.log(filesPrintSettings)
         setStlViewerColor(colors[filesPrintSettings[uuid].printSettings.color])
+        setSelectedUuid(uuid)
     }
+
+    const debounce = func => {
+        let timer;
+        return function (...args) {
+            console.log(args, func);
+            const context = this;
+            if (timer) clearTimeout(timer);
+            timer = setTimeout(() => {
+                timer = null;
+                func.apply(context, args);
+            }, 300);
+        };
+    };
+
+    const optimised = useCallback(debounce(handleChangeSelectedFile), [filesPrintSettings]);
 
     const onCalculate = async () => {
         setIsLoading(true);
@@ -276,7 +295,7 @@ export const OnDemand = ({ location }) => {
                 ...result,
                 fileName,
                 snapshotURL,
-                copies 
+                copies
             }
         })
 
@@ -285,30 +304,6 @@ export const OnDemand = ({ location }) => {
         setFilesSlicedInfo(slicedInfo)
         setActiveStep(prevActive => prevActive + 1);
         setIsCalculating(false)
-
-        // console.log(errors)
-        // const printSettingsObj = {
-        //     fileId: test.cubeeFileId,
-        //     infillDensity: test.printSettings.infill,
-        //     layerHeight: test.printSettings.resolution,
-        //     materialId: materialIds[test.printSettings.material],
-        //     processType: 'FDM',
-        //     colorId: 10,
-        //     support: test.printSettings.isSupports,
-        //     vaseMode: test.printSettings.isVase,
-        //     currencyCode: 'ILS',
-        // };
-        // const res = await onDemandService.calculateSlicer(printSettingsObj);
-        // if (res.error) {
-        //     setIsLoading(false);
-        //     return notificationHandler.error(
-        //         'אופס, לא הצלחנו לחשב את ההדפסה, נסה שוב'
-        //     );
-        // }
-        // setIsLoading(false);
-        // console.log(res)
-        // setSlicedInfo(res);
-        // setActiveStep(prevActive => prevActive + 1);
     };
 
     const onSubmitPrintOrder = async () => {
@@ -397,6 +392,7 @@ export const OnDemand = ({ location }) => {
                             takeSnapshot={takeSnapshot}
                             isLoading={isLoading}
                             onCalculate={onCalculate}
+                            isModelLoaded={isModelLoaded}
                         />
                         <div className='stl-settings-cont'>
 
@@ -416,6 +412,7 @@ export const OnDemand = ({ location }) => {
                                 setIsLoadedViewer={setIsLoadedViewer}
                                 selectedFile={uploadedFiles[selectedUuid]}
                                 stlViewerColor={stlViewerColor}
+                                setModelLoaded={setModelLoaded}
                             />
                         </div>
                     </>

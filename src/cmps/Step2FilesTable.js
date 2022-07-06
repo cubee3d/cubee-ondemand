@@ -4,10 +4,9 @@ import TableCell from '@mui/material/TableCell';
 import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
-import Paper from '@mui/material/Paper';
 import { useTranslation } from 'react-i18next';
-import { useEffect, useState, useRef } from 'react';
-import { Button, IconButton } from '@mui/material';
+import { useEffect, useRef } from 'react';
+import { IconButton } from '@mui/material';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import { LoadingButton } from '@mui/lab';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
@@ -25,6 +24,7 @@ export const Step2FilesTable = ({ handleChangeSelectedFile,
     takeSnapshot,
     isLoading,
     onCalculate
+    ,isModelLoaded
 }) => {
     const { t } = useTranslation(["step2"])
     const hiddenFileInput = useRef(null);
@@ -34,6 +34,7 @@ export const Step2FilesTable = ({ handleChangeSelectedFile,
     };
 
     const onChangeSelectedFile = (uuid) => {
+        if (!isModelLoaded) return;
         handleChangeSelectedFile(uuid)
     }
 
@@ -61,13 +62,6 @@ export const Step2FilesTable = ({ handleChangeSelectedFile,
         }
     }, [isLoadedViewer])
 
-    // useEffect(() => {
-    //     setTimeout(() => {
-    //         var canvas = document.querySelector("canvas")
-    //         var Pic = canvas?.toDataURL("image/png");
-    //         addSnapshot(selectedUuid, Pic)
-    //     }, 200)
-    // }, [triggerResetViewer])
     if (!selectedUuid) return <></>
     return (
         <>
