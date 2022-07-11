@@ -22,8 +22,8 @@ export const Step3OrderDetails = ({
     filesSlicedInfo,
     onPrevStep,
     onSubmitPrintOrder,
+    isLoading
 }) => {
-    const [isLoading, setIsLoading] = useState(false);
     const { language } = useContext(LanguageContext);
     const { t } = useTranslation(['step3']);
     const [orderComment, setOrderComment] = useState('');
@@ -95,7 +95,7 @@ export const Step3OrderDetails = ({
                                 <TableCell align="center">
                                     <img
                                         className="model-img"
-                                        src={file.snapshotURL || null}
+                                        src={file.snapshotURL}
                                         style={{
                                             width: 70,
                                             height: 70,
@@ -185,15 +185,9 @@ export const Step3OrderDetails = ({
                 >
                     {t('send_for_confirm')}
                 </LoadingButton>
-                <a target="_blank" href="https://wa.me/972737433201">
-                    <Button
-                        variant="outlined"
-                        color="blue"
-                        endIcon={<WhatsAppIcon />}
-                    >
-                        {t('contact')}
-                    </Button>
-                </a>
+                <div className='btn-placeholder'>
+
+                </div>
             </div>
         </>
     );

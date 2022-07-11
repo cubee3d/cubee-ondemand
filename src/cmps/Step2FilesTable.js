@@ -39,7 +39,6 @@ export const Step2FilesTable = ({
     };
 
     const onRemoveFile = uuid => {
-        console.log(uuid);
         handleRemoveFile(uuid);
     };
 
@@ -178,14 +177,14 @@ export const Step2FilesTable = ({
                     variant="contained"
                     color="warn"
                     onClick={handleFileSelect}
-                    loading={isLoading}
+                    loading={!(isLoading || isModelLoaded)}
                 >
                     {t('upload_file')}
                 </LoadingButton>
                 <LoadingButton
                     variant="contained"
                     color="warn"
-                    loading={isLoading}
+                    loading={!(isLoading || isModelLoaded)}
                     endIcon={<ThreeDRotationIcon />}
                     onClick={onCalculate}
                     loadingPosition="center"

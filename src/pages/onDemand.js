@@ -38,7 +38,6 @@ export const OnDemand = ({ location }) => {
     const [stlViewerColor, setStlViewerColor] = useState(
         colors[initialPrintSettings.color]
     );
-    const [orderId, setOrderId] = useState(null);
 
     const style = {
         top: 0,
@@ -60,13 +59,22 @@ export const OnDemand = ({ location }) => {
     const [isModelLoaded, setModelLoaded] = useState(false);
 
     useEffect(() => {
-        const searchQuery = new URLSearchParams(location.search);
-        if (searchQuery.get('k')) {
-            setApiKey(searchQuery.get('k'));
-        } else {
-            notificationHandler.warning(t('noApikey'));
-        }
+        window.parent.postMessage({ handshake: '1' }, '*');
+        window.addEventListener('message', event => {
+            event.stopPropagation()
+            if (event.data.handshake) {
+                setApiKey(event.data.handshake.apiKey)
+
+                //IN DEV LOCALHOST
+                setApiKey(event.data.handshake)
+            }
+            else if(event.data.isLoading){
+                setIsLoading(true)
+            }
+        })
     }, []);
+
+
 
     // * When the first file iss uploaded, this function is being called
     const onFirstFileSelect = async event => {
@@ -255,6 +263,7 @@ export const OnDemand = ({ location }) => {
             return {
                 ...result,
                 fileName,
+                uuid: currentUuid,
                 snapshotURL,
                 copies,
             };
@@ -266,34 +275,36 @@ export const OnDemand = ({ location }) => {
     };
 
     const onSubmitPrintOrder = async () => {
-        window.parent.postMessage({array: filesSlicedInfo}, '*');
-
-        // return window.location.href = `https://promaker.co.il/cart/?add-to-cart=4232&quantity=${Math.ceil(slicedInfo.price)}`;
-        // const isFormFilled = Object.values(contactForm).every(field => field);
-        // if (!isFormFilled)
-        //     return notificationHandler.warning('יש למלא את כל השדות');
-        // if (!phoneNumberValidation(contactForm.phoneNumber))
-        //     return notificationHandler.warning('יש להזין מספר טלפון נייד תקין');
-        // if (!emailValidation(contactForm.email))
-        //     return notificationHandler.warning('יש להזין מייל תקין');
-        // setIsLoading(true);
-        // const res = await onDemandService.submitPrintOrder({
-        //     calculated: { ...slicedInfo },
-        //     settings: { ...printSettings },
-        //     fileId: cubeeFileIdName.fileId,
-        // });
-        // if (res.error) {
-        //     notificationHandler.error('לא הצלחנו לבצע את ההזמנה, נסה שוב');
-        //     setIsLoading(false);
-        // }
-        // setOrderId(res.orderId);
+        let modelsDataArray = []
+        modelsDataArray = filesSlicedInfo.map(model => {
+            let printTime = ''
+            printTime = Math.floor(model.printTime) > 0 ? Math.floor(model.printTime) : ''
+            Math.floor(model.printTime) > 0 ? printTime += " Hours, " : printTime=printTime
+            printTime += Math.floor(Number((model.printTime - Math.floor(model.printTime)).toFixed(2)) * 60)
+            printTime += " Minutes"
+            return {
+                ...model,
+                printTime,
+                price: Math.ceil(model.price),
+                color: filesPrintSettings[model.uuid].printSettings.color,
+                material: filesPrintSettings[model.uuid].printSettings.material,
+                layerHeight: filesPrintSettings[model.uuid].printSettings.resolution,
+                isVase: filesPrintSettings[model.uuid].printSettings.isVase? 'Yes' : 'No',
+                isSupports: filesPrintSettings[model.uuid].printSettings.isSupports? 'Yes' : 'No',
+                infill: filesPrintSettings[model.uuid].printSettings.infill,
+                downloadURL: `${process.env.REACT_APP_DOWNLOAD_BASE_URL}${model.fileId}`,
+                snapshotURL: null
+            }
+        })
+        window.parent.postMessage({
+            onAddToCart: {
+                models: modelsDataArray
+            }
+        }, '*');
     };
 
     const onPrevStep = () => {
         setActiveStep(prevActive => prevActive - 1);
-        // document.querySelector('canvas').width = style.numWidth; //.style= {border: '5px solid black'}
-        // document.querySelector('canvas').height = style.numHeight; //.style= {border: '5px solid black'}
-        // document.querySelector('canvas').style = {};
     };
 
     const toggleLang = ({ target }) => {
@@ -396,6 +407,7 @@ export const OnDemand = ({ location }) => {
                         filesSlicedInfo={filesSlicedInfo}
                         onPrevStep={onPrevStep}
                         onSubmitPrintOrder={onSubmitPrintOrder}
+                        isLoading={isLoading}
                     />
                 );
         }
@@ -403,7 +415,6 @@ export const OnDemand = ({ location }) => {
 
     return (
         <>
-            {!orderId ? (
                 <div>
                     <div
                         style={{ display: 'flex' }}
@@ -456,13 +467,6 @@ export const OnDemand = ({ location }) => {
                     </div>
                     <div className="onDemand-step">{renderStep()}</div>
                 </div>
-            ) : (
-                <div className="print-order-submitted">
-                    <h1>קיבלנו את ההזמנה שלך #{orderId}</h1>
-                    <h2>תודה שבחרת בנו לביצוע ההדפסה</h2>
-                    <h3>נחזור אליך ממש בקרוב :)</h3>
-                </div>
-            )}
         </>
     );
 };
