@@ -13,8 +13,11 @@
     "EPriceT": "מחיר משוער ל-",
     "units": "יחידות",
     "change_settings": "רוצה לשנות הגדרות?",
-    "send_for_confirm": "שלח לחנות לאישור",
+    "send_for_confirm": "הוסף לעגלה",
     "contact": "צור קשר בוואטסאפ",
     "image": "תמונה",
-    "total": "סך הכל"
+    "total": "סך הכל",
+    "ILS": "₪",
+    "USD": "$",
+    "EUR": "€"
 }

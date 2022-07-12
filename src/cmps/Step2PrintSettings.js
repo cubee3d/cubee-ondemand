@@ -2,9 +2,7 @@ import { useState, useContext } from 'react';
 import { Button, Tooltip, Typography, Popover, TextField } from '@mui/material';
 import LiveHelpIcon from '@mui/icons-material/LiveHelp';
 import {
-    materials,
     popovers,
-    colors,
     initialPrintSettings,
     prettoSliderSettings,
     infillMarks,
@@ -25,12 +23,13 @@ export const Step2PrintSettings = ({
     setStlViewerColor,
     updateFilesPrintSettings,
     fileName,
+    materials,
+    colors,
 }) => {
     const { language } = useContext(LanguageContext);
     const { t } = useTranslation(['step2']);
     const [anchorEl, setAnchorEl] = useState(null);
     const [popoverContent, setPopoverContent] = useState('');
-
     const handlePopoverOpen = event => {
         setPopoverContent(popovers[language.lang][event.target.id]);
         setAnchorEl(event.currentTarget);
@@ -185,42 +184,44 @@ export const Step2PrintSettings = ({
                         color="blue"
                     />
                 </div>
-                <div className="setting">
-                    <h3>{t('color')}</h3>
-                    <div className="colors">
-                        {Object.values(colors).map((hexColor, idx) => {
-                            return (
-                                <Tooltip
-                                    key={idx}
-                                    title={Object.keys(colors)[idx]}
-                                    arrow
-                                >
-                                    <div
-                                        className={
-                                            Object.keys(colors)[idx] ==
-                                            printSettings.color
-                                                ? 'color-box active'
-                                                : 'color-box'
-                                        }
-                                        style={{
-                                            backgroundColor: hexColor,
-                                            boxShadow:
+                {Object.keys(colors).length && (
+                    <div className="setting">
+                        <h3>{t('color')}</h3>
+                        <div className="colors">
+                            {Object.values(colors).map((hexColor, idx) => {
+                                return (
+                                    <Tooltip
+                                        key={idx}
+                                        title={Object.keys(colors)[idx]}
+                                        arrow
+                                    >
+                                        <div
+                                            className={
                                                 Object.keys(colors)[idx] ==
                                                 printSettings.color
-                                                    ? `0px 0px 10px 2px ${hexColor}`
-                                                    : '0px 0px 0px 0px',
-                                        }}
-                                        onClick={() =>
-                                            onChangeColor(
-                                                Object.keys(colors)[idx]
-                                            )
-                                        }
-                                    />
-                                </Tooltip>
-                            );
-                        })}
+                                                    ? 'color-box active'
+                                                    : 'color-box'
+                                            }
+                                            style={{
+                                                backgroundColor: hexColor,
+                                                boxShadow:
+                                                    Object.keys(colors)[idx] ==
+                                                    printSettings.color
+                                                        ? `0px 0px 10px 2px ${hexColor}`
+                                                        : '0px 0px 0px 0px',
+                                            }}
+                                            onClick={() =>
+                                                onChangeColor(
+                                                    Object.keys(colors)[idx]
+                                                )
+                                            }
+                                        />
+                                    </Tooltip>
+                                );
+                            })}
+                        </div>
                     </div>
-                </div>
+                )}
                 <div className="setting">
                     <div className="switch-cont">
                         <Switch

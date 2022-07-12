@@ -52,7 +52,7 @@ th {
 th {
     font-weight: 800 !important;
 }
-.model-img {
+.model-img-ptr {
     cursor: pointer;
 }
 .cta-btns-cont {
@@ -60,6 +60,9 @@ th {
     justify-content: space-between;
     width: 70%;
     button {
+        width: 240px;
+    }
+    .btn-placeholder {
         width: 240px;
     }
 }
@@ -158,6 +161,9 @@ th {
                 .options {
                     display: flex;
                     gap: 10px;
+                    flex-wrap: wrap;
+                    align-items: center;
+                    justify-content: center;
                     .mat-btn {
                         color: $clr4;
                     }
@@ -168,6 +174,7 @@ th {
                 .colors {
                     display: flex;
                     gap: 5px;
+                    flex-wrap: wrap;
                     .color-box {
                         width: 30px;
                         height: 30px;

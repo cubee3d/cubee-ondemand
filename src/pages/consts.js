@@ -84,6 +84,7 @@ export const colors = {
     כתום: '#ff9800',
     חום: '#795548',
     אפור: '#607d8b',
+    'לא משנה': '#626262',
     כסף: '#919191',
     זהב: '#ffab0f',
 };
@@ -92,15 +93,125 @@ export const initialPrintSettings = {
     material: 'PLA',
     infill: 20,
     resolution: 0.2,
-    color: 'אפור',
+    color: 'לא משנה',
     isSupports: false,
     isVase: false,
     copies: 1,
 };
 
+export const materialsMap = {
+    12: 'ABS',
+    13: 'PLA',
+    1170: 'TPU',
+    1171: 'PETG',
+    1172: 'Nylon',
+    1173: 'Resin',
+    1174: 'High Temp Resin',
+    1175: 'Flexible Resin',
+    57012: 'Polycarbonate',
+};
+
+export const colorsMap = {
+    3: {
+        heb: 'אדום',
+        en: 'Red',
+        hexCode: '#f44336',
+    },
+    4: {
+        heb: 'לבן',
+        en: 'White',
+        hexCode: '#ffffff',
+    },
+    5: {
+        heb: 'כחול',
+        en: 'Blue',
+        hexCode: '#2410de',
+    },
+    6: {
+        heb: 'צהוב',
+        en: 'Yellow',
+        hexCode: '#ffeb3b',
+    },
+    7: {
+        heb: 'סגול',
+        en: 'Purple',
+        hexCode: '#9c27b0',
+    },
+    8: {
+        heb: 'שחור',
+        en: 'Black',
+        hexCode: '#1a1918',
+    },
+    9: {
+        heb: 'כתום',
+        en: 'Orange',
+        hexCode: '#ff9800',
+    },
+    10: {
+        heb: 'לא משנה',
+        en: 'Any',
+        hexCode: '#626262',
+    },
+    11: {
+        heb: 'ירוק',
+        en: 'Green',
+        hexCode: '#8bc34a',
+    },
+    228: {
+        heb: 'אפור',
+        en: 'Gray',
+        hexCode: '#607d8b',
+    },
+    16253: {
+        heb: 'כחול כהה',
+        en: 'Dark Blue',
+        hexCode: '#000099',
+    },
+    16254: {
+        heb: 'נחושת',
+        en: 'Brass',
+        hexCode: '#b87333',
+    },
+    16255: {
+        heb: 'ורוד',
+        en: 'Pink',
+        hexCode: '#fb87ff',
+    },
+    16256: {
+        heb: "מג'נטה",
+        en: 'Magenta',
+        hexCode: '#ff00ff',
+    },
+    16257: {
+        heb: 'חום',
+        en: 'Brown',
+        hexCode: '#795548',
+    },
+    16258: {
+        heb: 'שקוף',
+        en: 'Transparent',
+        hexCode: '#505050',
+    },
+    16259: {
+        heb: 'ציאן',
+        en: 'Cyan',
+        hexCode: '#00ffff',
+    },
+    1111111: {
+        heb: 'זהב',
+        en: 'Gold',
+        hexCode: '#FFD700',
+    },
+    1111111: {
+        heb: 'כסף',
+        en: 'Silver',
+        hexCode: '#C0C0C0',
+    },
+};
+
 // export const steps = ['העלאת קובץ להדפסה', 'הגדרות הדפסה', 'שלח לאישור'];
 export const steps = ['Upload 3D File', 'Print Settings', 'Confirm & Send'];
-export const materials = ['ABS', 'PLA', 'PETG', 'NYLON', 'TPU'];
+export const materials = ['ABS', 'PLA', 'PETG', 'TPU'];
 export const popovers = {
     heb: {
         material:
