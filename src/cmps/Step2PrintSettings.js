@@ -28,16 +28,6 @@ export const Step2PrintSettings = ({
 }) => {
     const { language } = useContext(LanguageContext);
     const { t } = useTranslation(['step2']);
-    const [anchorEl, setAnchorEl] = useState(null);
-    const [popoverContent, setPopoverContent] = useState('');
-    const handlePopoverOpen = event => {
-        setPopoverContent(popovers[language.lang][event.target.id]);
-        setAnchorEl(event.currentTarget);
-    };
-    const handlePopoverClose = () => {
-        setAnchorEl(null);
-    };
-    const isPopoverOpen = Boolean(anchorEl);
 
     const handleChangeMaterial = material => {
         updateFilesPrintSettings(currentUuid, {
@@ -112,12 +102,11 @@ export const Step2PrintSettings = ({
                 <div className="setting">
                     <div className="title-question-cont">
                         <h3>{t('material')}</h3>
+                        <Tooltip fontSize='large' arrow placement='top' title={popovers[language.lang].material}>
                         <LiveHelpIcon
                             fontSize="small"
-                            id="material"
-                            onMouseEnter={handlePopoverOpen}
-                            onMouseLeave={handlePopoverClose}
                         />
+                        </Tooltip>
                     </div>
                     <div className="options">
                         {materials.map(material => {
@@ -148,12 +137,11 @@ export const Step2PrintSettings = ({
                 <div className="setting">
                     <div className="title-question-cont">
                         <h3>{t('infill')}</h3>
+                        <Tooltip fontSize='large' arrow placement='top' title={popovers[language.lang].infill}>
                         <LiveHelpIcon
                             fontSize="small"
-                            id="infill"
-                            onMouseEnter={handlePopoverOpen}
-                            onMouseLeave={handlePopoverClose}
                         />
+                        </Tooltip>
                     </div>
                     <PrettoSlider
                         valueLabelDisplay="auto"
@@ -165,12 +153,11 @@ export const Step2PrintSettings = ({
                 <div className="setting">
                     <div className="title-question-cont">
                         <h3>{t('res')}</h3>
+                        <Tooltip fontSize='large' arrow placement='top' title={popovers[language.lang].res}>
                         <LiveHelpIcon
                             fontSize="small"
-                            id="res"
-                            onMouseEnter={handlePopoverOpen}
-                            onMouseLeave={handlePopoverClose}
                         />
+                        </Tooltip>
                     </div>
                     <PrettoSlider
                         valueLabelDisplay="auto"
@@ -230,12 +217,11 @@ export const Step2PrintSettings = ({
                             onChange={handleChangeSupports}
                         />
                         <h3 className="inline">{t('add_supports')}</h3>
+                        <Tooltip fontSize='large' arrow placement='top' title={popovers[language.lang].support}>
                         <LiveHelpIcon
                             fontSize="small"
-                            id="support"
-                            onMouseEnter={handlePopoverOpen}
-                            onMouseLeave={handlePopoverClose}
                         />
+                        </Tooltip>
                     </div>
                 </div>
                 <div className="setting">
@@ -246,12 +232,11 @@ export const Step2PrintSettings = ({
                             onChange={handleChangeVase}
                         />
                         <h3 className="inline">{t('vase_mode')}</h3>
+                        <Tooltip fontSize='large' arrow placement='top' title={popovers[language.lang].vase}>
                         <LiveHelpIcon
                             fontSize="small"
-                            id="vase"
-                            onMouseEnter={handlePopoverOpen}
-                            onMouseLeave={handlePopoverClose}
                         />
+                        </Tooltip>
                     </div>
                 </div>
                 <div className="setting">
@@ -282,27 +267,6 @@ export const Step2PrintSettings = ({
                     </Button>
                 </div>
             </div>
-            <Popover
-                id="mouse-over-popover"
-                sx={{
-                    pointerEvents: 'none',
-                }}
-                color="cubee"
-                open={isPopoverOpen}
-                anchorEl={anchorEl}
-                anchorOrigin={{
-                    vertical: 'bottom',
-                    horizontal: 'left',
-                }}
-                transformOrigin={{
-                    vertical: 'top',
-                    horizontal: 'right',
-                }}
-                onClose={handlePopoverClose}
-                disableRestoreFocus
-            >
-                <Typography sx={{ p: 1 }}>{popoverContent}</Typography>
-            </Popover>
         </>
     );
 };
