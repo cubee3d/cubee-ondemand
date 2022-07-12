@@ -154,6 +154,11 @@ export const OnDemand = ({ location }) => {
     };
 
     const onAddFile = async file => {
+        if (!checkColorValidity()) {
+            setIsCalculating(false);
+            setIsLoading(false);
+            return notificationHandler.error(t('selectColor'));
+        }
         handleNewFileUpload(file);
     };
 
