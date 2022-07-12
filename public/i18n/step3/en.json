@@ -13,8 +13,11 @@
     "EPriceT": "Estimated Price for ",
     "units": "units",
     "change_settings": "Change Settings",
-    "send_for_confirm": "Send For Confirmation",
+    "send_for_confirm": "Add To Cart",
     "contact": "Contact Via Whatsapp",
     "image": "Image",
-    "total": "Total"
+    "total": "Total",
+    "ILS": "₪",
+    "USD": "$",
+    "EUR": "€"
 }

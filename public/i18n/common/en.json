@@ -6,5 +6,7 @@
     "desktopOnlyP": "Please open in PC or Laptop in order to use the app",
     "noApikey": "API Key is required for this app",
     "only3DFiles": "Only 3D Files (STL,OBJ,3MF)",
-    "serverError": "Oops, there was a problem. Try again"
+    "serverError": "Oops, there was a problem. Try again",
+    "selectColor": "Please choose a color from the list",
+    "cantcalc": "We couldn't calculate, "
 }

@@ -7,7 +7,14 @@ import StepLabel from '@mui/material/StepLabel';
 import { SnackbarHandlerContext } from '../contexts/SnackbarHandlerContext';
 import { LanguageContext } from '../contexts/LanguageContext';
 import onDemandService from '../services/onDemandService';
-import { steps, initialPrintSettings, colors, materialIds } from './consts';
+import {
+    steps,
+    initialPrintSettings,
+    colors,
+    materialIds,
+    colorsMap,
+    materialsMap,
+} from './consts';
 import { StepWelcomeFile } from '../cmps/StepWelcomeFile';
 import { Step2PrintSettings } from '../cmps/Step2PrintSettings';
 import { Step3OrderDetails } from '../cmps/Step3OrderDetails';
@@ -25,28 +32,14 @@ import { generateUuid } from '../services/utils';
 export const OnDemand = ({ location }) => {
     const { t } = useTranslation(['common']);
     const [apiKey, setApiKey] = useState(null);
+    const [currencyCode, setCurrencyCode] = useState('ILS');
     const { language, setLanguage } = useContext(LanguageContext);
     const notificationHandler = useContext(SnackbarHandlerContext);
 
     const [activeStep, setActiveStep] = useState(0);
-    const [contactForm, setContactForm] = useState({
-        name: '',
-        phoneNumber: '',
-        email: '',
-    });
-    const [printSettings, setPrintSettings] = useState(initialPrintSettings);
     const [stlViewerColor, setStlViewerColor] = useState(
         colors[initialPrintSettings.color]
     );
-
-    const style = {
-        top: 0,
-        left: 0,
-        width: '600px',
-        height: '650px',
-        numWidth: 600,
-        numHeight: 650,
-    };
 
     const [isLoading, setIsLoading] = useState(false);
     const [selectedUuid, setSelectedUuid] = useState(null);
@@ -57,26 +50,69 @@ export const OnDemand = ({ location }) => {
     const [filesSlicedInfo, setFilesSlicedInfo] = useState({});
     const [isCalculating, setIsCalculating] = useState(false);
     const [isModelLoaded, setModelLoaded] = useState(false);
+    const [shopOptions, setShopOptions] = useState({});
 
     useEffect(() => {
         window.parent.postMessage({ handshake: '1' }, '*');
         window.addEventListener('message', event => {
-            event.stopPropagation()
+            event.stopPropagation();
             if (event.data.handshake) {
-                setApiKey(event.data.handshake.apiKey)
-
-                //IN DEV LOCALHOST
-                setApiKey(event.data.handshake)
+                if (event.data.handshake.apiKey) {
+                    setApiKey(event.data.handshake.apiKey);
+                    const getShopOptions = async () => {
+                        let res = await onDemandService.getShopOptions(
+                            event.data.handshake.apiKey
+                        );
+                        if (res.error)
+                            return notificationHandler.error(t('serverError'));
+                        const MaterialsColors = Object.keys(
+                            res.colorIdsByMaterialId
+                        );
+                        res.materialIdsByProcessType.FDM =
+                            res.materialIdsByProcessType.FDM.filter(
+                                material => {
+                                    return MaterialsColors.includes(
+                                        material.toString()
+                                    );
+                                }
+                            );
+                        setShopOptions(res);
+                    };
+                    getShopOptions();
+                }
+                if (event.data.handshake.currencyCode) {
+                    setCurrencyCode(event.data.handshake.currencyCode);
+                }
+            } else if (event.data.isLoading) {
+                setIsLoading(true);
             }
-            else if(event.data.isLoading){
-                setIsLoading(true)
+        });
+        if (process.env.REACT_APP_ENV === 'staging') {
+            if (!apiKey) {
+                setApiKey(process.env.REACT_APP_API_KEY_DEMO);
+                const getShopOptions = async () => {
+                    const res = await onDemandService.getShopOptions(
+                        process.env.REACT_APP_API_KEY_DEMO
+                    );
+                    if (res.error)
+                        return notificationHandler.error(t('serverError'));
+                    const MaterialsColors = Object.keys(
+                        res.colorIdsByMaterialId
+                    );
+                    res.materialIdsByProcessType.FDM =
+                        res.materialIdsByProcessType.FDM.filter(material => {
+                            return MaterialsColors.includes(
+                                material.toString()
+                            );
+                        });
+                    setShopOptions(res);
+                };
+                getShopOptions();
             }
-        })
+        }
     }, []);
 
-
-
-    // * When the first file iss uploaded, this function is being called
+    // * When the first file is uploaded, this function is being called
     const onFirstFileSelect = async event => {
         event.persist();
         const isSuccess = await handleNewFileUpload(event.target.files[0]);
@@ -214,6 +250,11 @@ export const OnDemand = ({ location }) => {
     };
 
     const handleChangeSelectedFile = uuid => {
+        if (!checkColorValidity()) {
+            setIsCalculating(false);
+            setIsLoading(false);
+            return notificationHandler.error(t('selectColor'));
+        }
         setStlViewerColor(colors[filesPrintSettings[uuid].printSettings.color]);
         setSelectedUuid(uuid);
     };
@@ -221,6 +262,11 @@ export const OnDemand = ({ location }) => {
     const onCalculate = async () => {
         setIsLoading(true);
         setIsCalculating(true);
+        if (!checkColorValidity()) {
+            setIsCalculating(false);
+            setIsLoading(false);
+            return notificationHandler.error(t('selectColor'));
+        }
         const queries = Object.values(filesPrintSettings).map(file => {
             return {
                 fileId: file.cubeeFileId,
@@ -231,13 +277,13 @@ export const OnDemand = ({ location }) => {
                 colorId: 10,
                 support: file.printSettings.isSupports,
                 vaseMode: file.printSettings.isVase,
-                currencyCode: 'ILS',
+                currencyCode,
             };
         });
         const sleep = ms => new Promise(r => setTimeout(r, ms));
         await sleep(1000);
         const results = await Promise.all(
-            queries.map(onDemandService.calculateSlicer)
+            queries.map(query => onDemandService.calculateSlicer(query, apiKey))
         );
         const errors = results.filter(result => {
             if (result.error) return result;
@@ -246,7 +292,7 @@ export const OnDemand = ({ location }) => {
             setIsCalculating(false);
             setIsLoading(false);
             return notificationHandler.error(
-                `לא הצלחנו לחשב, ${errors[0].error.message.message}`
+                `${t('cantcalc')}${errors[0].error.message.message}`
             );
         }
 
@@ -275,32 +321,50 @@ export const OnDemand = ({ location }) => {
     };
 
     const onSubmitPrintOrder = async () => {
-        let modelsDataArray = []
+        let modelsDataArray = [];
         modelsDataArray = filesSlicedInfo.map(model => {
-            let printTime = ''
-            printTime = Math.floor(model.printTime) > 0 ? Math.floor(model.printTime) : ''
-            Math.floor(model.printTime) > 0 ? printTime += " Hours, " : printTime=printTime
-            printTime += Math.floor(Number((model.printTime - Math.floor(model.printTime)).toFixed(2)) * 60)
-            printTime += " Minutes"
+            let printTime = '';
+            printTime =
+                Math.floor(model.printTime) > 0
+                    ? Math.floor(model.printTime)
+                    : '';
+            Math.floor(model.printTime) > 0
+                ? (printTime += ' Hours, ')
+                : (printTime = printTime);
+            printTime += Math.floor(
+                Number(
+                    (model.printTime - Math.floor(model.printTime)).toFixed(2)
+                ) * 60
+            );
+            printTime += ' Minutes';
             return {
                 ...model,
                 printTime,
                 price: Math.ceil(model.price),
                 color: filesPrintSettings[model.uuid].printSettings.color,
                 material: filesPrintSettings[model.uuid].printSettings.material,
-                layerHeight: filesPrintSettings[model.uuid].printSettings.resolution,
-                isVase: filesPrintSettings[model.uuid].printSettings.isVase? 'Yes' : 'No',
-                isSupports: filesPrintSettings[model.uuid].printSettings.isSupports? 'Yes' : 'No',
+                layerHeight:
+                    filesPrintSettings[model.uuid].printSettings.resolution,
+                isVase: filesPrintSettings[model.uuid].printSettings.isVase
+                    ? 'Yes'
+                    : 'No',
+                isSupports: filesPrintSettings[model.uuid].printSettings
+                    .isSupports
+                    ? 'Yes'
+                    : 'No',
                 infill: filesPrintSettings[model.uuid].printSettings.infill,
                 downloadURL: `${process.env.REACT_APP_DOWNLOAD_BASE_URL}${model.fileId}`,
-                snapshotURL: null
-            }
-        })
-        window.parent.postMessage({
-            onAddToCart: {
-                models: modelsDataArray
-            }
-        }, '*');
+                snapshotURL: null,
+            };
+        });
+        window.parent.postMessage(
+            {
+                onAddToCart: {
+                    models: modelsDataArray,
+                },
+            },
+            '*'
+        );
     };
 
     const onPrevStep = () => {
@@ -324,6 +388,34 @@ export const OnDemand = ({ location }) => {
             });
             document.querySelector('.content').classList.remove('ltr-body');
         }
+    };
+
+    const checkColorValidity = () => {
+        const availableColors = getRelevantColors(
+            filesPrintSettings[selectedUuid].printSettings.material
+        );
+        if (
+            !availableColors[
+                filesPrintSettings[selectedUuid].printSettings.color
+            ]
+        )
+            return false;
+        return true;
+    };
+
+    const getRelevantColors = selectedMaterial => {
+        const materialId = Object.keys(materialsMap).find(
+            key => materialsMap[key] === selectedMaterial
+        );
+        const colorsIds = shopOptions.colorIdsByMaterialId[materialId];
+        if (!colorsIds) return {};
+        let availableColors = {};
+        colorsIds.forEach(colorId => {
+            availableColors[colorsMap[colorId][language.lang]] =
+                colorsMap[colorId].hexCode;
+        });
+        availableColors[colorsMap[10][language.lang]] = colorsMap[10].hexCode;
+        return availableColors;
     };
 
     // * For the language Select
@@ -390,6 +482,13 @@ export const OnDemand = ({ location }) => {
                                 fileName={
                                     uploadedFiles[selectedUuid]?.file.name
                                 }
+                                materials={shopOptions.materialIdsByProcessType.FDM.map(
+                                    material => materialsMap[material]
+                                )}
+                                colors={getRelevantColors(
+                                    filesPrintSettings[selectedUuid]
+                                        .printSettings.material
+                                )}
                             />
                             <Step2STLViewer
                                 isLoadedViewer={isLoadedViewer}
@@ -408,6 +507,7 @@ export const OnDemand = ({ location }) => {
                         onPrevStep={onPrevStep}
                         onSubmitPrintOrder={onSubmitPrintOrder}
                         isLoading={isLoading}
+                        currencyCode={currencyCode}
                     />
                 );
         }
@@ -415,58 +515,55 @@ export const OnDemand = ({ location }) => {
 
     return (
         <>
-                <div>
-                    <div
-                        style={{ display: 'flex' }}
-                        className="stepper-language"
+            <div>
+                <div style={{ display: 'flex' }} className="stepper-language">
+                    <Stepper
+                        activeStep={activeStep}
+                        dir={language.dir}
+                        className="onDemand-stepper"
                     >
-                        <Stepper
-                            activeStep={activeStep}
-                            dir={language.dir}
-                            className="onDemand-stepper"
+                        {steps.map((label, index) => {
+                            const stepProps = {};
+                            const labelProps = {};
+                            return (
+                                <Step key={label} {...stepProps}>
+                                    <StepLabel {...labelProps}>
+                                        {t(label)}
+                                    </StepLabel>
+                                </Step>
+                            );
+                        })}
+                    </Stepper>
+                    {/* <Switch defaultChecked onChange={toggleLang} /> */}
+                    <div
+                        style={{
+                            display: 'flex',
+                            flexDirection: 'column',
+                            alignItems: 'center',
+                        }}
+                        className="language-select"
+                    >
+                        <LanguageIcon
+                            onClick={handleOpen}
+                            className="lang-btn"
+                            ref={selectRef}
+                        />
+                        <Select
+                            open={open}
+                            onClose={handleClose}
+                            onOpen={handleOpen}
+                            onChange={toggleLang}
+                            value={language.lang}
+                            anchorEl={selectRef}
+                            color={'blue'}
                         >
-                            {steps.map((label, index) => {
-                                const stepProps = {};
-                                const labelProps = {};
-                                return (
-                                    <Step key={label} {...stepProps}>
-                                        <StepLabel {...labelProps}>
-                                            {t(label)}
-                                        </StepLabel>
-                                    </Step>
-                                );
-                            })}
-                        </Stepper>
-                        {/* <Switch defaultChecked onChange={toggleLang} /> */}
-                        <div
-                            style={{
-                                display: 'flex',
-                                flexDirection: 'column',
-                                alignItems: 'center',
-                            }}
-                            className="language-select"
-                        >
-                            <LanguageIcon
-                                onClick={handleOpen}
-                                className="lang-btn"
-                                ref={selectRef}
-                            />
-                            <Select
-                                open={open}
-                                onClose={handleClose}
-                                onOpen={handleOpen}
-                                onChange={toggleLang}
-                                value={language.lang}
-                                anchorEl={selectRef}
-                                color={'blue'}
-                            >
-                                <MenuItem value={'heb'}>עברית</MenuItem>
-                                <MenuItem value={'en'}>English</MenuItem>
-                            </Select>
-                        </div>
+                            <MenuItem value={'heb'}>עברית</MenuItem>
+                            <MenuItem value={'en'}>English</MenuItem>
+                        </Select>
                     </div>
-                    <div className="onDemand-step">{renderStep()}</div>
                 </div>
+                <div className="onDemand-step">{renderStep()}</div>
+            </div>
         </>
     );
 };

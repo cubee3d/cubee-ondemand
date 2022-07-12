@@ -1,16 +1,13 @@
 /* global StlViewer */
 
-import React, { useEffect, useRef, useState, useContext } from 'react';
-import { Button, Tooltip, TextField } from '@mui/material';
+import React, { useEffect, useState, useContext } from 'react';
+import { Button } from '@mui/material';
 import LoadingButton from '@mui/lab/LoadingButton';
 import ViewInArRoundedIcon from '@mui/icons-material/ViewInArRounded';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
-import WhatsAppIcon from '@mui/icons-material/WhatsApp';
-import { ViewerLoader } from './ViewerLoader';
 import { useTranslation } from 'react-i18next';
 import { LanguageContext } from '../contexts/LanguageContext';
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
-import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
@@ -22,7 +19,8 @@ export const Step3OrderDetails = ({
     filesSlicedInfo,
     onPrevStep,
     onSubmitPrintOrder,
-    isLoading
+    isLoading,
+    currencyCode,
 }) => {
     const { language } = useContext(LanguageContext);
     const { t } = useTranslation(['step3']);
@@ -141,16 +139,19 @@ export const Step3OrderDetails = ({
                                     {file.weight} {t('gram')}
                                 </TableCell>
                                 <TableCell align="center">
-                                    ₪{Math.ceil(file.price)}
+                                    {t(currencyCode)}
+                                    {Math.ceil(file.price)}
                                 </TableCell>
                                 {file.copies > 1 ? (
                                     <TableCell align="center">
-                                        {file.copies} {t('units')}: ₪
+                                        {file.copies} {t('units')}:{' '}
+                                        {t(currencyCode)}
                                         {Math.ceil(file.price) * file.copies}
                                     </TableCell>
                                 ) : (
                                     <TableCell align="center">
-                                        ₪{Math.ceil(file.price)}
+                                        {t(currencyCode)}
+                                        {Math.ceil(file.price)}
                                     </TableCell>
                                 )}
                             </TableRow>
@@ -159,7 +160,8 @@ export const Step3OrderDetails = ({
                 </Table>
             </TableContainer>
             <h2>
-                {t('total')}: ₪{total}
+                {t('total')}: {t(currencyCode)}
+                {total}
             </h2>
             <div className="cta-btns-cont">
                 <Button
@@ -185,9 +187,7 @@ export const Step3OrderDetails = ({
                 >
                     {t('send_for_confirm')}
                 </LoadingButton>
-                <div className='btn-placeholder'>
-
-                </div>
+                <div className="btn-placeholder"></div>
             </div>
         </>
     );

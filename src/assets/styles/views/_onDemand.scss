@@ -62,7 +62,7 @@ th {
     button {
         width: 240px;
     }
-    .btn-placeholder{
+    .btn-placeholder {
         width: 240px;
     }
 }
@@ -161,6 +161,9 @@ th {
                 .options {
                     display: flex;
                     gap: 10px;
+                    flex-wrap: wrap;
+                    align-items: center;
+                    justify-content: center;
                     .mat-btn {
                         color: $clr4;
                     }
@@ -171,6 +174,7 @@ th {
                 .colors {
                     display: flex;
                     gap: 5px;
+                    flex-wrap: wrap;
                     .color-box {
                         width: 30px;
                         height: 30px;

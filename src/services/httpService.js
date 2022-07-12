@@ -22,9 +22,6 @@ export default {
     delete(endpoint, data, token) {
         return ajax(endpoint, 'DELETE', data, token);
     },
-    // postFile(file, apiKey) {
-    //     return ajaxFile(file, apiKey)
-    // }
 };
 
 async function ajax(endpoint, method = 'get', data = null, apiKey = null) {
@@ -35,7 +32,9 @@ async function ajax(endpoint, method = 'get', data = null, apiKey = null) {
             data,
             headers: {
                 // 'x-api-key': 'yPLsXXF6ialkaUbjGy0IRiV0YEVG4EYr',
-                'x-api-key': 'HXREGyX1onfC6d-_Z99EvBzQavgOayET',
+                // 'x-api-key': 'HXREGyX1onfC6d-_Z99EvBzQavgOayET',
+                'x-api-key': apiKey,
+
                 'Access-Control-Allow-Origin': '*',
             },
         });
@@ -69,7 +68,7 @@ async function ajaxFile(endpoint, method = 'get', data = null, apiKey = null) {
             method,
             data: formData,
             headers: {
-                'x-api-key': 'HXREGyX1onfC6d-_Z99EvBzQavgOayET',
+                'x-api-key': apiKey,
                 'Access-Control-Allow-Origin': '*',
                 'Content-Type': 'multipart/form-data',
             },
