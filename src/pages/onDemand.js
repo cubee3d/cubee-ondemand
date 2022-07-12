@@ -65,17 +65,6 @@ export const OnDemand = ({ location }) => {
                         );
                         if (res.error)
                             return notificationHandler.error(t('serverError'));
-                        const MaterialsColors = Object.keys(
-                            res.colorIdsByMaterialId
-                        );
-                        res.materialIdsByProcessType.FDM =
-                            res.materialIdsByProcessType.FDM.filter(
-                                material => {
-                                    return MaterialsColors.includes(
-                                        material.toString()
-                                    );
-                                }
-                            );
                         setShopOptions(res);
                     };
                     getShopOptions();
@@ -96,15 +85,6 @@ export const OnDemand = ({ location }) => {
                     );
                     if (res.error)
                         return notificationHandler.error(t('serverError'));
-                    const MaterialsColors = Object.keys(
-                        res.colorIdsByMaterialId
-                    );
-                    res.materialIdsByProcessType.FDM =
-                        res.materialIdsByProcessType.FDM.filter(material => {
-                            return MaterialsColors.includes(
-                                material.toString()
-                            );
-                        });
                     setShopOptions(res);
                 };
                 getShopOptions();

@@ -102,7 +102,7 @@ export const Step2FilesTable = ({
                                     }
                                 >
                                     <img
-                                        className="model-img"
+                                        className="model-img-ptr"
                                         src={
                                             filesSnapshots[fileObj.uuid]
                                                 ?.snapshotURL || null

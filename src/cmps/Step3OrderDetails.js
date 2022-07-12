@@ -103,7 +103,7 @@ export const Step3OrderDetails = ({
                                         }}
                                     />{' '}
                                 </TableCell>
-                                {file.fileName < 21 ? (
+                                {file.fileName.length < 21 ? (
                                     <TableCell align="center">
                                         {file.fileName}
                                     </TableCell>
