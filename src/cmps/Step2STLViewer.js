@@ -5,15 +5,7 @@ import { useState, useRef, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ViewerLoader } from './ViewerLoader';
 
-const style = {
-    top: 0,
-    left: 0,
-    width: '600px',
-    height: '600px',
-    numWidth: 600,
-    numHeight: 600,
-    marginTop: 10,
-};
+
 
 export const Step2STLViewer = ({
     selectedFile,
@@ -21,11 +13,28 @@ export const Step2STLViewer = ({
     isLoadedViewer,
     setIsLoadedViewer,
     setModelLoaded,
+    isDesktop
 }) => {
     const { t } = useTranslation(['step2']);
     const [stlViewer, setStlViewer] = useState(null);
     const [initialCamera, setInitialCamera] = useState(null);
     const [isAnimating, setIsAnimating] = useState(true);
+    let style= {
+        top: 0,
+        left: 0,
+        width: '600px',
+        height: '600px',
+        numWidth: 600,
+        numHeight: 600,
+        marginTop: 10,
+    }
+    if (!isDesktop) style = {
+        ...style,
+        width: '300px',
+        height: '300px',
+        numWidth: 300,
+        numHeight: 300
+    }
     const divRef = useRef(null);
 
     const resetCamera = () => {
@@ -36,14 +45,14 @@ export const Step2STLViewer = ({
         isAnimating
             ? stlViewer.animate_model(1, { animation: null })
             : stlViewer.animate_model(1, {
-                  delta: {
-                      rotationx: 1,
-                      rotationy: 1.1,
-                      rotationz: 1.2,
-                      msec: 8000,
-                      loop: true,
-                  },
-              });
+                delta: {
+                    rotationx: 1,
+                    rotationy: 1.1,
+                    rotationz: 1.2,
+                    msec: 8000,
+                    loop: true,
+                },
+            });
         setIsAnimating(!isAnimating);
     };
 
