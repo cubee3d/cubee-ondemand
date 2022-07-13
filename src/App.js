@@ -1,17 +1,14 @@
-import { useState, useContext, useEffect, Suspense } from 'react';
-import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
+import {Suspense, useEffect, useState} from 'react';
 import Snackbar from '@mui/material/Snackbar';
-import { createTheme, ThemeProvider } from '@mui/material/styles';
-import { SnackbarHandlerContext } from './contexts/SnackbarHandlerContext';
-import { SnackbarContext } from './contexts/SnackbarContext';
+import {createTheme, ThemeProvider} from '@mui/material/styles';
+import {SnackbarHandlerContext} from './contexts/SnackbarHandlerContext';
+import {SnackbarContext} from './contexts/SnackbarContext';
 import Alert from '@mui/material/Alert';
 import Slide from '@mui/material/Slide';
-import { OnDemand } from './pages/onDemand';
-import Lottie from 'lottie-react';
-import desktop from './assets/images/desktop.json';
+import {OnDemand} from './pages/onDemand';
 import i18n from './i18n/i18n';
-import { LanguageContext } from './contexts/LanguageContext';
-import { useTranslation } from 'react-i18next';
+import {LanguageContext} from './contexts/LanguageContext';
+import {useTranslation} from 'react-i18next';
 
 const theme = createTheme({
     components: {

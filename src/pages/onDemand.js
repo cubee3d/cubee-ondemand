@@ -270,9 +270,9 @@ export const OnDemand = ({ isDesktop }) => {
             queries.map(query => onDemandService.calculateSlicer(query, apiKey))
         );
         const errors = results.filter(result => {
-            if (result.error) return true;
-            return false;
+            return !!result.error;
         });
+
         if (errors.length) {
             setIsCalculating(false);
             setIsLoading(false);
@@ -308,14 +308,14 @@ export const OnDemand = ({ isDesktop }) => {
     const onSubmitPrintOrder = async () => {
         let modelsDataArray = [];
         modelsDataArray = filesSlicedInfo.map(model => {
-            let printTime = '';
+            let printTime;
             printTime =
                 Math.floor(model.printTime) > 0
                     ? Math.floor(model.printTime)
                     : '';
             Math.floor(model.printTime) > 0
                 ? (printTime += t('hours'))
-                : (printTime = printTime);
+                : (printTime);
             printTime += Math.floor(
                 Number(
                     (model.printTime - Math.floor(model.printTime)).toFixed(2)
@@ -364,7 +364,6 @@ export const OnDemand = ({ isDesktop }) => {
                 dir: 'ltr',
             });
             document.querySelector('.content').classList.add('ltr-body');
-            return;
         } else {
             i18n.changeLanguage('heb');
             setLanguage({
@@ -379,13 +378,7 @@ export const OnDemand = ({ isDesktop }) => {
         const availableColors = getRelevantColors(
             filesPrintSettings[selectedUuid].printSettings.material
         );
-        if (
-            !availableColors[
-            filesPrintSettings[selectedUuid].printSettings.color
-            ]
-        )
-            return false;
-        return true;
+        return availableColors[filesPrintSettings[selectedUuid].printSettings.color];
     };
 
     const getRelevantColors = selectedMaterial => {
