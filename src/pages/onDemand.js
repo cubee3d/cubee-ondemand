@@ -1,5 +1,3 @@
-/* global StlViewer */
-
 import React, { useEffect, useState, useContext, useRef } from 'react';
 import Stepper from '@mui/material/Stepper';
 import Step from '@mui/material/Step';
@@ -20,7 +18,7 @@ import { Step2PrintSettings } from '../cmps/Step2PrintSettings';
 import { Step3OrderDetails } from '../cmps/Step3OrderDetails';
 import { useTranslation } from 'react-i18next';
 import i18n from '../i18n/i18n';
-import { MenuItem, Select } from '@mui/material';
+import { Box, MenuItem, Select } from '@mui/material';
 import LanguageIcon from '@mui/icons-material/Language';
 import { Step2FilesTable } from '../cmps/Step2FilesTable';
 import { Step2STLViewer } from '../cmps/Step2STLViewer';
@@ -29,7 +27,7 @@ import { generateUuid } from '../services/utils';
 
 // * This is the Mother Component of the website.
 // * This component manages the whole state of the app.
-export const OnDemand = ({ location }) => {
+export const OnDemand = ({ isDesktop }) => {
     const { t } = useTranslation(['common']);
     const [apiKey, setApiKey] = useState(null);
     const [currencyCode, setCurrencyCode] = useState('ILS');
@@ -58,6 +56,7 @@ export const OnDemand = ({ location }) => {
             event.stopPropagation();
             if (event.data.handshake) {
                 if (event.data.handshake.apiKey) {
+                    console.log('api key from handshake', event.data.handshake.apiKey)
                     setApiKey(event.data.handshake.apiKey);
                     const getShopOptions = async () => {
                         let res = await onDemandService.getShopOptions(
@@ -271,7 +270,8 @@ export const OnDemand = ({ location }) => {
             queries.map(query => onDemandService.calculateSlicer(query, apiKey))
         );
         const errors = results.filter(result => {
-            if (result.error) return result;
+            if (result.error) return true;
+            return false;
         });
         if (errors.length) {
             setIsCalculating(false);
@@ -314,14 +314,14 @@ export const OnDemand = ({ location }) => {
                     ? Math.floor(model.printTime)
                     : '';
             Math.floor(model.printTime) > 0
-                ? (printTime += ' Hours, ')
+                ? (printTime += t('hours'))
                 : (printTime = printTime);
             printTime += Math.floor(
                 Number(
                     (model.printTime - Math.floor(model.printTime)).toFixed(2)
                 ) * 60
             );
-            printTime += ' Minutes';
+            printTime += t('minutes');
             return {
                 ...model,
                 printTime,
@@ -381,7 +381,7 @@ export const OnDemand = ({ location }) => {
         );
         if (
             !availableColors[
-                filesPrintSettings[selectedUuid].printSettings.color
+            filesPrintSettings[selectedUuid].printSettings.color
             ]
         )
             return false;
@@ -428,7 +428,7 @@ export const OnDemand = ({ location }) => {
                     />
                 );
             case 1:
-                if (isCalculating) return <Step2Calculating />;
+                if (isCalculating) return <Step2Calculating isDesktop={isDesktop} />;
                 return (
                     <>
                         <Step2FilesTable
@@ -474,6 +474,7 @@ export const OnDemand = ({ location }) => {
                                     filesPrintSettings[selectedUuid]
                                         .printSettings.material
                                 )}
+                                isDesktop={isDesktop}
                             />
                             <Step2STLViewer
                                 isLoadedViewer={isLoadedViewer}
@@ -481,6 +482,7 @@ export const OnDemand = ({ location }) => {
                                 selectedFile={uploadedFiles[selectedUuid]}
                                 stlViewerColor={stlViewerColor}
                                 setModelLoaded={setModelLoaded}
+                                isDesktop={isDesktop}
                             />
                         </div>
                     </>
@@ -495,6 +497,8 @@ export const OnDemand = ({ location }) => {
                         currencyCode={currencyCode}
                     />
                 );
+            default:
+                return <></>
         }
     };
 
@@ -520,32 +524,75 @@ export const OnDemand = ({ location }) => {
                         })}
                     </Stepper>
                     {/* <Switch defaultChecked onChange={toggleLang} /> */}
-                    <div
-                        style={{
-                            display: 'flex',
-                            flexDirection: 'column',
-                            alignItems: 'center',
-                        }}
-                        className="language-select"
-                    >
-                        <LanguageIcon
-                            onClick={handleOpen}
-                            className="lang-btn"
-                            ref={selectRef}
-                        />
-                        <Select
-                            open={open}
-                            onClose={handleClose}
-                            onOpen={handleOpen}
-                            onChange={toggleLang}
-                            value={language.lang}
-                            anchorEl={selectRef}
-                            color={'blue'}
+                    {isDesktop ?
+                        <Box
+                            style={{
+                                display: 'flex',
+                                flexDirection: 'column',
+                                alignItems: 'center',
+                            }}
+                            className="language-select"
                         >
-                            <MenuItem value={'heb'}>עברית</MenuItem>
-                            <MenuItem value={'en'}>English</MenuItem>
-                        </Select>
-                    </div>
+                            <LanguageIcon
+                                onClick={handleOpen}
+                                className="lang-btn"
+                                ref={selectRef}
+
+                            />
+                            <Select
+                                open={open}
+                                onClose={handleClose}
+                                onOpen={handleOpen}
+                                onChange={toggleLang}
+                                value={language.lang}
+                                anchorEl={selectRef}
+                                color={'blue'}
+                            >
+                                <MenuItem value={'heb'}>עברית</MenuItem>
+                                <MenuItem value={'en'}>English</MenuItem>
+                            </Select>
+                        </Box>
+                        :
+                        <Box
+                            style={{
+                                display: 'flex',
+                                flexDirection: 'column',
+                                alignItems: 'center',
+                                position: 'fixed',
+                                width: 60,
+                                height: 60,
+                                bottom: 40,
+                                right: 40,
+                                zIndex: 5000
+
+                            }}
+                            className="language-select"
+                        >
+                            <LanguageIcon
+                                onClick={handleOpen}
+                                className="lang-btn"
+                                ref={selectRef}
+                                style={{
+                                    position: 'float',
+                                    display: 'block',
+                                    marginTop: 60,
+                                    // marginRight: 80
+                                }}
+                            />
+                            <Select
+                                open={open}
+                                onClose={handleClose}
+                                onOpen={handleOpen}
+                                onChange={toggleLang}
+                                value={language.lang}
+                                anchorEl={selectRef}
+                                color={'blue'}
+                            >
+                                <MenuItem value={'heb'}>עברית</MenuItem>
+                                <MenuItem value={'en'}>English</MenuItem>
+                            </Select>
+                        </Box>
+                    }
                 </div>
                 <div className="onDemand-step">{renderStep()}</div>
             </div>

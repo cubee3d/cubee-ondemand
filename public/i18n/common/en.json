@@ -8,5 +8,7 @@
     "only3DFiles": "Only 3D Files (STL,OBJ,3MF)",
     "serverError": "Oops, there was a problem. Try again",
     "selectColor": "Please choose a color from the list",
-    "cantcalc": "We couldn't calculate, "
+    "cantcalc": "We couldn't calculate, ",
+    "hours": "Hours, ",
+    "minutes": " Minutes"
 }

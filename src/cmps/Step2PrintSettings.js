@@ -1,5 +1,5 @@
-import { useState, useContext } from 'react';
-import { Button, Tooltip, Typography, Popover, TextField } from '@mui/material';
+import { useContext } from 'react';
+import { Button, Tooltip, TextField } from '@mui/material';
 import LiveHelpIcon from '@mui/icons-material/LiveHelp';
 import {
     popovers,
@@ -25,6 +25,7 @@ export const Step2PrintSettings = ({
     fileName,
     materials,
     colors,
+    isDesktop
 }) => {
     const { language } = useContext(LanguageContext);
     const { t } = useTranslation(['step2']);
@@ -102,11 +103,11 @@ export const Step2PrintSettings = ({
                 <div className="setting">
                     <div className="title-question-cont">
                         <h3>{t('material')}</h3>
-                        <Tooltip fontSize='large' arrow placement='top' title={popovers[language.lang].material}>
-                        <LiveHelpIcon
-                            fontSize="small"
-                        />
-                        </Tooltip>
+                        {isDesktop && <Tooltip fontSize='large' arrow placement='top' title={popovers[language.lang].material}>
+                            <LiveHelpIcon
+                                fontSize="small"
+                            />
+                        </Tooltip>}
                     </div>
                     <div className="options">
                         {materials.map(material => {
@@ -114,7 +115,7 @@ export const Step2PrintSettings = ({
                                 <Button
                                     variant="contained"
                                     color={
-                                        printSettings.material == material
+                                        printSettings.material === material
                                             ? 'blue'
                                             : 'grey'
                                     }
@@ -137,11 +138,11 @@ export const Step2PrintSettings = ({
                 <div className="setting">
                     <div className="title-question-cont">
                         <h3>{t('infill')}</h3>
-                        <Tooltip fontSize='large' arrow placement='top' title={popovers[language.lang].infill}>
-                        <LiveHelpIcon
-                            fontSize="small"
-                        />
-                        </Tooltip>
+                        {isDesktop && <Tooltip fontSize='large' arrow placement='top' title={popovers[language.lang].infill}>
+                            <LiveHelpIcon
+                                fontSize="small"
+                            />
+                        </Tooltip>}
                     </div>
                     <PrettoSlider
                         valueLabelDisplay="auto"
@@ -153,11 +154,11 @@ export const Step2PrintSettings = ({
                 <div className="setting">
                     <div className="title-question-cont">
                         <h3>{t('res')}</h3>
-                        <Tooltip fontSize='large' arrow placement='top' title={popovers[language.lang].res}>
-                        <LiveHelpIcon
-                            fontSize="small"
-                        />
-                        </Tooltip>
+                        {isDesktop && <Tooltip fontSize='large' arrow placement='top' title={popovers[language.lang].res}>
+                            <LiveHelpIcon
+                                fontSize="small"
+                            />
+                        </Tooltip>}
                     </div>
                     <PrettoSlider
                         valueLabelDisplay="auto"
@@ -184,16 +185,16 @@ export const Step2PrintSettings = ({
                                     >
                                         <div
                                             className={
-                                                Object.keys(colors)[idx] ==
-                                                printSettings.color
+                                                Object.keys(colors)[idx] ===
+                                                    printSettings.color
                                                     ? 'color-box active'
                                                     : 'color-box'
                                             }
                                             style={{
                                                 backgroundColor: hexColor,
                                                 boxShadow:
-                                                    Object.keys(colors)[idx] ==
-                                                    printSettings.color
+                                                    Object.keys(colors)[idx] ===
+                                                        printSettings.color
                                                         ? `0px 0px 10px 2px ${hexColor}`
                                                         : '0px 0px 0px 0px',
                                             }}
@@ -217,11 +218,11 @@ export const Step2PrintSettings = ({
                             onChange={handleChangeSupports}
                         />
                         <h3 className="inline">{t('add_supports')}</h3>
-                        <Tooltip fontSize='large' arrow placement='top' title={popovers[language.lang].support}>
-                        <LiveHelpIcon
-                            fontSize="small"
-                        />
-                        </Tooltip>
+                        {isDesktop && <Tooltip fontSize='large' arrow placement='top' title={popovers[language.lang].support}>
+                            <LiveHelpIcon
+                                fontSize="small"
+                            />
+                        </Tooltip>}
                     </div>
                 </div>
                 <div className="setting">
@@ -232,11 +233,11 @@ export const Step2PrintSettings = ({
                             onChange={handleChangeVase}
                         />
                         <h3 className="inline">{t('vase_mode')}</h3>
-                        <Tooltip fontSize='large' arrow placement='top' title={popovers[language.lang].vase}>
-                        <LiveHelpIcon
-                            fontSize="small"
-                        />
-                        </Tooltip>
+                        {isDesktop && <Tooltip fontSize='large' arrow placement='top' title={popovers[language.lang].vase}>
+                            <LiveHelpIcon
+                                fontSize="small"
+                            />
+                        </Tooltip>}
                     </div>
                 </div>
                 <div className="setting">

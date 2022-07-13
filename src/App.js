@@ -113,20 +113,20 @@ function App() {
             return { ...prevSnack, open: false };
         });
     };
-    if (!isDesktop)
-        return (
-            <>
-                <div className="desktop-only">
-                    <h3>{t('desktopOnlyTitle')}</h3>
-                    <h4>{t('desktopOnlyP')}</h4>
-                    <Lottie
-                        animationData={desktop}
-                        loop={true}
-                        autoPlay={true}
-                    />
-                </div>
-            </>
-        );
+    // if (!isDesktop)
+    //     return (
+    //         <>
+    //             <div className="desktop-only">
+    //                 <h3>{t('desktopOnlyTitle')}</h3>
+    //                 <h4>{t('desktopOnlyP')}</h4>
+    //                 <Lottie
+    //                     animationData={desktop}
+    //                     loop={true}
+    //                     autoPlay={true}
+    //                 />
+    //             </div>
+    //         </>
+    //     );
     return (
         <Suspense fallback={null}>
             <ThemeProvider theme={theme}>
@@ -140,12 +140,13 @@ function App() {
                                     TransitionComponent={Slide}
                                     onClose={handleClose}
                                     autoHideDuration={3000}
-                                    anchorOrigin={{
-                                        vertical: 'bottom',
-                                        horizontal: 'center',
-                                    }}
+                                    // anchorOrigin={{
+                                    //     vertical: 'bottom',
+                                    //     horizontal: 'center',
+                                    // }}
                                     dir="ltr"
                                     open={snack.open}
+                                    anchorOrigin={{ vertical:'top', horizontal:'center' }}
                                 >
                                     <Alert
                                         onClose={handleClose}
@@ -157,17 +158,18 @@ function App() {
                                     </Alert>
                                 </Snackbar>
                             }
-                            <Router>
+                            {/* <Router> */}
                                 <div className={'content'}>
-                                    <Switch>
+                                    <OnDemand isDesktop={isDesktop} />
+                                    {/* <Switch>
                                         <Route
                                             path="/"
                                             exact
                                             component={OnDemand}
                                         />
-                                    </Switch>
+                                    </Switch> */}
                                 </div>
-                            </Router>
+                            {/* </Router> */}
                         </SnackbarContext.Provider>
                     </SnackbarHandlerContext.Provider>
                 </LanguageContext.Provider>

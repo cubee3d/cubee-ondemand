@@ -64,7 +64,7 @@ export const Step2FilesTable = ({
     return (
         <>
             <TableContainer
-                sx={{ height: 'auto', maxHeight: 200, width: '70%' }}
+                sx={{ height: 'auto', maxHeight: 200, width: {xs: '100%', md: '70%'} }}
             >
                 <Table
                     stickyHeader

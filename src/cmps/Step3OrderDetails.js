@@ -57,6 +57,7 @@ export const Step3OrderDetails = ({
                 sx={{ height: 'auto', maxHeight: 800, width: '100%' }}
             >
                 <Table
+                className='tablon'
                     stickyHeader
                     sx={{ minWidth: 400 }}
                     aria-label="simple table"

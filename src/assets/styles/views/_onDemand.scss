@@ -235,4 +235,30 @@ th {
     .stl-settings-cont {
         flex-direction: column;
     }
+    .onDemand-step{
+        .add-continue-btns-cont{
+            flex-direction: column;
+        }
+        .stl-settings-cont{
+            .viewer-cont{
+                height: 400px;
+            }
+            .settings{
+                width: 90vw;
+            }
+        }
+    }
+    .MuiPaper-elevation{
+        margin-top: -60px;
+    }
+    .cta-btns-cont{
+        flex-direction: column;
+        gap: 30px;
+        justify-content: center;
+        align-items: center;
+    }
+    .tablon{
+        width: 200% !important;
+    }
+
 }
