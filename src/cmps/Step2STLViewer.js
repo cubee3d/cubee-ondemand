@@ -22,10 +22,10 @@ export const Step2STLViewer = ({
     let style= {
         top: 0,
         left: 0,
-        width: '600px',
-        height: '600px',
-        numWidth: 600,
-        numHeight: 600,
+        width: '500px',
+        height: '500px',
+        numWidth: 500,
+        numHeight: 500,
         marginTop: 10,
     }
     if (!isDesktop) style = {
