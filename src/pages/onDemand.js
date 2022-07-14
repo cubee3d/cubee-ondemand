@@ -50,6 +50,10 @@ export const OnDemand = ({ isDesktop }) => {
     const [isModelLoaded, setModelLoaded] = useState(false);
     const [shopOptions, setShopOptions] = useState({});
 
+    const scrollToTop = () =>{
+        window.scrollTo({top: 0, behavior: 'smooth'});
+    }
+
     useEffect(() => {
         window.parent.postMessage({ handshake: '1' }, '*');
         window.addEventListener('message', event => {
@@ -269,6 +273,7 @@ export const OnDemand = ({ isDesktop }) => {
         });
         const sleep = ms => new Promise(r => setTimeout(r, ms));
         await sleep(1000);
+        scrollToTop()
         const results = await Promise.all(
             queries.map(query => onDemandService.calculateSlicer(query, apiKey))
         );
@@ -305,6 +310,7 @@ export const OnDemand = ({ isDesktop }) => {
         setIsLoading(false);
         setFilesSlicedInfo(slicedInfo);
         setActiveStep(prevActive => prevActive + 1);
+        scrollToTop()
         setIsCalculating(false);
     };
 
@@ -392,7 +398,7 @@ export const OnDemand = ({ isDesktop }) => {
         if (!colorsIds) return {};
         let availableColors = {};
         colorsIds.forEach(colorId => {
-            if(!availableColors[colorsMap[colorId]]) return;
+            if(!colorsMap[colorId]) return;
             availableColors[colorsMap[colorId][language.lang]] =
                 colorsMap[colorId].hexCode;
         });

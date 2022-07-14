@@ -190,7 +190,7 @@ export const colorsMap = {
     16258: {
         heb: 'שקוף',
         en: 'Transparent',
-        hexCode: '#505050',
+        hexCode: '#e3e1e1',
     },
     16259: {
         heb: 'ציאן',

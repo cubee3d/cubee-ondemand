@@ -53,7 +53,7 @@ async function ajax(endpoint, method = 'get', data = null, apiKey = null) {
         }
         return {
             error: {
-                message: err.response.data,
+                message: err.response.data.message,
                 status: err.response.status,
             },
         };
