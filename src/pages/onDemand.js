@@ -392,6 +392,7 @@ export const OnDemand = ({ isDesktop }) => {
         if (!colorsIds) return {};
         let availableColors = {};
         colorsIds.forEach(colorId => {
+            if(!availableColors[colorsMap[colorId]]) return;
             availableColors[colorsMap[colorId][language.lang]] =
                 colorsMap[colorId].hexCode;
         });
