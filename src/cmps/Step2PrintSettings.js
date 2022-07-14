@@ -78,8 +78,8 @@ export const Step2PrintSettings = ({
     };
 
     const onResetSettings = () => {
-        updateFilesPrintSettings(currentUuid, initialPrintSettings);
-        setStlViewerColor(colors[initialPrintSettings.color]);
+        updateFilesPrintSettings(currentUuid, {...initialPrintSettings, color: t('anyColor')});
+        setStlViewerColor(colors[t('anyColor')]);
     };
 
     const handleChangeCopies = ({ target }) => {

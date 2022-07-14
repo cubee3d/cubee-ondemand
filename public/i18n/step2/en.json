@@ -21,5 +21,6 @@
     "upload_file": "Add New File",
     "analyzingTitle": "We are analyzing your files",
     "analyzingP": "This can take up to 2 Minutes,",
-    "analyzingP2": "Please do not close this page."
+    "analyzingP2": "Please do not close this page.",
+    "anyColor": "Any"
 }
