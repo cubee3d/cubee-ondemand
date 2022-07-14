@@ -56,7 +56,6 @@ export const OnDemand = ({ isDesktop }) => {
             event.stopPropagation();
             if (event.data.handshake) {
                 if (event.data.handshake.apiKey) {
-                    console.log('api key from handshake', event.data.handshake.apiKey)
                     setApiKey(event.data.handshake.apiKey);
                     const getShopOptions = async () => {
                         let res = await onDemandService.getShopOptions(
@@ -313,7 +312,7 @@ export const OnDemand = ({ isDesktop }) => {
                 Math.floor(model.printTime) > 0
                     ? Math.floor(model.printTime)
                     : '';
-            Math.floor(model.printTime) > 0
+            printTime = Math.floor(model.printTime) > 0
                 ? (printTime += t('hours'))
                 : (printTime);
             printTime += Math.floor(
