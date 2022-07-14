@@ -42,7 +42,7 @@ async function ajax(endpoint, method = 'get', data = null, apiKey = null) {
         return res.data;
     } catch (err) {
         console.log(err);
-        if (!err.response) {
+        if (!err.response || !err.response.data) {
             return {
                 error: {
                     message:

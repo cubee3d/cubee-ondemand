@@ -10,5 +10,6 @@
     "selectColor": "Please choose a color from the list",
     "cantcalc": "We couldn't calculate, ",
     "hours": "Hours, ",
-    "minutes": " Minutes"
+    "minutes": " Minutes",
+    "anyColor": "Any"
 }
