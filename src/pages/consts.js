@@ -207,6 +207,11 @@ export const colorsMap = {
         en: 'Silver',
         hexCode: '#C0C0C0',
     },
+    125611: {
+        heb: 'ורוד בהיר',
+        en: 'Light Pink',
+        hexCode: '#f2c9de',
+    },
 };
 
 // export const steps = ['העלאת קובץ להדפסה', 'הגדרות הדפסה', 'שלח לאישור'];
