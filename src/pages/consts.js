@@ -83,7 +83,8 @@ export const colors = {
     כתום: '#ff9800',
     חום: '#795548',
     אפור: '#607d8b',
-    'לא משנה': '#626262',
+    'לא משנה': '#626262',   
+    Any: '#626262',
     כסף: '#919191',
     זהב: '#ffab0f',
 };
@@ -92,7 +93,7 @@ export const initialPrintSettings = {
     material: 'PLA',
     infill: 20,
     resolution: 0.2,
-    color: 'לא משנה',
+    color: 'Any',
     isSupports: false,
     isVase: false,
     copies: 1,

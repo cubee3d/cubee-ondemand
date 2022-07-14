@@ -184,9 +184,13 @@ export const OnDemand = ({ isDesktop }) => {
             return false;
         }
         addNewFileToState(uuid, file);
+        const initialPrintSettingsObj = {
+            ...initialPrintSettings,
+            color: t('anyColor')
+        }
         updateFilesPrintSettings(
             uuid,
-            initialPrintSettings,
+            initialPrintSettingsObj,
             cubeeFileIdRes.data
         );
         updateFileSnapshot(uuid, '');
@@ -276,7 +280,7 @@ export const OnDemand = ({ isDesktop }) => {
             setIsCalculating(false);
             setIsLoading(false);
             return notificationHandler.error(
-                `${t('cantcalc')}${errors[0].error.message.message}`
+                `${t('cantcalc')}${errors[0].error.message}`
             );
         }
 
