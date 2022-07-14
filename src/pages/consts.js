@@ -79,7 +79,6 @@ export const colors = {
     תכלת: '#2196f3',
     ירוק: '#8bc34a',
     צהוב: '#ffeb3b',
-    זהב: '#ffc107',
     לבן: '#ffffff',
     כתום: '#ff9800',
     חום: '#795548',
@@ -197,12 +196,12 @@ export const colorsMap = {
         en: 'Cyan',
         hexCode: '#00ffff',
     },
-    1111111: {
+    150484: {
         heb: 'זהב',
         en: 'Gold',
-        hexCode: '#FFD700',
+        hexCode: '#DAA520',
     },
-    1111111: {
+    150492: {
         heb: 'כסף',
         en: 'Silver',
         hexCode: '#C0C0C0',
