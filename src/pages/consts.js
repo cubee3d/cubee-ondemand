@@ -94,7 +94,7 @@ export const initialPrintSettings = {
     infill: 20,
     resolution: 0.2,
     color: 'Any',
-    isSupports: false,
+    isSupports: true,
     isVase: false,
     copies: 1,
 };
