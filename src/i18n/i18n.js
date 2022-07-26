@@ -4,7 +4,7 @@ import languageDetector from 'i18next-browser-languagedetector';
 import { initReactI18next } from 'react-i18next';
 
 i18n.use(Backend)
-    .use(languageDetector)
+    // .use(languageDetector)
     .use(initReactI18next)
     .init({
         backend: {

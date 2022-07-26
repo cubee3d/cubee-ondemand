@@ -76,14 +76,14 @@ const theme = createTheme({
 function App() {
     const { t } = useTranslation(['common']);
     useEffect(() => {
-        i18n.changeLanguage('heb');
+        i18n.changeLanguage('en');
     }, []);
     const [isDesktop, setIsDesktop] = useState(window.screen.width > 800);
 
     const [snack, setSnack] = useState({});
     const [language, setLanguage] = useState({
-        lang: 'heb',
-        dir: 'rtl',
+        lang: 'en',
+        dir: 'ltr',
     });
     const notificationHandler = {
         success: message => showNotification('success', message),
