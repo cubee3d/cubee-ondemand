@@ -75,9 +75,9 @@ const theme = createTheme({
 
 function App() {
     const { t } = useTranslation(['common']);
-    useEffect(() => {
-        i18n.changeLanguage('en');
-    }, []);
+    // useEffect(() => {
+    //     i18n.changeLanguage('en');
+    // }, []);
     const [isDesktop, setIsDesktop] = useState(window.screen.width > 800);
 
     const [snack, setSnack] = useState({});
