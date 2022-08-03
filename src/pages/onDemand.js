@@ -74,6 +74,12 @@ export const OnDemand = ({ isDesktop }) => {
                 if (event.data.handshake.currencyCode) {
                     setCurrencyCode(event.data.handshake.currencyCode);
                 }
+                if(event.data.handshake.lang){
+                    if(event.data.handshake.lang.toLowerCase().includes('heb')){
+                        toggleLangbyString('heb')
+                    }
+                    else toggleLangbyString('en')
+                }
             } else if (event.data.isLoading) {
                 setIsLoading(true);
             }
@@ -383,6 +389,24 @@ export const OnDemand = ({ isDesktop }) => {
         }
     };
 
+    const toggleLangbyString = (lang) => {
+        if (lang === 'en') {
+            i18n.changeLanguage('en');
+            setLanguage({
+                lang: 'en',
+                dir: 'ltr',
+            });
+            document.querySelector('.content').classList.add('ltr-body');
+        } else {
+            i18n.changeLanguage('heb');
+            setLanguage({
+                lang: 'heb',
+                dir: 'rtl',
+            });
+            document.querySelector('.content').classList.remove('ltr-body');
+        }
+    };
+
     const checkColorValidity = () => {
         const availableColors = getRelevantColors(
             filesPrintSettings[selectedUuid].printSettings.material
@@ -527,7 +551,7 @@ export const OnDemand = ({ isDesktop }) => {
                         })}
                     </Stepper>
                     {/* <Switch defaultChecked onChange={toggleLang} /> */}
-                    {isDesktop ?
+                    {/* {isDesktop ?
                         <Box
                             style={{
                                 display: 'flex',
@@ -595,7 +619,7 @@ export const OnDemand = ({ isDesktop }) => {
                                 <MenuItem value={'en'}>English</MenuItem>
                             </Select>
                         </Box>
-                    }
+                    } */}
                 </div>
                 <div className="onDemand-step">{renderStep()}</div>
             </div>
