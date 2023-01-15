@@ -559,7 +559,7 @@ export const OnDemand = ({ isDesktop, isCheckoutMode, queryKey}) => {
                         dir={language.dir}
                         className="onDemand-stepper"
                     >
-                        {steps.map((label, index) => {
+                        {steps.filter(lable => isCheckoutMode  || lable !== 'payment').map((label, index) => {
                             const stepProps = {};
                             const labelProps = {};
                             return (
