@@ -56,7 +56,7 @@ export const OnDemand = ({ isDesktop, isCheckoutMode, queryKey}) => {
 
     useEffect(() => {
         if (isCheckoutMode) {
-            console.log("checkout mode selected" + queryKey);
+            console.log("checkout mode selected");
 
             if (queryKey == null)
                 return;
