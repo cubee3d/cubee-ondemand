@@ -27,7 +27,7 @@ import { generateUuid } from '../services/utils';
 
 // * This is the Mother Component of the website.
 // * This component manages the whole state of the app.
-export const OnDemand = ({ isDesktop }) => {
+export const OnDemand = ({ isDesktop, isCheckoutMode, queryKey}) => {
     const { t } = useTranslation(['common']);
     const [apiKey, setApiKey] = useState(null);
     const [currencyCode, setCurrencyCode] = useState('ILS');
@@ -55,47 +55,59 @@ export const OnDemand = ({ isDesktop }) => {
     }
 
     useEffect(() => {
-        window.parent.postMessage({ handshake: '1' }, '*');
-        window.addEventListener('message', event => {
-            event.stopPropagation();
-            if (event.data.handshake) {
-                if (event.data.handshake.apiKey) {
-                    setApiKey(event.data.handshake.apiKey);
+        if (isCheckoutMode) {
+            console.log("checkout mode selected" + queryKey);
+
+            if (queryKey == null)
+                return;
+
+            setApiKey(queryKey);
+
+            const getShopOptions = async () => {
+                const res = await onDemandService.getShopOptions(
+                    process.env.REACT_APP_API_KEY_DEMO
+                );
+                if (res.error)
+                    return notificationHandler.error(t('serverError'));
+                setShopOptions(res);
+            };
+            getShopOptions();
+        } else {
+            window.parent.postMessage({handshake: '1'}, '*');
+            window.addEventListener('message', event => {
+                event.stopPropagation();
+                if (event.data.handshake) {
+                    if (event.data.handshake.apiKey) {
+                        setApiKey(event.data.handshake.apiKey);
+                        const getShopOptions = async () => {
+                            let res = await onDemandService.getShopOptions(event.data.handshake.apiKey);
+                            if (res.error) return notificationHandler.error(t('serverError'));
+                            setShopOptions(res);
+                        };
+                        getShopOptions();
+                    }
+                    if (event.data.handshake.currencyCode) {
+                        setCurrencyCode(event.data.handshake.currencyCode);
+                    }
+                    if (event.data.handshake.lang) {
+                        if (event.data.handshake.lang.toLowerCase().includes('heb')) {
+                            toggleLangbyString('heb')
+                        } else toggleLangbyString('en')
+                    }
+                } else if (event.data.isLoading) {
+                    setIsLoading(true);
+                }
+            });
+            if (process.env.REACT_APP_ENV === 'staging') {
+                if (!apiKey) {
+                    setApiKey(process.env.REACT_APP_API_KEY_DEMO);
                     const getShopOptions = async () => {
-                        let res = await onDemandService.getShopOptions(
-                            event.data.handshake.apiKey
-                        );
-                        if (res.error)
-                            return notificationHandler.error(t('serverError'));
+                        const res = await onDemandService.getShopOptions(process.env.REACT_APP_API_KEY_DEMO);
+                        if (res.error) return notificationHandler.error(t('serverError'));
                         setShopOptions(res);
                     };
                     getShopOptions();
                 }
-                if (event.data.handshake.currencyCode) {
-                    setCurrencyCode(event.data.handshake.currencyCode);
-                }
-                if(event.data.handshake.lang){
-                    if(event.data.handshake.lang.toLowerCase().includes('heb')){
-                        toggleLangbyString('heb')
-                    }
-                    else toggleLangbyString('en')
-                }
-            } else if (event.data.isLoading) {
-                setIsLoading(true);
-            }
-        });
-        if (process.env.REACT_APP_ENV === 'staging') {
-            if (!apiKey) {
-                setApiKey(process.env.REACT_APP_API_KEY_DEMO);
-                const getShopOptions = async () => {
-                    const res = await onDemandService.getShopOptions(
-                        process.env.REACT_APP_API_KEY_DEMO
-                    );
-                    if (res.error)
-                        return notificationHandler.error(t('serverError'));
-                    setShopOptions(res);
-                };
-                getShopOptions();
             }
         }
     }, []);
