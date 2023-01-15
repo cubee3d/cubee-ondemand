@@ -19,27 +19,28 @@ const Step4Payment = () => {
 
   return (
       <>
-        <div className="stripe-and-tag">
-          <div className="stripe-form">
-            <Elements
-                stripe={stripeTestPromise}
-                options={{
-                  // clientSecret: clientSecretState,
-                  appearance: {
-                    theme: 'flat',
-                    labels: 'floating',
-                  },
-                }}
-            >
-              <PaymentForm
-                  totalPrice={
-                      100
-                  }
-                  onSuccessPayment={() => {}}
-              />
-            </Elements>
-          </div>
-        </div>
+        Strip payments!!!
+        {/*<div className="stripe-and-tag">*/}
+        {/*  <div className="stripe-form">*/}
+        {/*    <Elements*/}
+        {/*        stripe={stripeTestPromise}*/}
+        {/*        options={{*/}
+        {/*          // clientSecret: clientSecretState,*/}
+        {/*          appearance: {*/}
+        {/*            theme: 'flat',*/}
+        {/*            labels: 'floating',*/}
+        {/*          },*/}
+        {/*        }}*/}
+        {/*    >*/}
+        {/*      <PaymentForm*/}
+        {/*          totalPrice={*/}
+        {/*              100*/}
+        {/*          }*/}
+        {/*          onSuccessPayment={() => {}}*/}
+        {/*      />*/}
+        {/*    </Elements>*/}
+        {/*  </div>*/}
+        {/*</div>*/}
       </>
         );
 };
