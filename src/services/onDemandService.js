@@ -16,3 +16,10 @@ function uploadFileToCubee(file, apiKey) {
 function calculateSlicer(printSettingsObj, apiKey) {
     return httpService.post('file/calc', printSettingsObj, apiKey);
 }
+
+function createNewPaymentIntent(amount, currency, apiKey) {
+    return httpService.get(`payment/client-secret?price=${amount}&currency=${currency}`,
+        null,
+        apiKey
+    );
+}

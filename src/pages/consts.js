@@ -215,7 +215,7 @@ export const colorsMap = {
 };
 
 // export const steps = ['העלאת קובץ להדפסה', 'הגדרות הדפסה', 'שלח לאישור'];
-export const steps = ['Upload 3D File', 'Print Settings', 'Confirm & Send'];
+export const steps = ['Upload 3D File', 'Print Settings', 'Confirm & Send', 'payment'];
 export const materials = ['ABS', 'PLA', 'PETG', 'TPU'];
 export const popovers = {
     heb: {

@@ -24,6 +24,7 @@ import { Step2FilesTable } from '../cmps/Step2FilesTable';
 import { Step2STLViewer } from '../cmps/Step2STLViewer';
 import { Step2Calculating } from '../cmps/Step2Calculating';
 import { generateUuid } from '../services/utils';
+import Step4Payment from "../cmps/Step4Payment";
 
 // * This is the Mother Component of the website.
 // * This component manages the whole state of the app.
@@ -268,6 +269,11 @@ export const OnDemand = ({ isDesktop, isCheckoutMode, queryKey}) => {
         setSelectedUuid(uuid);
     };
 
+    const onCheckout = () => {
+        setActiveStep(prevActive => prevActive + 1);
+        scrollToTop()
+    }
+
     const onCalculate = async () => {
         setIsLoading(true);
         setIsCalculating(true);
@@ -453,9 +459,6 @@ export const OnDemand = ({ isDesktop, isCheckoutMode, queryKey}) => {
 
     const [open, setOpen] = React.useState(false);
 
-    const selectRef = useRef(null);
-    // *
-
     const renderStep = () => {
         switch (activeStep) {
             case 0:
@@ -534,7 +537,13 @@ export const OnDemand = ({ isDesktop, isCheckoutMode, queryKey}) => {
                         onSubmitPrintOrder={onSubmitPrintOrder}
                         isLoading={isLoading}
                         currencyCode={currencyCode}
+                        isCheckoutMode={isCheckoutMode}
+                        onCheckout={onCheckout}
                     />
+                );
+            case 3:
+                return (
+                  <Step4Payment/>
                 );
             default:
                 return <></>

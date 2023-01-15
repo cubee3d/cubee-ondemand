@@ -21,6 +21,8 @@ export const Step3OrderDetails = ({
     onSubmitPrintOrder,
     isLoading,
     currencyCode,
+    isCheckoutMode,
+    onCheckout,
 }) => {
     const { language } = useContext(LanguageContext);
     const { t } = useTranslation(['step3']);
@@ -178,16 +180,27 @@ export const Step3OrderDetails = ({
                     {t('change_settings')}
                 </Button>
 
-                <LoadingButton
+                {!isCheckoutMode && <LoadingButton
                     variant="contained"
                     color="blue"
                     className="whiteText"
                     loading={isLoading}
-                    endIcon={<ViewInArRoundedIcon />}
+                    endIcon={<ViewInArRoundedIcon/>}
                     onClick={onSubmitPrintOrder}
                 >
                     {t('send_for_confirm')}
-                </LoadingButton>
+                </LoadingButton>}
+
+                {isCheckoutMode && <LoadingButton
+                    variant="contained"
+                    color="blue"
+                    className="whiteText"
+                    loading={isLoading}
+                    endIcon={<ViewInArRoundedIcon/>}
+                    onClick={onCheckout}
+                >
+                    {t('checkout')}
+                </LoadingButton>}
                 <div className="btn-placeholder"></div>
             </div>
         </>
