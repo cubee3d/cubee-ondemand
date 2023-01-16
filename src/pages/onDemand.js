@@ -66,7 +66,7 @@ export const OnDemand = ({ isDesktop, isCheckoutMode, queryKey}) => {
 
             const getShopOptions = async () => {
                 const res = await onDemandService.getShopOptions(
-                    apiKey
+                    queryKey
                 );
                 if (res.error)
                     return notificationHandler.error(t('serverError'));
