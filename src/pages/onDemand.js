@@ -66,7 +66,7 @@ export const OnDemand = ({ isDesktop, isCheckoutMode, queryKey}) => {
 
             const getShopOptions = async () => {
                 const res = await onDemandService.getShopOptions(
-                    process.env.REACT_APP_API_KEY_DEMO
+                    apiKey
                 );
                 if (res.error)
                     return notificationHandler.error(t('serverError'));
@@ -543,7 +543,7 @@ export const OnDemand = ({ isDesktop, isCheckoutMode, queryKey}) => {
                 );
             case 3:
                 return (
-                  <Step4Payment/>
+                  <Step4Payment apikey={apiKey} email={"neri.richter@gmail.com"}/>
                 );
             default:
                 return <></>
