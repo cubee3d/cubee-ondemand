@@ -197,7 +197,7 @@ export const Step3OrderDetails = ({
                     className="whiteText"
                     loading={isLoading}
                     endIcon={<ViewInArRoundedIcon/>}
-                    onClick={onCheckout}
+                    onClick={() => onCheckout(total)}
                 >
                     {t('checkout')}
                 </LoadingButton>}

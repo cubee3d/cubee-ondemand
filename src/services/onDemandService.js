@@ -5,6 +5,7 @@ export default {
     calculateSlicer,
     getShopOptions,
     createNewPaymentIntent,
+    createOrder,
 };
 
 function getShopOptions(apiKey) {
@@ -23,4 +24,8 @@ function createNewPaymentIntent(amount, currency, email, apiKey) {
         null,
         apiKey
     );
+}
+
+async function createOrder(totalPrice, currencyCode, email, paymentId) {
+    return true;
 }

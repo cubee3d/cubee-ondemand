@@ -4,18 +4,17 @@ import {PaymentForm} from "./PaymentForm";
 import {useState, useEffect} from "react";
 import onDemandService from "../services/onDemandService";
 
-const Step4Payment = ({apikey, email}) => {
+const Step4Payment = ({apikey, email, totalPrice, currencyCode, next}) => {
 
   const PUBLIC_KEY = process.env.REACT_APP_STRIPE_KEY;
   const stripeTestPromise = loadStripe(PUBLIC_KEY);
-
 
   const [clientSecretState, setClientSecretState] = useState(null);
   const [isloading, setIsloading] = useState(true);
   const createNewPaymentIntent = async () => {
     const res = await onDemandService.createNewPaymentIntent(
-        100,
-        "USD",
+        totalPrice,
+        currencyCode,
         email,
         apikey
     );
@@ -29,6 +28,11 @@ const Step4Payment = ({apikey, email}) => {
   }, []);
 
 
+  const onSuccess = (paymentId) => {
+    console.log("totalPrice: " + totalPrice + ", currency: " + currencyCode + ", email: " + email + ". paymentId: " + paymentId);
+    onDemandService.createOrder(totalPrice, currencyCode, email, paymentId).then(next);
+
+  }
 
   return (
       <>
@@ -48,9 +52,9 @@ const Step4Payment = ({apikey, email}) => {
             >
               <PaymentForm
                   totalPrice={
-                      100
+                    totalPrice
                   }
-                  onSuccessPayment={() => {}}
+                  onSuccessPayment={onSuccess}
               />
             </Elements>}
           </div>

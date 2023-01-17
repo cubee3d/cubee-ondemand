@@ -50,6 +50,7 @@ export const OnDemand = ({ isDesktop, isCheckoutMode, queryKey}) => {
     const [isCalculating, setIsCalculating] = useState(false);
     const [isModelLoaded, setModelLoaded] = useState(false);
     const [shopOptions, setShopOptions] = useState({});
+    const [total, setTotal] = useState();
 
     const scrollToTop = () =>{
         window.scrollTo({top: 0, behavior: 'smooth'});
@@ -269,8 +270,9 @@ export const OnDemand = ({ isDesktop, isCheckoutMode, queryKey}) => {
         setSelectedUuid(uuid);
     };
 
-    const onCheckout = () => {
+    const onCheckout = (price) => {
         setActiveStep(prevActive => prevActive + 1);
+        setTotal(price);
         scrollToTop()
     }
 
@@ -459,6 +461,10 @@ export const OnDemand = ({ isDesktop, isCheckoutMode, queryKey}) => {
 
     const [open, setOpen] = React.useState(false);
 
+    const onNext = () => {
+        setActiveStep(prevActive => prevActive + 1);
+    }
+
     const renderStep = () => {
         switch (activeStep) {
             case 0:
@@ -543,8 +549,12 @@ export const OnDemand = ({ isDesktop, isCheckoutMode, queryKey}) => {
                 );
             case 3:
                 return (
-                  <Step4Payment apikey={apiKey} email={"neri.richter@gmail.com"}/>
+                  <Step4Payment apikey={apiKey} email={"neri.richter@gmail.com"} totalPrice={total} currencyCode={currencyCode} next={onNext}/>
                 );
+            case 4:
+                return <div>
+                    Success payment was made!
+                </div>
             default:
                 return <></>
         }
