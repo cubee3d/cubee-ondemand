@@ -24,7 +24,8 @@ import { Step2FilesTable } from '../cmps/Step2FilesTable';
 import { Step2STLViewer } from '../cmps/Step2STLViewer';
 import { Step2Calculating } from '../cmps/Step2Calculating';
 import { generateUuid } from '../services/utils';
-import Step4Payment from "../cmps/Step5Payment";
+import Step5Payment from "../cmps/Step5Payment";
+import { Step4Shipping } from '../cmps/Step4Shipping';
 
 // * This is the Mother Component of the website.
 // * This component manages the whole state of the app.
@@ -549,12 +550,16 @@ export const OnDemand = ({ isDesktop, isCheckoutMode, queryKey}) => {
                 );
             case 3:
                 return (
-                    <h1>Shipping Page</h1>
+                    <div>
+
+                        <h1>Shipping Page</h1>
+                        <Step4Shipping next={onNext} />
+                    </div>
 
                 );
             case 4:
                 return (
-                  <Step4Payment apikey={apiKey} email={"neri.richter@gmail.com"} totalPrice={total} currencyCode={currencyCode} next={onNext}/>
+                  <Step5Payment apikey={apiKey} email={"neri.richter@gmail.com"} totalPrice={total} currencyCode={currencyCode} next={onNext}/>
                 );
             case 5:
                 return <div>
