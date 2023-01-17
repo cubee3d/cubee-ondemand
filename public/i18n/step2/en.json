@@ -8,7 +8,7 @@
     "vase_mode": "Vase Mode",
     "copies": "Copies",
     "reset_settwings": "Reset Settings",
-    "continue": "Continue To Price",
+    "continue": "Approve and Continue",
     "reset_viewer": "Reset Viewer",
     "stop_animation": "Stop Animation",
     "start_animation": "Start Animation",
@@ -19,8 +19,8 @@
     "image": "Image",
     "action": "Action",
     "upload_file": "Add New File",
-    "analyzingTitle": "We are analyzing your files",
-    "analyzingP": "This can take up to 2 Minutes,",
-    "analyzingP2": "Please do not close this page.",
+    "analyzingTitle": "We're analyzing your files",
+    "analyzingP": "This can take up to 2 minutes",
+    "analyzingP2": "Please do not close this page",
     "anyColor": "Any"
 }
