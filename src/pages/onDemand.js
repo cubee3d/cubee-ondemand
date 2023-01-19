@@ -551,7 +551,7 @@ export const OnDemand = ({ isDesktop, isCheckoutMode, queryKey}) => {
             case 3:
                 return (
                     <div>
-                        <Step4Shipping next={onNext} />
+                        <Step4Shipping next={onNext} prev={onPrevStep} />
                     </div>
 
                 );
