@@ -199,7 +199,7 @@ export const Step3OrderDetails = ({
                     endIcon={<ViewInArRoundedIcon/>}
                     onClick={() => onCheckout(total)}
                 >
-                    {t('checkout')}
+                    {t('shipping')}
                 </LoadingButton>}
                 <div className="btn-placeholder"></div>
             </div>
