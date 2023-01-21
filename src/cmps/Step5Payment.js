@@ -3,12 +3,13 @@ import {loadStripe} from '@stripe/stripe-js';
 import {PaymentForm} from "./PaymentForm";
 import {useState, useEffect} from "react";
 import onDemandService from "../services/onDemandService";
+import {useTranslation} from "react-i18next";
 
 const Step5Payment = ({apikey, totalPrice, currencyCode, next, items, filesPrintSettings, shippingData}) => {
 
   const PUBLIC_KEY = process.env.REACT_APP_STRIPE_KEY;
   const stripeTestPromise = loadStripe(PUBLIC_KEY);
-
+  const { t } = useTranslation();
   const [clientSecretState, setClientSecretState] = useState(null);
   const [isloading, setIsloading] = useState(true);
   const createNewPaymentIntent = async () => {
@@ -27,41 +28,29 @@ const Step5Payment = ({apikey, totalPrice, currencyCode, next, items, filesPrint
   }, []);
 
 
-  // const extractFiles = () => {
-  //   return filesSlicedInfo.map(model => {
-  //     let printTime;
-  //     printTime = Math.floor(model.printTime) > 0 ? Math.floor(model.printTime) : '';
-  //     printTime = Math.floor(model.printTime) > 0 ? (printTime += t('hours')) : (printTime);
-  //     printTime += Math.floor(Number((model.printTime - Math.floor(model.printTime)).toFixed(2))
-  //         * 60);
-  //     printTime += t('minutes');
-  //     return {
-  //       ...model,
-  //       printTime,
-  //       price: Math.ceil(model.price),
-  //       color: filesPrintSettings[model.uuid].printSettings.color,
-  //       material: filesPrintSettings[model.uuid].printSettings.material,
-  //       layerHeight: filesPrintSettings[model.uuid].printSettings.resolution,
-  //       isVase: filesPrintSettings[model.uuid].printSettings.isVase ? 'Yes' : 'No',
-  //       isSupports: filesPrintSettings[model.uuid].printSettings.isSupports ? 'Yes' : 'No',
-  //       infill: filesPrintSettings[model.uuid].printSettings.infill,
-  //       downloadURL: `${process.env.REACT_APP_DOWNLOAD_BASE_URL}${model.fileId}`,
-  //       snapshotURL: null,
-  //     };
-  //   });
-  // }
+  const extractFiles = () => {
+    return items.map(model => {
+      return {
+        ...model,
+        price: Math.ceil(model.price),
+        color: filesPrintSettings[model.uuid].printSettings.color,
+        material: filesPrintSettings[model.uuid].printSettings.material,
+        layerHeight: filesPrintSettings[model.uuid].printSettings.resolution,
+        isVase: !!filesPrintSettings[model.uuid].printSettings.isVase,
+        isSupports: !!filesPrintSettings[model.uuid].printSettings.isSupports,
+        infill: filesPrintSettings[model.uuid].printSettings.infill,
+      };
+    });
+  }
 
   const onSuccess = (paymentId) => {
-    console.log("info: " + items);
-    console.log("filesPrintSettings: " + filesPrintSettings);
     const data = {
       paymentId: paymentId,
       email: shippingData.emailValue,
       currencyCode: currencyCode,
       amount: totalPrice,
-      items: items,
-      test: filesPrintSettings,
-      shipping: shippingData
+      shipping: shippingData,
+      data: extractFiles()
     };
 
     onDemandService.createOrder(data, apikey).then(next);

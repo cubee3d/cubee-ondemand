@@ -64,7 +64,7 @@ export const Step4Shipping = ({next , prev, setShippingData}) => {
                             )}
                         />
                         <Controller
-                            name={"LasttNameValue"}
+                            name={"LastNameValue"}
                             control={control}
                             render={({ field: { onChange, value } }) => (
                                 <TextField 
