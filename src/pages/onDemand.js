@@ -51,6 +51,7 @@ export const OnDemand = ({ isDesktop, isCheckoutMode, queryKey}) => {
     const [isCalculating, setIsCalculating] = useState(false);
     const [isModelLoaded, setModelLoaded] = useState(false);
     const [shopOptions, setShopOptions] = useState({});
+    const [shippingData, setShippingData] = useState({});
     const [total, setTotal] = useState();
 
     const scrollToTop = () =>{
@@ -551,13 +552,19 @@ export const OnDemand = ({ isDesktop, isCheckoutMode, queryKey}) => {
             case 3:
                 return (
                     <div>
-                        <Step4Shipping next={onNext} prev={onPrevStep} />
+                        <Step4Shipping next={onNext} prev={onPrevStep} setShippingData={setShippingData}/>
                     </div>
 
                 );
             case 4:
                 return (
-                  <Step5Payment apikey={apiKey} email={"neri.richter@gmail.com"} totalPrice={total} currencyCode={currencyCode} next={onNext}/>
+                  <Step5Payment apikey={apiKey} email={"neri.richter@gmail.com"}
+                                totalPrice={total}
+                                currencyCode={currencyCode}
+                                items={filesSlicedInfo}
+                                filesPrintSettings={filesPrintSettings}
+                                shippingData={shippingData}
+                                next={onNext}/>
                 );
             case 5:
                 return <div>

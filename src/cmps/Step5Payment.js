@@ -4,7 +4,7 @@ import {PaymentForm} from "./PaymentForm";
 import {useState, useEffect} from "react";
 import onDemandService from "../services/onDemandService";
 
-const Step5Payment = ({apikey, email, totalPrice, currencyCode, next, items, filesPrintSettings}) => {
+const Step5Payment = ({apikey, email, totalPrice, currencyCode, next, items, filesPrintSettings, shippingData}) => {
 
   const PUBLIC_KEY = process.env.REACT_APP_STRIPE_KEY;
   const stripeTestPromise = loadStripe(PUBLIC_KEY);
@@ -60,10 +60,11 @@ const Step5Payment = ({apikey, email, totalPrice, currencyCode, next, items, fil
       currencyCode: currencyCode,
       amount: totalPrice,
       items: items,
-      test: filesPrintSettings
+      test: filesPrintSettings,
+      shipping: shippingData
     };
 
-    onDemandService.createOrder(data).then(next);
+    onDemandService.createOrder(data, apikey).then(next);
   }
 
   return (

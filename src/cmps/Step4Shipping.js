@@ -11,7 +11,7 @@ import { ArrowBack } from "@mui/icons-material";
 import PaymentIcon from '@mui/icons-material/Payment';
 import ShieldOutlinedIcon from '@mui/icons-material/ShieldOutlined';
 
-export const Step4Shipping = ({next , prev}) => {
+export const Step4Shipping = ({next , prev, setShippingData}) => {
 
     const price = 20;
 
@@ -20,7 +20,8 @@ export const Step4Shipping = ({next , prev}) => {
     // const { t } = useTranslation(['step3']);
     const { handleSubmit, reset, control } = useForm();
     const onSubmit = (data) => { 
-        console.log(data)
+        console.log(data);
+        setShippingData(data);
         next();
     };
 
