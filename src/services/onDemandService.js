@@ -4,6 +4,8 @@ export default {
     uploadFileToCubee,
     calculateSlicer,
     getShopOptions,
+    createNewPaymentIntent,
+    createOrder,
 };
 
 function getShopOptions(apiKey) {
@@ -15,4 +17,18 @@ function uploadFileToCubee(file, apiKey) {
 }
 function calculateSlicer(printSettingsObj, apiKey) {
     return httpService.post('file/calc', printSettingsObj, apiKey);
+}
+
+function createNewPaymentIntent(amount, currency, email, apiKey) {
+    return httpService.get(`payment/client-secret?price=${amount}&currency=${currency}&email=${email}`,
+        null,
+        apiKey
+    );
+}
+
+async function createOrder(data, apiKey) {
+    return httpService.post(`payment`,
+        data,
+        apiKey
+    );
 }

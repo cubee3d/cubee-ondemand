@@ -75,6 +75,12 @@ const theme = createTheme({
 
 function App() {
     const { t } = useTranslation(['common']);
+    const searchParams = new URLSearchParams(document.location.search)
+
+    const queryKey = searchParams.get('t');
+    const isCheckoutMode = searchParams.get('checkoutMode') != null;
+
+
     // useEffect(() => {
     //     i18n.changeLanguage('en');
     // }, []);
@@ -157,7 +163,7 @@ function App() {
                             }
                             {/* <Router> */}
                                 <div className={'content'}>
-                                    <OnDemand isDesktop={isDesktop} />
+                                    <OnDemand isDesktop={isDesktop} queryKey={queryKey} isCheckoutMode={isCheckoutMode}/>
                                     {/* <Switch>
                                         <Route
                                             path="/"

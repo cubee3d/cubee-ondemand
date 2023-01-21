@@ -24,10 +24,12 @@ import { Step2FilesTable } from '../cmps/Step2FilesTable';
 import { Step2STLViewer } from '../cmps/Step2STLViewer';
 import { Step2Calculating } from '../cmps/Step2Calculating';
 import { generateUuid } from '../services/utils';
+import Step5Payment from "../cmps/Step5Payment";
+import { Step4Shipping } from '../cmps/Step4Shipping';
 
 // * This is the Mother Component of the website.
 // * This component manages the whole state of the app.
-export const OnDemand = ({ isDesktop }) => {
+export const OnDemand = ({ isDesktop, isCheckoutMode, queryKey}) => {
     const { t } = useTranslation(['common']);
     const [apiKey, setApiKey] = useState(null);
     const [currencyCode, setCurrencyCode] = useState('ILS');
@@ -49,53 +51,67 @@ export const OnDemand = ({ isDesktop }) => {
     const [isCalculating, setIsCalculating] = useState(false);
     const [isModelLoaded, setModelLoaded] = useState(false);
     const [shopOptions, setShopOptions] = useState({});
+    const [shippingData, setShippingData] = useState({});
+    const [total, setTotal] = useState();
 
     const scrollToTop = () =>{
         window.scrollTo({top: 0, behavior: 'smooth'});
     }
 
     useEffect(() => {
-        window.parent.postMessage({ handshake: '1' }, '*');
-        window.addEventListener('message', event => {
-            event.stopPropagation();
-            if (event.data.handshake) {
-                if (event.data.handshake.apiKey) {
-                    setApiKey(event.data.handshake.apiKey);
+        if (isCheckoutMode) {
+            console.log("checkout mode selected");
+
+            if (queryKey == null)
+                return;
+
+            setApiKey(queryKey);
+
+            const getShopOptions = async () => {
+                const res = await onDemandService.getShopOptions(
+                    queryKey
+                );
+                if (res.error)
+                    return notificationHandler.error(t('serverError'));
+                setShopOptions(res);
+            };
+            getShopOptions();
+        } else {
+            window.parent.postMessage({handshake: '1'}, '*');
+            window.addEventListener('message', event => {
+                event.stopPropagation();
+                if (event.data.handshake) {
+                    if (event.data.handshake.apiKey) {
+                        setApiKey(event.data.handshake.apiKey);
+                        const getShopOptions = async () => {
+                            let res = await onDemandService.getShopOptions(event.data.handshake.apiKey);
+                            if (res.error) return notificationHandler.error(t('serverError'));
+                            setShopOptions(res);
+                        };
+                        getShopOptions();
+                    }
+                    if (event.data.handshake.currencyCode) {
+                        setCurrencyCode(event.data.handshake.currencyCode);
+                    }
+                    if (event.data.handshake.lang) {
+                        if (event.data.handshake.lang.toLowerCase().includes('heb')) {
+                            toggleLangbyString('heb')
+                        } else toggleLangbyString('en')
+                    }
+                } else if (event.data.isLoading) {
+                    setIsLoading(true);
+                }
+            });
+            if (process.env.REACT_APP_ENV === 'staging') {
+                if (!apiKey) {
+                    setApiKey(process.env.REACT_APP_API_KEY_DEMO);
                     const getShopOptions = async () => {
-                        let res = await onDemandService.getShopOptions(
-                            event.data.handshake.apiKey
-                        );
-                        if (res.error)
-                            return notificationHandler.error(t('serverError'));
+                        const res = await onDemandService.getShopOptions(process.env.REACT_APP_API_KEY_DEMO);
+                        if (res.error) return notificationHandler.error(t('serverError'));
                         setShopOptions(res);
                     };
                     getShopOptions();
                 }
-                if (event.data.handshake.currencyCode) {
-                    setCurrencyCode(event.data.handshake.currencyCode);
-                }
-                if(event.data.handshake.lang){
-                    if(event.data.handshake.lang.toLowerCase().includes('heb')){
-                        toggleLangbyString('heb')
-                    }
-                    else toggleLangbyString('en')
-                }
-            } else if (event.data.isLoading) {
-                setIsLoading(true);
-            }
-        });
-        if (process.env.REACT_APP_ENV === 'staging') {
-            if (!apiKey) {
-                setApiKey(process.env.REACT_APP_API_KEY_DEMO);
-                const getShopOptions = async () => {
-                    const res = await onDemandService.getShopOptions(
-                        process.env.REACT_APP_API_KEY_DEMO
-                    );
-                    if (res.error)
-                        return notificationHandler.error(t('serverError'));
-                    setShopOptions(res);
-                };
-                getShopOptions();
             }
         }
     }, []);
@@ -255,6 +271,12 @@ export const OnDemand = ({ isDesktop }) => {
         setStlViewerColor(colors[filesPrintSettings[uuid].printSettings.color]);
         setSelectedUuid(uuid);
     };
+
+    const onCheckout = (price) => {
+        setActiveStep(prevActive => prevActive + 1);
+        setTotal(price);
+        scrollToTop()
+    }
 
     const onCalculate = async () => {
         setIsLoading(true);
@@ -441,8 +463,9 @@ export const OnDemand = ({ isDesktop }) => {
 
     const [open, setOpen] = React.useState(false);
 
-    const selectRef = useRef(null);
-    // *
+    const onNext = () => {
+        setActiveStep(prevActive => prevActive + 1);
+    }
 
     const renderStep = () => {
         switch (activeStep) {
@@ -522,8 +545,31 @@ export const OnDemand = ({ isDesktop }) => {
                         onSubmitPrintOrder={onSubmitPrintOrder}
                         isLoading={isLoading}
                         currencyCode={currencyCode}
+                        isCheckoutMode={isCheckoutMode}
+                        onCheckout={onCheckout}
                     />
                 );
+            case 3:
+                return (
+                    <div>
+                        <Step4Shipping next={onNext} prev={onPrevStep} setShippingData={setShippingData}/>
+                    </div>
+
+                );
+            case 4:
+                return (
+                  <Step5Payment apikey={apiKey}
+                                totalPrice={total}
+                                currencyCode={currencyCode}
+                                items={filesSlicedInfo}
+                                filesPrintSettings={filesPrintSettings}
+                                shippingData={shippingData}
+                                next={onNext}/>
+                );
+            case 5:
+                return <div>
+                    Success payment was made!
+                </div>
             default:
                 return <></>
         }
@@ -538,7 +584,7 @@ export const OnDemand = ({ isDesktop }) => {
                         dir={language.dir}
                         className="onDemand-stepper"
                     >
-                        {steps.map((label, index) => {
+                        {steps.filter(label => isCheckoutMode  || label !== 'Payment' && label != 'Shipping').map((label, index) => {
                             const stepProps = {};
                             const labelProps = {};
                             return (
