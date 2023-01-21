@@ -343,6 +343,7 @@ export const OnDemand = ({ isDesktop, isCheckoutMode, queryKey}) => {
     };
 
     const onSubmitPrintOrder = async () => {
+        setIsLoading(true);
         let modelsDataArray = [];
         modelsDataArray = filesSlicedInfo.map(model => {
             let printTime;
