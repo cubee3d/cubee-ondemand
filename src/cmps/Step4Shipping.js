@@ -146,8 +146,7 @@ export const Step4Shipping = ({next , prev, setShippingData}) => {
                                     value={value} 
                                     label={"State/Province"} 
                                     size="normal" 
-                                    margin="normal"
-                                    required/>
+                                    margin="normal"/>
                             )}
                         />
                     </div>
@@ -176,8 +175,7 @@ export const Step4Shipping = ({next , prev, setShippingData}) => {
                                 value={value} 
                                 label={"Street Address Line 2"} 
                                 size="normal" 
-                                margin="normal"
-                                required/>
+                                margin="normal"/>
                         )}
                     />
                     <Controller

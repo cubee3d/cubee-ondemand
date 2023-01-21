@@ -31,7 +31,10 @@ const Step5Payment = ({apikey, totalPrice, currencyCode, next, items, filesPrint
   const extractFiles = () => {
     return items.map(model => {
       return {
-        ...model,
+        copies: model["copies"],
+        dimensions: model["dimensions"],
+        fileId: model["fileId"],
+        fileName: model["fileName"],
         price: Math.ceil(model.price),
         color: filesPrintSettings[model.uuid].printSettings.color,
         material: filesPrintSettings[model.uuid].printSettings.material,
