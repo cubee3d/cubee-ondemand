@@ -549,7 +549,7 @@ export const OnDemand = ({ isDesktop, isCheckoutMode, queryKey}) => {
                 );
             case 3:
                 return (
-                  <Step4Payment apikey={apiKey} email={"neri.richter@gmail.com"} totalPrice={total} currencyCode={currencyCode} next={onNext}/>
+                  <Step4Payment apikey={apiKey} email={"neri.richter@gmail.com"} totalPrice={total} currencyCode={currencyCode} next={onNext} items={filesSlicedInfo} filesPrintSettings={filesPrintSettings}/>
                 );
             case 4:
                 return <div>

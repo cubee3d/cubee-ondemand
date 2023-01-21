@@ -26,6 +26,9 @@ function createNewPaymentIntent(amount, currency, email, apiKey) {
     );
 }
 
-async function createOrder(totalPrice, currencyCode, email, paymentId, apiKey) {
-    return true;
+async function createOrder(data, apiKey) {
+    return httpService.post(`payment`,
+        data,
+        apiKey
+    );
 }
