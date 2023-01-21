@@ -558,7 +558,7 @@ export const OnDemand = ({ isDesktop, isCheckoutMode, queryKey}) => {
                 );
             case 4:
                 return (
-                  <Step5Payment apikey={apiKey} email={"neri.richter@gmail.com"}
+                  <Step5Payment apikey={apiKey}
                                 totalPrice={total}
                                 currencyCode={currencyCode}
                                 items={filesSlicedInfo}
