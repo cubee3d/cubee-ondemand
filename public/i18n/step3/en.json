@@ -1,5 +1,5 @@
 {
-    "print_conc": "Print Conclusion",
+    "print_conc": "Print Summary",
     "file_name": "File Name",
     "dimensions": "Dimensions",
     "mm": "mm",
@@ -12,8 +12,8 @@
     "EPU": "Estimated Price Per Unit",
     "EPriceT": "Estimated Price for ",
     "units": "units",
-    "change_settings": "Change Settings",
-    "send_for_confirm": "Add To Cart",
+    "change_settings": "Back to Settings",
+    "send_for_confirm": "Continue to Shipping",
     "checkout" : "Continue to Checkout",
     "contact": "Contact Via Whatsapp",
     "image": "Image",
