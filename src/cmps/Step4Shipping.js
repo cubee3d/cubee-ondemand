@@ -6,7 +6,6 @@ import { Controller, useForm } from "react-hook-form";
 import { Button, Divider, TextField } from "@mui/material";
 import { Box } from "@mui/system";
 import { MuiTelInput } from 'mui-tel-input';
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { ArrowBack } from "@mui/icons-material";
 import PaymentIcon from '@mui/icons-material/Payment';
 import ShieldOutlinedIcon from '@mui/icons-material/ShieldOutlined';
@@ -18,7 +17,8 @@ export const Step4Shipping = ({next , prev, setShippingData}) => {
     const privacy = "We value your privacy. The information you share with us will be used only for shipping purposes, and will not be shared with third parties. ";
 
     // const { t } = useTranslation(['step3']);
-    const { handleSubmit, reset, control } = useForm();
+    const { handleSubmit, control } = useForm();
+
     const onSubmit = (data) => { 
         console.log(data);
         setShippingData(data);
@@ -48,6 +48,7 @@ export const Step4Shipping = ({next , prev, setShippingData}) => {
                 </div>
                     <div style={{display: 'flex' , justifyContent: 'space-between'}}>
                         <Controller
+                            
                             name={"firstNameValue"}
                             control={control}
                             render={({ field: { onChange, value } }) => (
