@@ -26,6 +26,7 @@ import { Step2Calculating } from '../cmps/Step2Calculating';
 import { generateUuid } from '../services/utils';
 import Step5Payment from "../cmps/Step5Payment";
 import { Step4Shipping } from '../cmps/Step4Shipping';
+import { SuccessPage } from '../cmps/SuccessPage';
 
 // * This is the Mother Component of the website.
 // * This component manages the whole state of the app.
@@ -471,7 +472,7 @@ export const OnDemand = ({ isDesktop, isCheckoutMode, queryKey}) => {
     const renderStep = () => {
         switch (activeStep) {
             case 0:
-                return (
+                return (   
                     <StepWelcomeFile
                         isLoading={isLoading}
                         apiKey={apiKey}
@@ -579,9 +580,12 @@ export const OnDemand = ({ isDesktop, isCheckoutMode, queryKey}) => {
                                 />
                 );
             case 5:
-                return <div>
-                    Success payment was made!
-                </div>
+                return (
+                    <SuccessPage 
+                    repeat={setActiveStep}
+                   />
+                )
+                                   
             default:
                 return <></>
         }
