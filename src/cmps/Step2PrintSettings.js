@@ -162,6 +162,7 @@ export const Step2PrintSettings = ({
                         </Tooltip>}
                     </div>
                     <PrettoSlider
+                    
                         valueLabelDisplay="auto"
                         value={printSettings.resolution}
                         min={0.1}
@@ -169,7 +170,7 @@ export const Step2PrintSettings = ({
                         step={0.01}
                         marks={resMarks[language.lang]}
                         onChange={handleChangeRes}
-                        track="inverted"
+                        // track="inverted"
                         color="blue"
                     />
                 </div>

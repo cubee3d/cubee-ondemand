@@ -500,6 +500,14 @@ export const OnDemand = ({ isDesktop, isCheckoutMode, queryKey}) => {
                             isLoading={isLoading}
                             onCalculate={onCalculate}
                             isModelLoaded={isModelLoaded}
+                            printSettings={
+                                filesPrintSettings[selectedUuid]
+                                    ?.printSettings
+                            }
+                            colors={getRelevantColors(
+                                filesPrintSettings[selectedUuid]
+                                    .printSettings.material
+                            )}
                         />
                         <div className="stl-settings-cont">
                             <Step2PrintSettings
@@ -565,7 +573,10 @@ export const OnDemand = ({ isDesktop, isCheckoutMode, queryKey}) => {
                                 items={filesSlicedInfo}
                                 filesPrintSettings={filesPrintSettings}
                                 shippingData={shippingData}
-                                next={onNext}/>
+                                next={onNext}
+                                prev={onPrevStep}
+                                filesSlicedInfo={filesSlicedInfo}
+                                />
                 );
             case 5:
                 return <div>

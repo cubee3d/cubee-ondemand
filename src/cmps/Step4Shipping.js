@@ -12,8 +12,6 @@ import ShieldOutlinedIcon from '@mui/icons-material/ShieldOutlined';
 
 export const Step4Shipping = ({next , prev, setShippingData}) => {
 
-    const price = 20;
-
     const privacy = "We value your privacy. The information you share with us will be used only for shipping purposes, and will not be shared with third parties. ";
 
     // const { t } = useTranslation(['step3']);
@@ -56,7 +54,7 @@ export const Step4Shipping = ({next , prev, setShippingData}) => {
                                     sx={{width: '245px'}}
                                     InputLabelProps={{ shrink: true }} 
                                     onChange={onChange} 
-                                    value={value} 
+                                    value={value? value : ""}  
                                     label={"First Name"} 
                                     size="normal" 
                                     margin="normal"
@@ -72,11 +70,12 @@ export const Step4Shipping = ({next , prev, setShippingData}) => {
                                     sx={{width: '245px'}}
                                     InputLabelProps={{ shrink: true }} 
                                     onChange={onChange} 
-                                    value={value} 
+                                    value={value? value : ""} 
                                     label={"Last Name"} 
                                     size="normal" 
                                     margin="normal"
-                                    required/>
+                                    required
+                                    />
                             )}
                         />
                     </div>
@@ -86,7 +85,7 @@ export const Step4Shipping = ({next , prev, setShippingData}) => {
                         render={({ field: { onChange, value } }) => (
                             <MuiTelInput 
                                 required
-                                value={value} 
+                                value={value? value : ""} 
                                 onChange={onChange}
                                 forceCallingCode
                                 focusOnSelectCountry
@@ -104,13 +103,14 @@ export const Step4Shipping = ({next , prev, setShippingData}) => {
                             <TextField 
                                 InputLabelProps={{ shrink: true }} 
                                 onChange={onChange} 
-                                value={value} 
+                                value={value? value : ""}  
                                 label={"Email"} 
                                 size="normal" 
                                 margin="normal"
                                 type="email"
                                 placeholder="ex: myname@example.com"
-                                required/>
+                                required
+                                />
                         )}
                     />
                     
@@ -128,7 +128,7 @@ export const Step4Shipping = ({next , prev, setShippingData}) => {
                                     sx={{width: '245px'}}
                                     InputLabelProps={{ shrink: true }} 
                                     onChange={onChange} 
-                                    value={value} 
+                                    value={value? value : ""}  
                                     label={"City"} 
                                     size="normal" 
                                     margin="normal"
@@ -144,7 +144,7 @@ export const Step4Shipping = ({next , prev, setShippingData}) => {
                                     sx={{width: '245px'}}
                                     InputLabelProps={{ shrink: true }} 
                                     onChange={onChange} 
-                                    value={value} 
+                                    value={value? value : ""}  
                                     label={"State/Province"} 
                                     size="normal" 
                                     margin="normal"/>
@@ -159,11 +159,12 @@ export const Step4Shipping = ({next , prev, setShippingData}) => {
                             <TextField 
                                 InputLabelProps={{ shrink: true }} 
                                 onChange={onChange} 
-                                value={value} 
+                                value={value? value : ""}  
                                 label={"Street Address"} 
                                 size="normal" 
                                 margin="normal"
-                                required/>
+                                required
+                                />
                         )}
                     />
                     <Controller
@@ -173,7 +174,7 @@ export const Step4Shipping = ({next , prev, setShippingData}) => {
                             <TextField 
                                 InputLabelProps={{ shrink: true }} 
                                 onChange={onChange} 
-                                value={value} 
+                                value={value? value : ""}  
                                 label={"Street Address Line 2"} 
                                 size="normal" 
                                 margin="normal"/>
@@ -186,11 +187,12 @@ export const Step4Shipping = ({next , prev, setShippingData}) => {
                             <TextField 
                                 InputLabelProps={{ shrink: true }} 
                                 onChange={onChange} 
-                                value={value} 
+                                value={value? value : ""}  
                                 label={"Postal/Zip Code"} 
                                 size="normal" 
                                 margin="normal"
-                                required/>
+                                required
+                                />
                         )}
                     />
                     {/* <div style={{fontSize: "16px", padding: "13px"}}>

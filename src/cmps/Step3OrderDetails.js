@@ -14,6 +14,8 @@ import TableCell from '@mui/material/TableCell';
 import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import LocalShippingIcon from '@mui/icons-material/LocalShipping';
 
 export const Step3OrderDetails = ({
     filesSlicedInfo,
@@ -54,9 +56,9 @@ export const Step3OrderDetails = ({
 
     return (
         <>
-            <h2>{t('print_conc')}</h2>
+            {/* <h2>{t('print_conc')}</h2> */}
             <TableContainer
-                sx={{ height: 'auto', maxHeight: 800, width: '100%' }}
+                sx={{ height: 'auto', maxHeight: 800, width: '100%', paddingTop: 7, direction: "ltr" }}
             >
                 <Table
                 className='tablon'
@@ -66,26 +68,27 @@ export const Step3OrderDetails = ({
                 >
                     <TableHead>
                         <TableRow>
-                            <TableCell width={'5%'} align="center">
+                            <TableCell width={'10%'} align="center">
                                 {t('image')}
                             </TableCell>
-                            <TableCell width={'20%'} align="center">
+                            <TableCell width={'15%'} align="center">
                                 {t('file_name')}
                             </TableCell>
                             <TableCell width={'15%'} align="center">
                                 {t('dimensions')}
                             </TableCell>
-                            <TableCell width={'20%'} align="center">
+                            <TableCell width={'15%'} align="center">
                                 {t('EPT')}
                             </TableCell>
-                            <TableCell align="center">{t('EW')}</TableCell>
-                            <TableCell align="center">{t('EPU')}</TableCell>
-                            <TableCell align="center">{t('EP')}</TableCell>
+                            <TableCell width={'15%'} align="center">{t('EW')}</TableCell>
+                            {/* <TableCell align="center">{t('EPU')}</TableCell> */}
+                            <TableCell width={'15%'} align="center">{t('EP')}</TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>
                         {filesSlicedInfo.map(file => (
                             <TableRow
+                                // style={{display: "flex", justifyContent: "space-between"}}
                                 key={file.fileId}
                                 sx={{
                                     '&:last-child td, &:last-child th': {
@@ -141,10 +144,10 @@ export const Step3OrderDetails = ({
                                 <TableCell align="center">
                                     {file.weight} {t('gram')}
                                 </TableCell>
-                                <TableCell align="center">
+                                {/* <TableCell align="center">
                                     {t(currencyCode)}
                                     {Math.ceil(file.price)}
-                                </TableCell>
+                                </TableCell> */}
                                 {file.copies > 1 ? (
                                     <TableCell align="center">
                                         {file.copies} {t('units')}:{' '}
@@ -162,46 +165,59 @@ export const Step3OrderDetails = ({
                     </TableBody>
                 </Table>
             </TableContainer>
-            <h2>
+            <h3>
                 {t('total')}: {t(currencyCode)}
+            
                 {total}
-            </h2>
-            <div className="cta-btns-cont">
-                <Button
-                    startIcon={
-                        language.lang === 'en' ? (
-                            <ArrowBackIosIcon />
-                        ) : (
-                            <ArrowForwardIosIcon />
-                        )
-                    }
-                    onClick={onPrevStep}
-                >
-                    {t('change_settings')}
-                </Button>
+            </h3>
+                <p>
+                    Final price will be shown at check-out
+                </p>
+         
+            <div className="cta-btns-cont">   
+                <div>
+                    {!isCheckoutMode && <LoadingButton
+                        variant="contained"
+                        className="whiteText"
+                        // loading={isLoading}
+                        endIcon={<LocalShippingIcon/>}
+                        onClick={onSubmitPrintOrder}
+                    >
+                        {t('send_for_confirm')}
+                    </LoadingButton>}
 
-                {!isCheckoutMode && <LoadingButton
-                    variant="contained"
-                    color="blue"
-                    className="whiteText"
-                    loading={isLoading}
-                    endIcon={<ViewInArRoundedIcon/>}
-                    onClick={onSubmitPrintOrder}
-                >
-                    {t('send_for_confirm')}
-                </LoadingButton>}
+                    {isCheckoutMode && <Button
+                        variant="contained"
+                        
+                        className="whiteText"
+                        // loading={isLoading}
+                        endIcon={<LocalShippingIcon/>}
+                        onClick={() => onCheckout(total)}
+                    >
+                        {t('shipping')}
+                    </Button>}
+                </div>
+                
+                <div>
+                    <Button
+                        style={{color: "purple"}}
+                        variant='outlined'
+                        color='black'
+                        endIcon={
+                            language.lang === 'en' ? (
+                                <ArrowBackIcon />
+                            ) : (
+                                <ArrowBackIcon />
+                            )
+                        }
+                        onClick={onPrevStep}
+                    >
+                        {t('change_settings')}
+                    </Button>
+                </div>
+                                
 
-                {isCheckoutMode && <LoadingButton
-                    variant="contained"
-                    color="blue"
-                    className="whiteText"
-                    loading={isLoading}
-                    endIcon={<ViewInArRoundedIcon/>}
-                    onClick={() => onCheckout(total)}
-                >
-                    {t('shipping')}
-                </LoadingButton>}
-                <div className="btn-placeholder"></div>
+                {/* <div className="btn-placeholder"></div> */}
             </div>
         </>
     );

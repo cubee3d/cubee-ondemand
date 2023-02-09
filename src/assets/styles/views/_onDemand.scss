@@ -61,14 +61,16 @@ th {
 }
 .cta-btns-cont {
     display: flex;
-    justify-content: space-between;
-    width: 70%;
-    button {
-        width: 240px;
-    }
-    .btn-placeholder {
-        width: 240px;
-    }
+    justify-content: space-around;
+    width: 450px;
+    // flex-direction: row;
+    // width: 70%;
+    // button {
+    //     width: 240px;
+    // }
+    // .btn-placeholder {
+    //     width: 240px;
+    // }
 }
 .onDemand-step {
     // text-align: center;
@@ -341,4 +343,73 @@ th {
 .step4-container {
 
 }
+
+
+.step5-container {
+    display: grid;
+    grid-template-columns: [l1] 110px [l2] 100px [l3] 320px;
+    padding-bottom: 15px;
+    
+    .step5-image {
+        grid-column-start: 1;
+        justify-self: start;
+        margin-left: 20px;
+        background-color: rgb(227, 225, 225);
+        border-radius: 10px;
+        width: 70px;  
+    }
+    
+    .step5-item-name {
+        grid-column-start: 2;
+        justify-self: start;
+        font-size: 12px;
+        font-weight: bold;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    
+    .step5-price {
+        grid-column-start: 3;
+        justify-self: end;
+        font-size: 13px;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+        // padding-top: 3px;
+        // padding-left: 160px;
+
+    }
+
+    
+}
+
+.step5-subtotal {
+    display: flex;
+    flex-direction: column;
+    width: 530px;
+    padding-top: 15px;
+    
+    
+}
+.step5-title {
+    font-size: 15px;
+    padding-left: 25px;
+    padding-bottom: 15px;
+    display: flex;
+    justify-content: space-between;
+    
+    .step5-title-grey {
+        color: gray;
+       
+    }
+}
+
+.step5-backbtn {
+    display: flex;
+    padding: 10px;
+}
+
+
 
