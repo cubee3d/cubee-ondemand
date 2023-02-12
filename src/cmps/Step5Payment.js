@@ -219,8 +219,10 @@ const Step5Payment = ({apikey, totalPrice, currencyCode, next, prev, items, file
             },
           }}
         >
-          <Paper elevation={5} sx={{borderRadius: 3, direction: "ltr"}} >
-        Payment Details
+          <Paper elevation={5} sx={{borderRadius: 3, direction: "ltr", padding: 3}} >
+        <div style={{paddingBottom: 13, display: "flex", alignContent: "flex-start"}}>
+            Payment Details
+        </div>
         <div className="stripe-and-tag">
           <div className="stripe-form">
             {!isloading &&

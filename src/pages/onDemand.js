@@ -480,7 +480,9 @@ export const OnDemand = ({ isDesktop, isCheckoutMode, queryKey}) => {
                     />
                 );
             case 1:
-                if (isCalculating) return <Step2Calculating isDesktop={isDesktop} />;
+                if (isCalculating) {
+                    return  <Step2Calculating isDesktop={isDesktop}/>
+                } 
                 return (
                     <>
                         <Step2FilesTable
@@ -600,7 +602,7 @@ export const OnDemand = ({ isDesktop, isCheckoutMode, queryKey}) => {
                         dir={language.dir}
                         className="onDemand-stepper"
                     >
-                        {steps.filter(label => isCheckoutMode  || label !== 'Payment' && label != 'Shipping').map((label, index) => {
+                        {steps.filter(label => isCheckoutMode  || label !== 'Check-Out' && label != 'Shipping').map((label, index) => {
                             const stepProps = {};
                             const labelProps = {};
                             return (
