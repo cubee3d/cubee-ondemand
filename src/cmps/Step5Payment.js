@@ -30,7 +30,7 @@ const Step5Payment = ({apikey, totalPrice, currencyCode, next, prev, items, file
         .then(() => setIsloading(false))
   }, []);
 
-  
+
   const [total, setTotal] = useState();
 
   useEffect(() => {
@@ -64,17 +64,19 @@ const Step5Payment = ({apikey, totalPrice, currencyCode, next, prev, items, file
       paymentId: paymentId,
       email: shippingData.emailValue,
       currencyCode: currencyCode,
-      amount: totalPrice,
+      amount: totalPrice + shippingData.price,
       shipping: shippingData,
       data: extractFiles()
     };
 
-    onDemandService.createOrder(data, apikey).then(next);
+    onDemandService.createOrder(data, apikey).then(res => {
+      next(res)
+    });
   }
 
   return (
       <>
-        <Box 
+        <Box
           sx={{
             paddingTop: 5,
             display: 'flex',
@@ -90,19 +92,19 @@ const Step5Payment = ({apikey, totalPrice, currencyCode, next, prev, items, file
             <div className='step5-backbtn'>
               <Button style={{fontSize: "15px"}}
                 size="large"
-                startIcon={<ArrowBack/>} 
-                // variant="outlined" 
+                startIcon={<ArrowBack/>}
+                // variant="outlined"
                 onClick={() => {prev()}}
                 >
                   Back
               </Button>
             </div>
-             
+
               {filesSlicedInfo.map(file => (
                   <div
                       className="step5-container"
                       key={file.fileId}
-                      sx={{         
+                      sx={{
                           '&:last-child td, &:last-child th': {
                               border: 0,
                           },
@@ -110,7 +112,7 @@ const Step5Payment = ({apikey, totalPrice, currencyCode, next, prev, items, file
                   >
                       <div className="step5-image">
                           <img
-                              
+
                               src={file.snapshotURL}
                               style={{
                                   width: 45,
@@ -137,7 +139,7 @@ const Step5Payment = ({apikey, totalPrice, currencyCode, next, prev, items, file
                               {file.fileName.slice(-3)}
                           </div>
                       )}
-                    
+
                       {file.copies > 1 ? (
                           <div className='step5-price'>
                             <div >
@@ -159,11 +161,11 @@ const Step5Payment = ({apikey, totalPrice, currencyCode, next, prev, items, file
               ))}
 
             <div className='step5-subtotal'>
-              
-              
+
+
               <div className='step5-title'>
                 <div>
-                  Subtotal             
+                  Subtotal
                 </div>
                 <div>
                   {t(currencyCode)}{' '}
@@ -178,38 +180,35 @@ const Step5Payment = ({apikey, totalPrice, currencyCode, next, prev, items, file
                 Shipping (International)
               </div>
               <div className='step5-title-grey'>
-                ?????
+                {shippingData.price}
               </div>
              </div>
-             <div className='step5-title'>
-               <div className='step5-title-grey'>
-                Sales Tax (%6.5)
-              </div>
-              <div className='step5-title-grey'>
-                ?????
-              </div>
-             </div>
+             {/*<div className='step5-title'>*/}
+             {/*  <div className='step5-title-grey'>*/}
+             {/*   Sales Tax (%6.5)*/}
+             {/* </div>*/}
+             {/* <div className='step5-title-grey'>*/}
+             {/*   ?????*/}
+             {/* </div>*/}
+             {/*</div>*/}
              <div style={{paddingLeft: '25px', paddingBottom: '10px'}}>
                 <Divider width='500px'></Divider>
              </div>
              <div className='step5-title'>
                 <div>
-                  Total due           
+                  Total due
                 </div>
                 <div>
-                  ?????
+                  {totalPrice + shippingData.price}
                 </div>
               </div>
-              
-                        
-            
             </div>
-          </Paper> 
+          </Paper>
         </Box>
-        
-        <Box 
+
+        <Box
           sx={{
-            
+
             display: 'flex',
             flexWrap: 'wrap',
             '& > :not(style)': {
@@ -238,7 +237,7 @@ const Step5Payment = ({apikey, totalPrice, currencyCode, next, prev, items, file
                 >
                   <PaymentForm
                       totalPrice={
-                        totalPrice
+                        totalPrice + shippingData.price
                       }
                       onSuccessPayment={onSuccess}
                   />

@@ -13,7 +13,7 @@ import Slider from '@mui/material/Slider';
 import { styled } from '@mui/material/styles';
 import { useTranslation } from 'react-i18next';
 import { LanguageContext } from '../contexts/LanguageContext';
-import UndoIcon from '@mui/icons-material/Undo'; 
+import UndoIcon from '@mui/icons-material/Undo';
 
 const PrettoSlider = styled(Slider)(prettoSliderSettings);
 
@@ -75,6 +75,7 @@ export const Step2PrintSettings = ({
             ...printSettings,
             color,
         });
+
         setStlViewerColor(colors[color]);
     };
 
@@ -162,7 +163,7 @@ export const Step2PrintSettings = ({
                         </Tooltip>}
                     </div>
                     <PrettoSlider
-                    
+
                         valueLabelDisplay="auto"
                         value={printSettings.resolution}
                         min={0.1}

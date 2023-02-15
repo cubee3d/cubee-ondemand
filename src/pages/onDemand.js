@@ -54,6 +54,11 @@ export const OnDemand = ({ isDesktop, isCheckoutMode, queryKey}) => {
     const [shopOptions, setShopOptions] = useState({});
     const [shippingData, setShippingData] = useState({});
     const [total, setTotal] = useState();
+    const [orderId, setOrderId] = useState();
+
+    const refreshPage = () => {
+        window.location.reload();
+    }
 
     const scrollToTop = () =>{
         window.scrollTo({top: 0, behavior: 'smooth'});
@@ -269,13 +274,19 @@ export const OnDemand = ({ isDesktop, isCheckoutMode, queryKey}) => {
             setIsLoading(false);
             return notificationHandler.error(t('selectColor'));
         }
-        setStlViewerColor(colors[filesPrintSettings[uuid].printSettings.color]);
+        let availableColors = getRelevantColors(
+            filesPrintSettings[uuid]
+                .printSettings.material);
+
+        let selectedColor = availableColors[filesPrintSettings[selectedUuid].printSettings.color];
+
+        setStlViewerColor(selectedColor);
         setSelectedUuid(uuid);
     };
 
     const onCheckout = (price) => {
-        setActiveStep(prevActive => prevActive + 1);
         setTotal(price);
+        setActiveStep(prevActive => prevActive + 1);
         scrollToTop()
     }
 
@@ -465,14 +476,35 @@ export const OnDemand = ({ isDesktop, isCheckoutMode, queryKey}) => {
 
     const [open, setOpen] = React.useState(false);
 
-    const onNext = () => {
+    const onNext = (res) => {
+        setOrderId(res);
         setActiveStep(prevActive => prevActive + 1);
+    }
+
+    const onShippingNext = () => {
+        let totalPrice = 0;
+        filesSlicedInfo.forEach(file => {
+            totalPrice += Math.ceil(file.price) * file.copies;
+        });
+
+        onDemandService.getShippingPrice(currencyCode, totalPrice, apiKey)
+            .then((res) => {
+                if (res.error) {
+                    notificationHandler.error("Shipping is available, please contact seller.");
+                } else {
+                    setShippingData(prv => {
+                        return {...prv, price: res?.shippingPrice};
+                    });
+
+                    setActiveStep(prevActive => prevActive + 1);
+                }
+            });
     }
 
     const renderStep = () => {
         switch (activeStep) {
             case 0:
-                return (   
+                return (
                     <StepWelcomeFile
                         isLoading={isLoading}
                         apiKey={apiKey}
@@ -482,7 +514,7 @@ export const OnDemand = ({ isDesktop, isCheckoutMode, queryKey}) => {
             case 1:
                 if (isCalculating) {
                     return  <Step2Calculating isDesktop={isDesktop}/>
-                } 
+                }
                 return (
                     <>
                         <Step2FilesTable
@@ -564,7 +596,7 @@ export const OnDemand = ({ isDesktop, isCheckoutMode, queryKey}) => {
             case 3:
                 return (
                     <div>
-                        <Step4Shipping next={onNext} prev={onPrevStep} setShippingData={setShippingData}/>
+                        <Step4Shipping next={onShippingNext} prev={onPrevStep} setShippingData={setShippingData}/>
                     </div>
 
                 );
@@ -583,11 +615,12 @@ export const OnDemand = ({ isDesktop, isCheckoutMode, queryKey}) => {
                 );
             case 5:
                 return (
-                    <SuccessPage 
-                    repeat={setActiveStep}
+                    <SuccessPage
+                    repeat={refreshPage}
+                    orderId={orderId}
                    />
                 )
-                                   
+
             default:
                 return <></>
         }
