@@ -1,5 +1,5 @@
 import { useContext } from 'react';
-import { Button, Tooltip, TextField } from '@mui/material';
+import { Button, Tooltip, TextField, IconButton } from '@mui/material';
 import LiveHelpIcon from '@mui/icons-material/LiveHelp';
 import {
     popovers,
@@ -13,6 +13,7 @@ import Slider from '@mui/material/Slider';
 import { styled } from '@mui/material/styles';
 import { useTranslation } from 'react-i18next';
 import { LanguageContext } from '../contexts/LanguageContext';
+import UndoIcon from '@mui/icons-material/Undo';
 
 const PrettoSlider = styled(Slider)(prettoSliderSettings);
 
@@ -74,6 +75,7 @@ export const Step2PrintSettings = ({
             ...printSettings,
             color,
         });
+
         setStlViewerColor(colors[color]);
     };
 
@@ -92,7 +94,7 @@ export const Step2PrintSettings = ({
 
     return (
         <>
-            <div className="settings">
+            <div className="settings" dir='ltr'>
                 {fileName?.length < 20 ? (
                     <p>{fileName}</p>
                 ) : (
@@ -161,6 +163,7 @@ export const Step2PrintSettings = ({
                         </Tooltip>}
                     </div>
                     <PrettoSlider
+
                         valueLabelDisplay="auto"
                         value={printSettings.resolution}
                         min={0.1}
@@ -168,7 +171,7 @@ export const Step2PrintSettings = ({
                         step={0.01}
                         marks={resMarks[language.lang]}
                         onChange={handleChangeRes}
-                        track="inverted"
+                        // track="inverted"
                         color="blue"
                     />
                 </div>
@@ -259,7 +262,10 @@ export const Step2PrintSettings = ({
                 </div>
                 <div className="cta-cont">
                     <Button
-                        variant="link"
+                        startIcon={<UndoIcon />}
+                        style={{color: "blue", width: "fit-content"}}
+                        size='small'
+                        variant="contained"
                         color="white"
                         onClick={onResetSettings}
                         disabled={isLoading}

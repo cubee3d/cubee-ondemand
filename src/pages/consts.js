@@ -51,23 +51,25 @@ export const infillMarks = [
 export const resMarks = {
     en: [
         {
-            value: 0.1,
-            label: 'High',
-        },
-        {
             value: 0.3,
             label: 'Low',
         },
-    ],
-    heb: [
         {
             value: 0.1,
-            label: 'גבוהה',
+            label: 'High',
         },
+      
+    ],
+    heb: [
         {
             value: 0.3,
             label: 'נמוכה',
         },
+        {
+            value: 0.1,
+            label: 'גבוהה',
+        },
+  
     ],
 };
 
@@ -215,7 +217,7 @@ export const colorsMap = {
 };
 
 // export const steps = ['העלאת קובץ להדפסה', 'הגדרות הדפסה', 'שלח לאישור'];
-export const steps = ['Upload File', 'Print Settings', 'Summary','Shipping','Payment'];
+export const steps = ['Upload File', 'Print Settings', 'Summary','Shipping','Check-Out'];
 export const materials = ['ABS', 'PLA', 'PETG', 'TPU'];
 export const popovers = {
     heb: {

@@ -91,7 +91,7 @@ export const PaymentForm = ({ totalPrice, onSuccessPayment }) => {
                         }}
                     />
                     <LoadingButton
-                        sx={{ width: '40%' }}
+                        sx={{ width: '40%', marginTop: 3 }}
                         loading={isLoadingPayment}
                         className="pay-btn"
                         type="submit"

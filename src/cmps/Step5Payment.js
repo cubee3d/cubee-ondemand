@@ -3,12 +3,16 @@ import {loadStripe} from '@stripe/stripe-js';
 import {PaymentForm} from "./PaymentForm";
 import {useState, useEffect} from "react";
 import onDemandService from "../services/onDemandService";
+import {useTranslation} from "react-i18next";
+import { Box } from '@mui/system';
+import { Button, Divider, IconButton, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material';
+import { ArrowBack } from '@mui/icons-material';
 
-const Step5Payment = ({apikey, totalPrice, currencyCode, next, items, filesPrintSettings, shippingData}) => {
+const Step5Payment = ({apikey, totalPrice, currencyCode, next, prev, items, filesPrintSettings, shippingData, filesSlicedInfo}) => {
 
   const PUBLIC_KEY = process.env.REACT_APP_STRIPE_KEY;
   const stripeTestPromise = loadStripe(PUBLIC_KEY);
-
+  const { t } = useTranslation();
   const [clientSecretState, setClientSecretState] = useState(null);
   const [isloading, setIsloading] = useState(true);
   const createNewPaymentIntent = async () => {
@@ -27,49 +31,197 @@ const Step5Payment = ({apikey, totalPrice, currencyCode, next, items, filesPrint
   }, []);
 
 
-  // const extractFiles = () => {
-  //   return filesSlicedInfo.map(model => {
-  //     let printTime;
-  //     printTime = Math.floor(model.printTime) > 0 ? Math.floor(model.printTime) : '';
-  //     printTime = Math.floor(model.printTime) > 0 ? (printTime += t('hours')) : (printTime);
-  //     printTime += Math.floor(Number((model.printTime - Math.floor(model.printTime)).toFixed(2))
-  //         * 60);
-  //     printTime += t('minutes');
-  //     return {
-  //       ...model,
-  //       printTime,
-  //       price: Math.ceil(model.price),
-  //       color: filesPrintSettings[model.uuid].printSettings.color,
-  //       material: filesPrintSettings[model.uuid].printSettings.material,
-  //       layerHeight: filesPrintSettings[model.uuid].printSettings.resolution,
-  //       isVase: filesPrintSettings[model.uuid].printSettings.isVase ? 'Yes' : 'No',
-  //       isSupports: filesPrintSettings[model.uuid].printSettings.isSupports ? 'Yes' : 'No',
-  //       infill: filesPrintSettings[model.uuid].printSettings.infill,
-  //       downloadURL: `${process.env.REACT_APP_DOWNLOAD_BASE_URL}${model.fileId}`,
-  //       snapshotURL: null,
-  //     };
-  //   });
-  // }
+  const [total, setTotal] = useState();
+
+  useEffect(() => {
+      let totalPrice = 0;
+      filesSlicedInfo.forEach(file => {
+          totalPrice += Math.ceil(file.price) * file.copies;
+      });
+      setTotal(totalPrice);
+  }, []);
+
+  const extractFiles = () => {
+    return items.map(model => {
+      return {
+        copies: model["copies"],
+        dimensions: model["dimensions"],
+        fileId: model["fileId"],
+        fileName: model["fileName"],
+        price: Math.ceil(model.price),
+        color: filesPrintSettings[model.uuid].printSettings.color,
+        material: filesPrintSettings[model.uuid].printSettings.material,
+        layerHeight: filesPrintSettings[model.uuid].printSettings.resolution,
+        isVase: !!filesPrintSettings[model.uuid].printSettings.isVase,
+        isSupports: !!filesPrintSettings[model.uuid].printSettings.isSupports,
+        infill: filesPrintSettings[model.uuid].printSettings.infill,
+      };
+    });
+  }
 
   const onSuccess = (paymentId) => {
-    console.log("info: " + items);
-    console.log("filesPrintSettings: " + filesPrintSettings);
     const data = {
       paymentId: paymentId,
       email: shippingData.emailValue,
       currencyCode: currencyCode,
-      amount: totalPrice,
-      items: items,
-      test: filesPrintSettings,
-      shipping: shippingData
+      amount: totalPrice + shippingData.price,
+      shipping: shippingData,
+      data: extractFiles()
     };
 
-    onDemandService.createOrder(data, apikey).then(next);
+    onDemandService.createOrder(data, apikey).then(res => {
+      next(res)
+    });
   }
 
   return (
       <>
-        Strip payments!!!
+        <Box
+          sx={{
+            paddingTop: 5,
+            display: 'flex',
+            flexWrap: 'wrap',
+            '& > :not(style)': {
+              m: 1,
+              width: 550,
+              height: 'fit-content',
+            },
+          }}
+        >
+          <Paper elevation={5} sx={{borderRadius: 3, direction: "ltr"}} >
+            <div className='step5-backbtn'>
+              <Button style={{fontSize: "15px"}}
+                size="large"
+                startIcon={<ArrowBack/>}
+                // variant="outlined"
+                onClick={() => {prev()}}
+                >
+                  Back
+              </Button>
+            </div>
+
+              {filesSlicedInfo.map(file => (
+                  <div
+                      className="step5-container"
+                      key={file.fileId}
+                      sx={{
+                          '&:last-child td, &:last-child th': {
+                              border: 0,
+                          },
+                      }}
+                  >
+                      <div className="step5-image">
+                          <img
+
+                              src={file.snapshotURL}
+                              style={{
+                                  width: 45,
+                                  height: 60,
+                                  objectFit: 'contain',
+                                  margin: 'auto',
+                                  display: 'block',
+                              }}
+                          />{' '}
+                      </div>
+                        {file.fileName.length < 21 ? (
+                          <div className='step5-item-name'>
+                              <div>
+                                {file.fileName}
+                              </div>
+                              <div style={{paddingTop: 10, paddingRight: 60, color: "grey"}}>
+                                Qty: {file.copies}
+                              </div>
+
+                          </div>
+                      ) : (
+                          <div className='step5-item-name'>
+                              {file.fileName.slice(0, 16)}...
+                              {file.fileName.slice(-3)}
+                          </div>
+                      )}
+
+                      {file.copies > 1 ? (
+                          <div className='step5-price'>
+                            <div >
+                              {t(currencyCode)}{' '}
+                              {Math.ceil(file.price) * file.copies}
+                            </div>
+                            <div style={{paddingTop: 10, color: "grey", fontSize: 12}}>
+                              {t(currencyCode)}{' '}
+                              {Math.ceil(file.price)} each
+                            </div>
+                          </div>
+                      ) : (
+                          <div className='step5-price'>
+                              {t(currencyCode)}{' '}
+                              {Math.ceil(file.price)}
+                          </div>
+                      )}
+                  </div>
+              ))}
+
+            <div className='step5-subtotal'>
+
+
+              <div className='step5-title'>
+                <div>
+                  Subtotal
+                </div>
+                <div>
+                  {t(currencyCode)}{' '}
+                  {total}
+                </div>
+              </div>
+             <div style={{paddingLeft: '25px', paddingBottom: '10px'}}>
+                <Divider width='500px'></Divider>
+             </div>
+             <div className='step5-title'>
+               <div className='step5-title-grey'>
+                Shipping (International)
+              </div>
+              <div className='step5-title-grey'>
+                {shippingData.price}
+              </div>
+             </div>
+             {/*<div className='step5-title'>*/}
+             {/*  <div className='step5-title-grey'>*/}
+             {/*   Sales Tax (%6.5)*/}
+             {/* </div>*/}
+             {/* <div className='step5-title-grey'>*/}
+             {/*   ?????*/}
+             {/* </div>*/}
+             {/*</div>*/}
+             <div style={{paddingLeft: '25px', paddingBottom: '10px'}}>
+                <Divider width='500px'></Divider>
+             </div>
+             <div className='step5-title'>
+                <div>
+                  Total due
+                </div>
+                <div>
+                  {totalPrice + shippingData.price}
+                </div>
+              </div>
+            </div>
+          </Paper>
+        </Box>
+
+        <Box
+          sx={{
+
+            display: 'flex',
+            flexWrap: 'wrap',
+            '& > :not(style)': {
+              m: 1,
+              width: 550,
+              height: 'fit-content',
+            },
+          }}
+        >
+          <Paper elevation={5} sx={{borderRadius: 3, direction: "ltr", padding: 3}} >
+        <div style={{paddingBottom: 13, display: "flex", alignContent: "flex-start"}}>
+            Payment Details
+        </div>
         <div className="stripe-and-tag">
           <div className="stripe-form">
             {!isloading &&
@@ -85,13 +237,15 @@ const Step5Payment = ({apikey, totalPrice, currencyCode, next, items, filesPrint
                 >
                   <PaymentForm
                       totalPrice={
-                        totalPrice
+                        totalPrice + shippingData.price
                       }
                       onSuccessPayment={onSuccess}
                   />
                 </Elements>}
           </div>
         </div>
+        </Paper>
+        </Box>
       </>
   );
 };

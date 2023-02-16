@@ -6,19 +6,17 @@ import { Controller, useForm } from "react-hook-form";
 import { Button, Divider, TextField } from "@mui/material";
 import { Box } from "@mui/system";
 import { MuiTelInput } from 'mui-tel-input';
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { ArrowBack } from "@mui/icons-material";
 import PaymentIcon from '@mui/icons-material/Payment';
 import ShieldOutlinedIcon from '@mui/icons-material/ShieldOutlined';
 
 export const Step4Shipping = ({next , prev, setShippingData}) => {
 
-    const price = 20;
-
     const privacy = "We value your privacy. The information you share with us will be used only for shipping purposes, and will not be shared with third parties. ";
 
     // const { t } = useTranslation(['step3']);
-    const { handleSubmit, reset, control } = useForm();
+    const { handleSubmit, control } = useForm();
+
     const onSubmit = (data) => { 
         console.log(data);
         setShippingData(data);
@@ -48,6 +46,7 @@ export const Step4Shipping = ({next , prev, setShippingData}) => {
                 </div>
                     <div style={{display: 'flex' , justifyContent: 'space-between'}}>
                         <Controller
+                            
                             name={"firstNameValue"}
                             control={control}
                             render={({ field: { onChange, value } }) => (
@@ -55,7 +54,7 @@ export const Step4Shipping = ({next , prev, setShippingData}) => {
                                     sx={{width: '245px'}}
                                     InputLabelProps={{ shrink: true }} 
                                     onChange={onChange} 
-                                    value={value} 
+                                    value={value? value : ""}  
                                     label={"First Name"} 
                                     size="normal" 
                                     margin="normal"
@@ -64,18 +63,19 @@ export const Step4Shipping = ({next , prev, setShippingData}) => {
                             )}
                         />
                         <Controller
-                            name={"LasttNameValue"}
+                            name={"lastNameValue"}
                             control={control}
                             render={({ field: { onChange, value } }) => (
                                 <TextField 
                                     sx={{width: '245px'}}
                                     InputLabelProps={{ shrink: true }} 
                                     onChange={onChange} 
-                                    value={value} 
+                                    value={value? value : ""} 
                                     label={"Last Name"} 
                                     size="normal" 
                                     margin="normal"
-                                    required/>
+                                    required
+                                    />
                             )}
                         />
                     </div>
@@ -85,7 +85,7 @@ export const Step4Shipping = ({next , prev, setShippingData}) => {
                         render={({ field: { onChange, value } }) => (
                             <MuiTelInput 
                                 required
-                                value={value} 
+                                value={value? value : ""} 
                                 onChange={onChange}
                                 forceCallingCode
                                 focusOnSelectCountry
@@ -103,13 +103,14 @@ export const Step4Shipping = ({next , prev, setShippingData}) => {
                             <TextField 
                                 InputLabelProps={{ shrink: true }} 
                                 onChange={onChange} 
-                                value={value} 
+                                value={value? value : ""}  
                                 label={"Email"} 
                                 size="normal" 
                                 margin="normal"
                                 type="email"
                                 placeholder="ex: myname@example.com"
-                                required/>
+                                required
+                                />
                         )}
                     />
                     
@@ -127,7 +128,7 @@ export const Step4Shipping = ({next , prev, setShippingData}) => {
                                     sx={{width: '245px'}}
                                     InputLabelProps={{ shrink: true }} 
                                     onChange={onChange} 
-                                    value={value} 
+                                    value={value? value : ""}  
                                     label={"City"} 
                                     size="normal" 
                                     margin="normal"
@@ -143,11 +144,10 @@ export const Step4Shipping = ({next , prev, setShippingData}) => {
                                     sx={{width: '245px'}}
                                     InputLabelProps={{ shrink: true }} 
                                     onChange={onChange} 
-                                    value={value} 
+                                    value={value? value : ""}  
                                     label={"State/Province"} 
                                     size="normal" 
-                                    margin="normal"
-                                    required/>
+                                    margin="normal"/>
                             )}
                         />
                     </div>
@@ -159,11 +159,12 @@ export const Step4Shipping = ({next , prev, setShippingData}) => {
                             <TextField 
                                 InputLabelProps={{ shrink: true }} 
                                 onChange={onChange} 
-                                value={value} 
+                                value={value? value : ""}  
                                 label={"Street Address"} 
                                 size="normal" 
                                 margin="normal"
-                                required/>
+                                required
+                                />
                         )}
                     />
                     <Controller
@@ -173,11 +174,10 @@ export const Step4Shipping = ({next , prev, setShippingData}) => {
                             <TextField 
                                 InputLabelProps={{ shrink: true }} 
                                 onChange={onChange} 
-                                value={value} 
+                                value={value? value : ""}  
                                 label={"Street Address Line 2"} 
                                 size="normal" 
-                                margin="normal"
-                                required/>
+                                margin="normal"/>
                         )}
                     />
                     <Controller
@@ -187,11 +187,12 @@ export const Step4Shipping = ({next , prev, setShippingData}) => {
                             <TextField 
                                 InputLabelProps={{ shrink: true }} 
                                 onChange={onChange} 
-                                value={value} 
+                                value={value? value : ""}  
                                 label={"Postal/Zip Code"} 
                                 size="normal" 
                                 margin="normal"
-                                required/>
+                                required
+                                />
                         )}
                     />
                     {/* <div style={{fontSize: "16px", padding: "13px"}}>

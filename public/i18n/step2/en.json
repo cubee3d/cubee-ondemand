@@ -7,7 +7,7 @@
     "add_supports": "Add Supports",
     "vase_mode": "Vase Mode",
     "copies": "Copies",
-    "reset_settwings": "Reset Settings",
+    "reset_settings": "Reset Settings",
     "continue": "Approve and Continue",
     "reset_viewer": "Reset Viewer",
     "stop_animation": "Stop Animation",
@@ -17,10 +17,11 @@
     "file_name": "File Name",
     "file_size": "Size (MB)",
     "image": "Image",
-    "action": "Action",
-    "upload_file": "Add New File",
+    "action": "Remove",
+    "upload_file": "Upload Another File",
     "analyzingTitle": "We're analyzing your files",
     "analyzingP": "This can take up to 2 minutes",
     "analyzingP2": "Please do not close this page",
     "anyColor": "Any"
+    
 }
