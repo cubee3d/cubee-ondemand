@@ -64,7 +64,7 @@ const Step5Payment = ({apikey, totalPrice, currencyCode, next, prev, items, file
       paymentId: paymentId,
       email: shippingData.emailValue,
       currencyCode: currencyCode,
-      amount: totalPrice + shippingData.price,
+      amount: Math.ceil(totalPrice + shippingData.price),
       shipping: shippingData,
       data: extractFiles()
     };
