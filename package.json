@@ -36,7 +36,7 @@
         "start": "env-cmd -f .env.staging react-scripts start",
         "start:production": "env-cmd -f .env.production react-scripts start",
         "build:staging": "env-cmd -f .env.staging react-scripts build ",
-        "build:production": "env-cmd -f .env.production react-scripts build",
+        "build:production": "env-cmd -f .env.production react-scripts build -p",
         "test": "react-scripts test",
         "eject": "react-scripts eject"
     },
