@@ -83,9 +83,10 @@ export const OnDemand = ({ isDesktop, isCheckoutMode, queryKey}) => {
             };
             getShopOptions();
         } else {
-            window.parent.postMessage({handshake: '1'}, '*');
             window.addEventListener('message', event => {
                 event.stopPropagation();
+                console.log("Message recived from parent: " + event);
+
                 if (event.data.handshake) {
                     if (event.data.handshake.apiKey) {
                         setApiKey(event.data.handshake.apiKey);
@@ -94,7 +95,6 @@ export const OnDemand = ({ isDesktop, isCheckoutMode, queryKey}) => {
                             if (res.error) return notificationHandler.error(t('serverError'));
                             setShopOptions(res);
                         };
-                        getShopOptions();
                     }
                     if (event.data.handshake.currencyCode) {
                         setCurrencyCode(event.data.handshake.currencyCode);
@@ -108,6 +108,9 @@ export const OnDemand = ({ isDesktop, isCheckoutMode, queryKey}) => {
                     setIsLoading(true);
                 }
             });
+
+            window.parent.postMessage({handshake: '1'}, '*');
+
             if (process.env.REACT_APP_ENV === 'staging') {
                 if (!apiKey) {
                     setApiKey(process.env.REACT_APP_API_KEY_DEMO);
