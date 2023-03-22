@@ -79,7 +79,11 @@ function App() {
 
     const queryKey = searchParams.get('t');
     const isCheckoutMode = searchParams.get('checkoutMode') != null;
+    console.log(isCheckoutMode);
+    let lang = searchParams.get('lang');
 
+    if (lang == null)
+        lang = 'en';
 
     // useEffect(() => {
     //     i18n.changeLanguage('en');
