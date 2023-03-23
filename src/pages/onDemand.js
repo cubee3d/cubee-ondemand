@@ -85,8 +85,7 @@ export const OnDemand = ({ isDesktop, isCheckoutMode, queryKey}) => {
         } else {
             window.addEventListener('message', event => {
                 event.stopPropagation();
-                console.log("Message recived from parent: " + event);
-
+                console.log("Message recived from parent: " + JSON.stringify(event));
                 if (event.data.handshake) {
                     if (event.data.handshake.apiKey) {
                         setApiKey(event.data.handshake.apiKey);
