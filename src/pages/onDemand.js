@@ -1,32 +1,23 @@
-import React, { useEffect, useState, useContext, useRef } from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import Stepper from '@mui/material/Stepper';
 import Step from '@mui/material/Step';
 import StepLabel from '@mui/material/StepLabel';
-import { SnackbarHandlerContext } from '../contexts/SnackbarHandlerContext';
-import { LanguageContext } from '../contexts/LanguageContext';
+import {SnackbarHandlerContext} from '../contexts/SnackbarHandlerContext';
+import {LanguageContext} from '../contexts/LanguageContext';
 import onDemandService from '../services/onDemandService';
-import {
-    steps,
-    initialPrintSettings,
-    colors,
-    materialIds,
-    colorsMap,
-    materialsMap,
-} from './consts';
-import { StepWelcomeFile } from '../cmps/StepWelcomeFile';
-import { Step2PrintSettings } from '../cmps/Step2PrintSettings';
-import { Step3OrderDetails } from '../cmps/Step3OrderDetails';
-import { useTranslation } from 'react-i18next';
+import {colors, colorsMap, initialPrintSettings, materialIds, materialsMap, steps,} from './consts';
+import {StepWelcomeFile} from '../cmps/StepWelcomeFile';
+import {Step2PrintSettings} from '../cmps/Step2PrintSettings';
+import {Step3OrderDetails} from '../cmps/Step3OrderDetails';
+import {useTranslation} from 'react-i18next';
 import i18n from '../i18n/i18n';
-import { Box, MenuItem, Select } from '@mui/material';
-import LanguageIcon from '@mui/icons-material/Language';
-import { Step2FilesTable } from '../cmps/Step2FilesTable';
-import { Step2STLViewer } from '../cmps/Step2STLViewer';
-import { Step2Calculating } from '../cmps/Step2Calculating';
-import { generateUuid } from '../services/utils';
+import {Step2FilesTable} from '../cmps/Step2FilesTable';
+import {Step2STLViewer} from '../cmps/Step2STLViewer';
+import {Step2Calculating} from '../cmps/Step2Calculating';
+import {generateUuid} from '../services/utils';
 import Step5Payment from "../cmps/Step5Payment";
-import { Step4Shipping } from '../cmps/Step4Shipping';
-import { SuccessPage } from '../cmps/SuccessPage';
+import {Step4Shipping} from '../cmps/Step4Shipping';
+import {SuccessPage} from '../cmps/SuccessPage';
 
 // * This is the Mother Component of the website.
 // * This component manages the whole state of the app.
@@ -65,63 +56,66 @@ export const OnDemand = ({ isDesktop, isCheckoutMode, queryKey}) => {
     }
 
     useEffect(() => {
-        if (isCheckoutMode) {
-            console.log("checkout mode selected");
+        setTimeout(() => {
+            if (isCheckoutMode) {
+                console.log("checkout mode selected");
 
-            if (queryKey == null)
-                return;
+                if (queryKey == null)
+                    return;
 
-            setApiKey(queryKey);
+                setApiKey(queryKey);
 
-            const getShopOptions = async () => {
-                const res = await onDemandService.getShopOptions(
-                    queryKey
-                );
-                if (res.error)
-                    return notificationHandler.error(t('serverError'));
-                setShopOptions(res);
-            };
-            getShopOptions();
-        } else {
-            window.addEventListener('message', event => {
-                event.stopPropagation();
-                console.log("Message recived from parent: " + JSON.stringify(event));
-                if (event.data.handshake) {
-                    if (event.data.handshake.apiKey) {
-                        setApiKey(event.data.handshake.apiKey);
+                const getShopOptions = async () => {
+                    const res = await onDemandService.getShopOptions(
+                        queryKey
+                    );
+                    if (res.error)
+                        return notificationHandler.error(t('serverError'));
+                    setShopOptions(res);
+                };
+                getShopOptions();
+            } else {
+                window.addEventListener('message', event => {
+                    event.stopPropagation();
+                    console.log("Message received from parent: " + JSON.stringify(event.data.handshake));
+                    if (event.data.handshake) {
+                        if (event.data.handshake.apiKey) {
+                            setApiKey(event.data.handshake.apiKey);
+                            const getShopOptions = async () => {
+                                let res = await onDemandService.getShopOptions(event.data.handshake.apiKey);
+                                if (res.error) return notificationHandler.error(t('serverError'));
+                                setShopOptions(res);
+                            };
+                        }
+                        if (event.data.handshake.currencyCode) {
+                            setCurrencyCode(event.data.handshake.currencyCode);
+                        }
+                        if (event.data.handshake.lang) {
+                            if (event.data.handshake.lang.toLowerCase().includes('heb')) {
+                                toggleLangbyString('heb')
+                            } else toggleLangbyString('en')
+                        }
+                    } else if (event.data.isLoading) {
+                        setIsLoading(true);
+                    }
+                });
+
+
+                window.parent.postMessage({handshake: '1'}, '*');
+
+                if (process.env.REACT_APP_ENV === 'staging') {
+                    if (!apiKey) {
+                        setApiKey(process.env.REACT_APP_API_KEY_DEMO);
                         const getShopOptions = async () => {
-                            let res = await onDemandService.getShopOptions(event.data.handshake.apiKey);
+                            const res = await onDemandService.getShopOptions(process.env.REACT_APP_API_KEY_DEMO);
                             if (res.error) return notificationHandler.error(t('serverError'));
                             setShopOptions(res);
                         };
+                        getShopOptions();
                     }
-                    if (event.data.handshake.currencyCode) {
-                        setCurrencyCode(event.data.handshake.currencyCode);
-                    }
-                    if (event.data.handshake.lang) {
-                        if (event.data.handshake.lang.toLowerCase().includes('heb')) {
-                            toggleLangbyString('heb')
-                        } else toggleLangbyString('en')
-                    }
-                } else if (event.data.isLoading) {
-                    setIsLoading(true);
-                }
-            });
-
-            window.parent.postMessage({handshake: '1'}, '*');
-
-            if (process.env.REACT_APP_ENV === 'staging') {
-                if (!apiKey) {
-                    setApiKey(process.env.REACT_APP_API_KEY_DEMO);
-                    const getShopOptions = async () => {
-                        const res = await onDemandService.getShopOptions(process.env.REACT_APP_API_KEY_DEMO);
-                        if (res.error) return notificationHandler.error(t('serverError'));
-                        setShopOptions(res);
-                    };
-                    getShopOptions();
                 }
             }
-        }
+        }, 5000)
     }, []);
 
     // * When the first file is uploaded, this function is being called
