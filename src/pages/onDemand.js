@@ -56,7 +56,6 @@ export const OnDemand = ({ isDesktop, isCheckoutMode, queryKey}) => {
     }
 
     useEffect(() => {
-        setTimeout(() => {
             if (isCheckoutMode) {
                 console.log("checkout mode selected");
 
@@ -115,7 +114,6 @@ export const OnDemand = ({ isDesktop, isCheckoutMode, queryKey}) => {
                     }
                 }
             }
-        }, 5000)
     }, []);
 
     // * When the first file is uploaded, this function is being called
