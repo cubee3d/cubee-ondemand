@@ -82,8 +82,10 @@ export const OnDemand = ({ isDesktop, isCheckoutMode, queryKey}) => {
                             setApiKey(event.data.handshake.apiKey);
                             const getShopOptions = async () => {
                                 let res = await onDemandService.getShopOptions(event.data.handshake.apiKey);
-                                if (res.error) return notificationHandler.error(t('serverError'));
                                 setShopOptions(res);
+
+                                if (res.error)
+                                    return notificationHandler.error(t('serverError'));
                             };
                         }
                         if (event.data.handshake.currencyCode) {
