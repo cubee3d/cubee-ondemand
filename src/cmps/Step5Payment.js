@@ -177,7 +177,7 @@ const Step5Payment = ({apikey, totalPrice, currencyCode, next, prev, items, file
              </div>
              <div className='step5-title'>
                <div className='step5-title-grey'>
-                Shipping (International)
+                Shipping
               </div>
               <div className='step5-title-grey'>
                 {shippingData.price}
