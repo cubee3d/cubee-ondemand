@@ -82,8 +82,9 @@ function App() {
     console.log(isCheckoutMode);
     let lang = searchParams.get('lang');
 
-    if (lang == null)
+    if (lang == null) {
         lang = 'en';
+    }
 
     // useEffect(() => {
     //     i18n.changeLanguage('en');
@@ -92,7 +93,7 @@ function App() {
 
     const [snack, setSnack] = useState({});
     const [language, setLanguage] = useState({
-        lang: 'en',
+        lang: lang,
         dir: 'ltr',
     });
     const notificationHandler = {

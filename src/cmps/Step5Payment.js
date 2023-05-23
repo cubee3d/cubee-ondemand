@@ -17,7 +17,7 @@ const Step5Payment = ({apikey, totalPrice, currencyCode, next, prev, items, file
   const [isloading, setIsloading] = useState(true);
   const createNewPaymentIntent = async () => {
     const res = await onDemandService.createNewPaymentIntent(
-        totalPrice,
+        Math.ceil(totalPrice + shippingData.price),
         currencyCode,
         shippingData.emailValue,
         apikey
