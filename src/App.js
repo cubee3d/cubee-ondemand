@@ -94,7 +94,7 @@ function App() {
     const [snack, setSnack] = useState({});
     const [language, setLanguage] = useState({
         lang: lang,
-        dir: 'ltr',
+        dir: lang === 'en' ? 'ltr' : 'rtl',
     });
     const notificationHandler = {
         success: message => showNotification('success', message),
