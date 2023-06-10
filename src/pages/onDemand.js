@@ -1,27 +1,27 @@
-import React, {useContext, useEffect, useState} from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import Stepper from '@mui/material/Stepper';
 import Step from '@mui/material/Step';
 import StepLabel from '@mui/material/StepLabel';
-import {SnackbarHandlerContext} from '../contexts/SnackbarHandlerContext';
-import {LanguageContext} from '../contexts/LanguageContext';
+import { SnackbarHandlerContext } from '../contexts/SnackbarHandlerContext';
+import { LanguageContext } from '../contexts/LanguageContext';
 import onDemandService from '../services/onDemandService';
-import {colors, colorsMap, initialPrintSettings, materialIds, materialsMap, steps,} from './consts';
-import {StepWelcomeFile} from '../cmps/StepWelcomeFile';
-import {Step2PrintSettings} from '../cmps/Step2PrintSettings';
-import {Step3OrderDetails} from '../cmps/Step3OrderDetails';
-import {useTranslation} from 'react-i18next';
+import { colors, colorsMap, initialPrintSettings, materialIds, materialsMap, steps } from './consts';
+import { StepWelcomeFile } from '../cmps/StepWelcomeFile';
+import { Step2PrintSettings } from '../cmps/Step2PrintSettings';
+import { Step3OrderDetails } from '../cmps/Step3OrderDetails';
+import { useTranslation } from 'react-i18next';
 import i18n from '../i18n/i18n';
-import {Step2FilesTable} from '../cmps/Step2FilesTable';
-import {Step2STLViewer} from '../cmps/Step2STLViewer';
-import {Step2Calculating} from '../cmps/Step2Calculating';
-import {generateUuid} from '../services/utils';
-import Step5Payment from "../cmps/Step5Payment";
-import {Step4Shipping} from '../cmps/Step4Shipping';
-import {SuccessPage} from '../cmps/SuccessPage';
+import { Step2FilesTable } from '../cmps/Step2FilesTable';
+import { Step2STLViewer } from '../cmps/Step2STLViewer';
+import { Step2Calculating } from '../cmps/Step2Calculating';
+import { generateUuid } from '../services/utils';
+import Step5Payment from '../cmps/Step5Payment';
+import { Step4Shipping } from '../cmps/Step4Shipping';
+import { SuccessPage } from '../cmps/SuccessPage';
 
 // * This is the Mother Component of the website.
 // * This component manages the whole state of the app.
-export const OnDemand = ({ isDesktop, isCheckoutMode, queryKey}) => {
+export const OnDemand = ({ isDesktop, isCheckoutMode, queryKey }) => {
     const { t } = useTranslation(['common']);
     const [apiKey, setApiKey] = useState(null);
     const [currencyCode, setCurrencyCode] = useState('ILS');
@@ -30,7 +30,7 @@ export const OnDemand = ({ isDesktop, isCheckoutMode, queryKey}) => {
 
     const [activeStep, setActiveStep] = useState(0);
     const [stlViewerColor, setStlViewerColor] = useState(
-        colors[initialPrintSettings.color]
+        colors[initialPrintSettings.color],
     );
 
     const [isLoading, setIsLoading] = useState(false);
@@ -49,34 +49,38 @@ export const OnDemand = ({ isDesktop, isCheckoutMode, queryKey}) => {
 
     const refreshPage = () => {
         window.location.reload();
-    }
+    };
 
-    const scrollToTop = () =>{
-        window.scrollTo({top: 0, behavior: 'smooth'});
-    }
+    const scrollToTop = () => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
 
     useEffect(() => {
-            if (isCheckoutMode) {
-                console.log("checkout mode selected");
+        if (isCheckoutMode) {
+            console.log('checkout mode selected');
 
-                if (queryKey == null)
-                    return;
+            if (queryKey == null)
+                return;
 
-                setApiKey(queryKey);
+            setApiKey(queryKey);
 
-                const getShopOptions = async () => {
-                    const res = await onDemandService.getShopOptions(
-                        queryKey
-                    );
-                    if (res.error)
-                        return notificationHandler.error(t('serverError'));
-                    setShopOptions(res);
-                };
-                getShopOptions();
-            } else {
+            const getShopOptions = async () => {
+                const res = await onDemandService.getShopOptions(
+                    queryKey,
+                );
+                if (res.error)
+                    return notificationHandler.error(t('serverError'));
+                setShopOptions(res);
+            };
+            getShopOptions();
+        } else {
+            const asyncfunc = async () => {
+                console.log(`LIDOR-NOT CHECKOUT- WAITING 10 SECONDS ${new Date().getSeconds()}`);
+                await new Promise(resolve => setTimeout(resolve, 10 * 1000));
+                console.log(`LIDOR-NOT CHECKOUT- After 10 seconds ${new Date().getSeconds()}`);
                 window.addEventListener('message', event => {
                     event.stopPropagation();
-                    console.log("Message received from parent: " + JSON.stringify(event.data.handshake));
+                    console.log('Message received from parent: ' + JSON.stringify(event.data.handshake));
                     if (event.data.handshake) {
                         if (event.data.handshake.apiKey) {
                             setApiKey(event.data.handshake.apiKey);
@@ -93,8 +97,8 @@ export const OnDemand = ({ isDesktop, isCheckoutMode, queryKey}) => {
                         }
                         if (event.data.handshake.lang) {
                             if (event.data.handshake.lang.toLowerCase().includes('heb')) {
-                                toggleLangbyString('heb')
-                            } else toggleLangbyString('en')
+                                toggleLangbyString('heb');
+                            } else toggleLangbyString('en');
                         }
                     } else if (event.data.isLoading) {
                         setIsLoading(true);
@@ -102,7 +106,7 @@ export const OnDemand = ({ isDesktop, isCheckoutMode, queryKey}) => {
                 });
 
 
-                window.parent.postMessage({handshake: '1'}, '*');
+                window.parent.postMessage({ handshake: '1' }, '*');
 
                 if (process.env.REACT_APP_ENV === 'staging') {
                     if (!apiKey) {
@@ -115,7 +119,9 @@ export const OnDemand = ({ isDesktop, isCheckoutMode, queryKey}) => {
                         getShopOptions();
                     }
                 }
-            }
+            };
+            asyncfunc();
+        }
     }, []);
 
     // * When the first file is uploaded, this function is being called
@@ -129,7 +135,7 @@ export const OnDemand = ({ isDesktop, isCheckoutMode, queryKey}) => {
     const updateFilesPrintSettings = (
         uuid,
         newPrintSettings,
-        cubeeFileId = null
+        cubeeFileId = null,
     ) => {
         if (cubeeFileId) {
             return setFilesPrintSettings(prevData => {
@@ -204,7 +210,7 @@ export const OnDemand = ({ isDesktop, isCheckoutMode, queryKey}) => {
         const uuid = generateUuid();
         const cubeeFileIdRes = await onDemandService.uploadFileToCubee(
             file,
-            apiKey
+            apiKey,
         );
         if (cubeeFileIdRes.error) {
             setIsLoading(false);
@@ -214,12 +220,12 @@ export const OnDemand = ({ isDesktop, isCheckoutMode, queryKey}) => {
         addNewFileToState(uuid, file);
         const initialPrintSettingsObj = {
             ...initialPrintSettings,
-            color: t('anyColor')
-        }
+            color: t('anyColor'),
+        };
         updateFilesPrintSettings(
             uuid,
             initialPrintSettingsObj,
-            cubeeFileIdRes.data
+            cubeeFileIdRes.data,
         );
         updateFileSnapshot(uuid, '');
         setSelectedUuid(uuid);
@@ -283,8 +289,8 @@ export const OnDemand = ({ isDesktop, isCheckoutMode, queryKey}) => {
     const onCheckout = (price) => {
         setTotal(price);
         setActiveStep(prevActive => prevActive + 1);
-        scrollToTop()
-    }
+        scrollToTop();
+    };
 
     const onCalculate = async () => {
         setIsLoading(true);
@@ -309,9 +315,9 @@ export const OnDemand = ({ isDesktop, isCheckoutMode, queryKey}) => {
         });
         const sleep = ms => new Promise(r => setTimeout(r, ms));
         await sleep(1000);
-        scrollToTop()
+        scrollToTop();
         const results = await Promise.all(
-            queries.map(query => onDemandService.calculateSlicer(query, apiKey))
+            queries.map(query => onDemandService.calculateSlicer(query, apiKey)),
         );
         const errors = results.filter(result => {
             return !!result.error;
@@ -321,19 +327,19 @@ export const OnDemand = ({ isDesktop, isCheckoutMode, queryKey}) => {
             setIsCalculating(false);
             setIsLoading(false);
             return notificationHandler.error(
-                `${t('cantcalc')}${errors[0].error.message}`
+                `${t('cantcalc')}${errors[0].error.message}`,
             );
         }
 
         const printSettingsValues = Object.values(filesPrintSettings);
         const slicedInfo = results.map(result => {
             const currentUuid = printSettingsValues.find(
-                file => file.cubeeFileId === result.fileId
+                file => file.cubeeFileId === result.fileId,
             ).uuid;
             const fileName = uploadedFiles[currentUuid].file.name;
             const snapshotURL = filesSnapshots[currentUuid].snapshotURL;
             const copies = Number(
-                filesPrintSettings[currentUuid].printSettings.copies
+                filesPrintSettings[currentUuid].printSettings.copies,
             );
             return {
                 ...result,
@@ -346,7 +352,7 @@ export const OnDemand = ({ isDesktop, isCheckoutMode, queryKey}) => {
         setIsLoading(false);
         setFilesSlicedInfo(slicedInfo);
         setActiveStep(prevActive => prevActive + 1);
-        scrollToTop()
+        scrollToTop();
         setIsCalculating(false);
     };
 
@@ -364,8 +370,8 @@ export const OnDemand = ({ isDesktop, isCheckoutMode, queryKey}) => {
                 : (printTime);
             printTime += Math.floor(
                 Number(
-                    (model.printTime - Math.floor(model.printTime)).toFixed(2)
-                ) * 60
+                    (model.printTime - Math.floor(model.printTime)).toFixed(2),
+                ) * 60,
             );
             printTime += t('minutes');
             return {
@@ -375,7 +381,7 @@ export const OnDemand = ({ isDesktop, isCheckoutMode, queryKey}) => {
                 color: filesPrintSettings[model.uuid].printSettings.color,
                 material: filesPrintSettings[model.uuid].printSettings.material,
                 layerHeight:
-                    filesPrintSettings[model.uuid].printSettings.resolution,
+                filesPrintSettings[model.uuid].printSettings.resolution,
                 isVase: filesPrintSettings[model.uuid].printSettings.isVase
                     ? 'Yes'
                     : 'No',
@@ -394,7 +400,7 @@ export const OnDemand = ({ isDesktop, isCheckoutMode, queryKey}) => {
                     models: modelsDataArray,
                 },
             },
-            '*'
+            '*',
         );
     };
 
@@ -440,20 +446,20 @@ export const OnDemand = ({ isDesktop, isCheckoutMode, queryKey}) => {
 
     const checkColorValidity = () => {
         const availableColors = getRelevantColors(
-            filesPrintSettings[selectedUuid].printSettings.material
+            filesPrintSettings[selectedUuid].printSettings.material,
         );
         return availableColors[filesPrintSettings[selectedUuid].printSettings.color];
     };
 
     const getRelevantColors = selectedMaterial => {
         const materialId = Object.keys(materialsMap).find(
-            key => materialsMap[key] === selectedMaterial
+            key => materialsMap[key] === selectedMaterial,
         );
         const colorsIds = shopOptions.colorIdsByMaterialId[materialId];
         if (!colorsIds) return {};
         let availableColors = {};
         colorsIds.forEach(colorId => {
-            if(!colorsMap[colorId]) return;
+            if (!colorsMap[colorId]) return;
             availableColors[colorsMap[colorId][language.lang]] =
                 colorsMap[colorId].hexCode;
         });
@@ -475,7 +481,7 @@ export const OnDemand = ({ isDesktop, isCheckoutMode, queryKey}) => {
     const onNext = (res) => {
         setOrderId(res);
         setActiveStep(prevActive => prevActive + 1);
-    }
+    };
 
     const onShippingNext = () => {
         let totalPrice = 0;
@@ -486,16 +492,16 @@ export const OnDemand = ({ isDesktop, isCheckoutMode, queryKey}) => {
         onDemandService.getShippingPrice(currencyCode, totalPrice, apiKey)
             .then((res) => {
                 if (res.error) {
-                    notificationHandler.error("Shipping is available, please contact seller.");
+                    notificationHandler.error('Shipping is available, please contact seller.');
                 } else {
                     setShippingData(prv => {
-                        return {...prv, price: res?.shippingPrice};
+                        return { ...prv, price: res?.shippingPrice };
                     });
 
                     setActiveStep(prevActive => prevActive + 1);
                 }
             });
-    }
+    };
 
     const renderStep = () => {
         switch (activeStep) {
@@ -509,7 +515,7 @@ export const OnDemand = ({ isDesktop, isCheckoutMode, queryKey}) => {
                 );
             case 1:
                 if (isCalculating) {
-                    return  <Step2Calculating isDesktop={isDesktop}/>
+                    return <Step2Calculating isDesktop={isDesktop} />;
                 }
                 return (
                     <>
@@ -526,7 +532,7 @@ export const OnDemand = ({ isDesktop, isCheckoutMode, queryKey}) => {
                                     uuid: fileData.uuid,
                                     fileName: fileData.file.name,
                                     fileSize: fileData.file.size,
-                                })
+                                }),
                             )}
                             isLoading={isLoading}
                             onCalculate={onCalculate}
@@ -537,10 +543,10 @@ export const OnDemand = ({ isDesktop, isCheckoutMode, queryKey}) => {
                             }
                             colors={getRelevantColors(
                                 filesPrintSettings[selectedUuid]
-                                    .printSettings.material
+                                    .printSettings.material,
                             )}
                         />
-                        <div className="stl-settings-cont">
+                        <div className='stl-settings-cont'>
                             <Step2PrintSettings
                                 // onChangeFile={onChangeFile}
                                 isLoading={isLoading}
@@ -558,11 +564,11 @@ export const OnDemand = ({ isDesktop, isCheckoutMode, queryKey}) => {
                                     uploadedFiles[selectedUuid]?.file.name
                                 }
                                 materials={shopOptions.materialIdsByProcessType.FDM.map(
-                                    material => materialsMap[material]
+                                    material => materialsMap[material],
                                 )}
                                 colors={getRelevantColors(
                                     filesPrintSettings[selectedUuid]
-                                        .printSettings.material
+                                        .printSettings.material,
                                 )}
                                 isDesktop={isDesktop}
                             />
@@ -592,46 +598,46 @@ export const OnDemand = ({ isDesktop, isCheckoutMode, queryKey}) => {
             case 3:
                 return (
                     <div>
-                        <Step4Shipping next={onShippingNext} prev={onPrevStep} setShippingData={setShippingData}/>
+                        <Step4Shipping next={onShippingNext} prev={onPrevStep} setShippingData={setShippingData} />
                     </div>
 
                 );
             case 4:
                 return (
-                  <Step5Payment apikey={apiKey}
-                                totalPrice={total}
-                                currencyCode={currencyCode}
-                                items={filesSlicedInfo}
-                                filesPrintSettings={filesPrintSettings}
-                                shippingData={shippingData}
-                                next={onNext}
-                                prev={onPrevStep}
-                                filesSlicedInfo={filesSlicedInfo}
-                                />
+                    <Step5Payment apikey={apiKey}
+                                  totalPrice={total}
+                                  currencyCode={currencyCode}
+                                  items={filesSlicedInfo}
+                                  filesPrintSettings={filesPrintSettings}
+                                  shippingData={shippingData}
+                                  next={onNext}
+                                  prev={onPrevStep}
+                                  filesSlicedInfo={filesSlicedInfo}
+                    />
                 );
             case 5:
                 return (
                     <SuccessPage
-                    repeat={refreshPage}
-                    orderId={orderId}
-                   />
-                )
+                        repeat={refreshPage}
+                        orderId={orderId}
+                    />
+                );
 
             default:
-                return <></>
+                return <></>;
         }
     };
 
     return (
         <>
             <div>
-                <div style={{ display: 'flex' }} className="stepper-language">
+                <div style={{ display: 'flex' }} className='stepper-language'>
                     <Stepper
                         activeStep={activeStep}
                         dir={language.dir}
-                        className="onDemand-stepper"
+                        className='onDemand-stepper'
                     >
-                        {steps.filter(label => isCheckoutMode  || label !== 'Check-Out' && label != 'Shipping').map((label, index) => {
+                        {steps.filter(label => isCheckoutMode || label !== 'Check-Out' && label != 'Shipping').map((label, index) => {
                             const stepProps = {};
                             const labelProps = {};
                             return (
@@ -714,7 +720,7 @@ export const OnDemand = ({ isDesktop, isCheckoutMode, queryKey}) => {
                         </Box>
                     } */}
                 </div>
-                <div className="onDemand-step">{renderStep()}</div>
+                <div className='onDemand-step'>{renderStep()}</div>
             </div>
         </>
     );
