@@ -80,7 +80,7 @@ export const OnDemand = ({ isDesktop, isCheckoutMode, queryKey }) => {
                     const getShopOptions = async () => {
                         let res = await onDemandService.getShopOptions(queryKey);
                         setShopOptions(res);
-
+                        toggleLangbyString('heb');
                         if (res.error)
                             return notificationHandler.error(t('serverError'));
                     };
