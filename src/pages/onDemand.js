@@ -75,8 +75,6 @@ export const OnDemand = ({ isDesktop, isCheckoutMode, queryKey }) => {
             getShopOptions();
         } else {
             const asyncfunc = async () => {
-                console.log(`LIDOR-NOT CHECKOUT- WAITING 10 SECONDS ${new Date().getSeconds()}`);
-                await new Promise(resolve => setTimeout(resolve, 10 * 1000));
                 if(queryKey) {
                     setApiKey(queryKey)
                     const getShopOptions = async () => {
@@ -88,10 +86,8 @@ export const OnDemand = ({ isDesktop, isCheckoutMode, queryKey }) => {
                     };
                     getShopOptions()
                 }
-                console.log(`LIDOR-NOT CHECKOUT- After 10 seconds ${new Date().getSeconds()}`);
                 window.addEventListener('message', event => {
                     event.stopPropagation();
-                    console.log('Message received from parent: ' + JSON.stringify(event.data.handshake));
                     if (event.data.handshake) {
                         if (event.data.handshake.apiKey) {
                             setApiKey(event.data.handshake.apiKey);
