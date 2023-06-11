@@ -80,7 +80,7 @@ export const OnDemand = ({ isDesktop, isCheckoutMode, queryKey }) => {
                 if(queryKey) {
                     setApiKey(queryKey)
                     const getShopOptions = async () => {
-                        let res = await onDemandService.getShopOptions(event.data.handshake.apiKey);
+                        let res = await onDemandService.getShopOptions(queryKey);
                         setShopOptions(res);
 
                         if (res.error)
