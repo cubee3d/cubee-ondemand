@@ -179,7 +179,7 @@ export const Step3OrderDetails = ({
                     {!isCheckoutMode && <LoadingButton
                         variant="contained"
                         className="whiteText"
-                        // loading={isLoading}
+                        loading={isLoading}
                         endIcon={<LocalShippingIcon/>}
                         onClick={onSubmitPrintOrder}
                     >
