@@ -75,17 +75,17 @@ export const OnDemand = ({ isDesktop, isCheckoutMode, queryKey }) => {
             getShopOptions();
         } else {
             const asyncfunc = async () => {
-                if(queryKey) {
-                    setApiKey(queryKey)
-                    const getShopOptions = async () => {
-                        let res = await onDemandService.getShopOptions(queryKey);
-                        setShopOptions(res);
-                        toggleLangbyString('heb');
-                        if (res.error)
-                            return notificationHandler.error(t('serverError'));
-                    };
-                    getShopOptions()
-                }
+                // if(queryKey) {
+                //     setApiKey(queryKey)
+                //     const getShopOptions = async () => {
+                //         let res = await onDemandService.getShopOptions(queryKey);
+                //         setShopOptions(res);
+                //         toggleLangbyString('heb');
+                //         if (res.error)
+                //             return notificationHandler.error(t('serverError'));
+                //     };
+                //     getShopOptions()
+                // }
                 window.addEventListener('message', event => {
                     event.stopPropagation();
                     if (event.data.handshake) {
