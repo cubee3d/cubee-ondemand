@@ -78,6 +78,7 @@ function App() {
     const searchParams = new URLSearchParams(document.location.search)
 
     const queryKey = searchParams.get('t');
+    const langPrefer = searchParams.get('l')
     const isCheckoutMode = searchParams.get('checkoutMode') != null;
     console.log(isCheckoutMode);
     let lang = searchParams.get('lang');
@@ -168,7 +169,7 @@ function App() {
                             }
                             {/* <Router> */}
                                 <div className={'content'}>
-                                    <OnDemand isDesktop={isDesktop} queryKey={queryKey} isCheckoutMode={isCheckoutMode}/>
+                                    <OnDemand isDesktop={isDesktop} queryKey={queryKey} isCheckoutMode={isCheckoutMode} langPrefer={langPrefer}/>
                                     {/* <Switch>
                                         <Route
                                             path="/"

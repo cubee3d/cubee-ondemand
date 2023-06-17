@@ -21,7 +21,7 @@ import { SuccessPage } from '../cmps/SuccessPage';
 
 // * This is the Mother Component of the website.
 // * This component manages the whole state of the app.
-export const OnDemand = ({ isDesktop, isCheckoutMode, queryKey }) => {
+export const OnDemand = ({ isDesktop, isCheckoutMode, queryKey, langPrefer }) => {
     const { t } = useTranslation(['common']);
     const [apiKey, setApiKey] = useState(null);
     const [currencyCode, setCurrencyCode] = useState('ILS');
@@ -80,7 +80,11 @@ export const OnDemand = ({ isDesktop, isCheckoutMode, queryKey }) => {
                     const getShopOptions = async () => {
                         let res = await onDemandService.getShopOptions(queryKey);
                         setShopOptions(res);
-                        toggleLangbyString('heb');
+                        if(langPrefer){
+                            if(langPrefer.toLowerCase().includes('heb')) toggleLangbyString('heb');
+                            else if (langPrefer.toLowerCase().includes('en')) toggleLangbyString('en')
+                            else if (langPrefer.toLowerCase().includes('de')) toggleLangbyString('de')
+                        }
                         if (res.error)
                             return notificationHandler.error(t('serverError'));
                     };
@@ -441,13 +445,21 @@ export const OnDemand = ({ isDesktop, isCheckoutMode, queryKey }) => {
                 dir: 'ltr',
             });
             document.querySelector('.content').classList.add('ltr-body');
-        } else {
+        } else if (lang=== 'heb') {
             i18n.changeLanguage('heb');
             setLanguage({
                 lang: 'heb',
                 dir: 'rtl',
             });
             document.querySelector('.content').classList.remove('ltr-body');
+        }
+        else {
+            i18n.changeLanguage('de');
+            setLanguage({
+                lang: 'de',
+                dir: 'ltr',
+            });
+            document.querySelector('.content').classList.add('ltr-body');
         }
     };
 

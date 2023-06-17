@@ -1,0 +1,17 @@
+{
+    "Upload 3D File": "3D Datei hochladen",
+    "Print Settings": "Druckeinstellungen",
+    "Confirm & Send": "Bestätigen & Senden",
+    "desktopOnlyTitle": "Sorry, diese App ist nur für den Desktop",
+    "desktopOnlyP": "Bitte öffnen Sie die App auf einem PC oder Laptop, um sie zu nutzen",
+    "noApikey": "Für diese App ist ein API-Schlüssel erforderlich",
+    "only3DFiles": "Nur 3D Dateien (STL,OBJ,3MF)",
+    "serverError": "Hoppla, da gab es wohl ein Problem. Versuchen Sie es erneut",
+    "selectColor": "Bitte wählen Sie eine Farbe aus der Liste",
+    "cantcalc": "Wir konnten die Berechnung nicht durchführen, ",
+    "hours": "Stunden",
+    "minutes": "Minuten",
+    "anyColor": "Irgendeine",
+    "Upload File": "3D Datei hochladen",
+    "Summary":"Bestätigen & Senden"
+}
