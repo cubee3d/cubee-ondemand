@@ -1,0 +1,27 @@
+{
+    "replace_file": "Datei ersetzen",
+    "material": "Druckmaterial",
+    "infill": "Infill Dichte (%)",
+    "res": "Auflösung (Schichthöhe)",
+    "color": "Farbe",
+    "add_supports": "Stützmaterial hinzufügen",
+    "vase_mode": "Vasenmodus (Objekt wird hohl gedruckt)",
+    "copies": "Kopien",
+    "reset_settings": "Einstellungen zurücksetzen",
+    "continue": "Akzeptieren und fortfahren",
+    "reset_viewer": "Ansicht zurücksetzen",
+    "stop_animation": "Animation anhalten",
+    "start_animation": "Animation starten",
+    "low": "Niedrig",
+    "high": "Hoch",
+    "file_name": "Dateiname",
+    "file_size": "Größe (MB)",
+    "image": "Bild",
+    "action": "Entfernen",
+    "upload_file": "Weitere Datei hochladen",
+    "analyzingTitle": "Wir analysieren Ihre Dateien",
+    "analyzingP": "Dies kann bis zu 2 Minuten dauern",
+    "analyzingP2": "Bitte schließen Sie diese Seite nicht",
+    "anyColor": "Irgendeine"
+    
+}
