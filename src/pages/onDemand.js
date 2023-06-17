@@ -79,6 +79,7 @@ export const OnDemand = ({ isDesktop, isCheckoutMode, queryKey, langPrefer }) =>
                     setApiKey(queryKey)
                     const getShopOptions = async () => {
                         let res = await onDemandService.getShopOptions(queryKey);
+                        console.log(res, 'res')
                         setShopOptions(res);
                         if(langPrefer){
                             if(langPrefer.toLowerCase().includes('heb')) toggleLangbyString('heb');
