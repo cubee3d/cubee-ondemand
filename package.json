@@ -20,7 +20,7 @@
         "i18next-http-backend": "^1.4.1",
         "lottie-react": "^2.2.1",
         "mui-tel-input": "^3.0.2",
-        "node-sass": "^7.0.1",
+        "node-sass": "^9.0.0",
         "react": "^18.1.0",
         "react-dom": "^18.1.0",
         "react-hook-form": "^7.42.1",
